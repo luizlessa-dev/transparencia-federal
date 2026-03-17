@@ -40,3 +40,4 @@ lerna-debug.log*
 # Local workspace
 .cache/
 .turbo/
+node_modules

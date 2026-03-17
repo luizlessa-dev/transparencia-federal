@@ -1,0 +1,7 @@
+curl -s "https://api.portaldatransparencia.gov.br/api-de-dados/emendas?ano=2025&pagina=1&tamanhoPagina=15" \
+  -H "chave-api-dados: 8965d2863eeea39bae8aa65122213610" \
+  -H "Accept: application/json" | python3 -c "import json,sys; d=json.load(sys.stdin); print('2025:', len(d) if isinstance(d, list) else d)"
+
+curl -s "https://api.portaldatransparencia.gov.br/api-de-dados/emendas?ano=2026&pagina=1&tamanhoPagina=15" \
+  -H "chave-api-dados: 8965d2863eeea39bae8aa65122213610" \
+  -H "Accept: application/json" | python3 -c "import json,sys; d=json.load(sys.stdin); print('2026:', len(d) if isinstance(d, list) else d)"
