@@ -5,9 +5,6 @@
   "workspaces": [
     "packages/ingestao-portal",
     "packages/ingestao-camara",
-    "packages/enriquecimento",
-    "packages/analytics",
-    "packages/api",
     "packages/web"
   ],
   "scripts": {
