@@ -1,0 +1,20 @@
+{
+  "name": "@transparencia/ingestao-camara",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "ingestao-camara": "node --experimental-strip-types dist/run.js",
+    "ingestao-camara:ts": "tsx src/run.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "typescript": "^5.0.0",
+    "tsx": "^4.19.0"
+  }
+}

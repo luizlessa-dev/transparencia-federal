@@ -1,0 +1,21 @@
+{
+  "name": "transparencia-federal-v3",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "packages/ingestao-portal",
+    "packages/ingestao-camara",
+    "packages/enriquecimento",
+    "packages/analytics",
+    "packages/api",
+    "packages/web"
+  ],
+  "scripts": {
+    "typecheck": "npm run typecheck -w @transparencia/ingestao-portal -w @transparencia/ingestao-camara -w @transparencia/enriquecimento -w @transparencia/analytics -w @transparencia/api -w @transparencia/web",
+    "ingestao-portal": "npm run ingestao-portal:ts -w @transparencia/ingestao-portal",
+    "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

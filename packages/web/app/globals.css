@@ -1,0 +1,566 @@
+/* ============================================
+   Transparência Federal v3 — Estilos globais
+   Reset, tipografia, layout e componentes base
+   ============================================ */
+
+/* --- Reset básico --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-feature-settings: "kern" 1;
+  -webkit-font-smoothing: antialiased;
+  color: #2c2c2c;
+  background-color: #fafafa;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+/* --- Container e layout --- */
+.container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* --- Header e navegação --- */
+.site-header {
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem 0;
+}
+
+.site-header .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.site-title:hover {
+  color: #333;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  align-items: center;
+}
+
+.site-nav a {
+  font-size: 0.9375rem;
+  color: #444;
+  text-decoration: none;
+  padding: 0.35em 0.5em;
+  border-radius: 4px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.site-nav a:hover {
+  background-color: #eee;
+  color: #1a1a1a;
+}
+
+.site-nav a[data-current="true"] {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* --- Main --- */
+.main-content {
+  padding: 2rem 0 3rem;
+  min-height: 50vh;
+}
+
+/* --- Footer --- */
+.site-footer {
+  margin-top: auto;
+  padding: 1.5rem 0;
+  background-color: #fff;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.site-footer .container {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* --- Tipografia --- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  color: #1a1a1a;
+}
+
+h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.375rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.375rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.lead {
+  font-size: 1.0625rem;
+  color: #444;
+  margin-bottom: 1.5rem;
+}
+
+/* --- Links no conteúdo --- */
+.main-content a {
+  color: #0a5a8a;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.main-content a:hover {
+  color: #084a73;
+}
+
+/* --- Seções --- */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.page-title {
+  margin-bottom: 1rem;
+}
+
+/* --- Listas --- */
+ul, ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.25rem;
+}
+
+li:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Tabelas --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  margin-bottom: 1.5rem;
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  font-weight: 600;
+  background-color: #fafafa;
+  color: #1a1a1a;
+}
+
+tbody tr:hover {
+  background-color: #fafafa;
+}
+
+/* --- Cores e Design System --- */
+:root {
+  /* Cores primárias — Azul confiável para setor público/transparência */
+  --color-primary: #0a5a8a;
+  --color-primary-dark: #084a73;
+  --color-primary-light: #1a7bb5;
+
+  /* Cores secundárias — Verde para sucesso/dados positivos */
+  --color-success: #228B22;
+  --color-success-light: #90EE90;
+
+  /* Cores de alerta/atenção */
+  --color-warning: #ff9800;
+  --color-error: #d32f2f;
+
+  /* Cores neutras — Para background e texto */
+  --color-bg-primary: #fafafa;
+  --color-bg-secondary: #f5f5f5;
+  --color-text-primary: #2c2c2c;
+  --color-text-secondary: #555;
+  --color-text-light: #777;
+  --color-border: #e0e0e0;
+  --color-border-light: #f0f0f0;
+
+  /* Tamanhos de fonte — Escala harmônica */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.0625rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.375rem;
+  --font-size-3xl: 1.75rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+}
+
+/* --- Utilitários de espaçamento --- */
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mt-6 { margin-top: 3rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mb-6 { margin-bottom: 3rem; }
+.py-4 { padding: 2rem 0; }
+.py-6 { padding: 3rem 0; }
+.px-4 { padding: 0 2rem; }
+
+/* --- Componentes Editorial — Hero Section --- */
+.hero {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.hero .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.hero h1 {
+  color: white;
+  font-size: var(--font-size-5xl);
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.hero .subtitle {
+  font-size: var(--font-size-lg);
+  opacity: 0.95;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+.hero .cta-primary {
+  background-color: #228B22;
+  color: white;
+  padding: 0.875rem 1.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.hero .cta-primary:hover {
+  background-color: #1a6b1a;
+  transform: translateY(-2px);
+}
+
+/* --- Componentes Editorial — Stats Grid --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+  padding: 2rem 0;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: box-shadow 0.25s ease, transform 0.15s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 8px 24px rgba(10, 90, 138, 0.12);
+  transform: translateY(-4px);
+}
+
+.stat-card .number {
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card .label {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* --- Componentes Editorial — Featured Cards --- */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.featured-card {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.featured-card:hover {
+  box-shadow: 0 12px 32px rgba(10, 90, 138, 0.15);
+  transform: translateY(-6px);
+}
+
+.featured-card .thumbnail {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+}
+
+.featured-card .content {
+  padding: 1.5rem;
+}
+
+.featured-card h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+}
+
+.featured-card p {
+  margin: 0 0 1rem 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+}
+
+.featured-card a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.featured-card a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* --- Componentes Editorial — CTA Sections --- */
+.cta-section {
+  background-color: var(--color-bg-secondary);
+  border-left: 4px solid var(--color-primary);
+  padding: 2rem;
+  margin: 2rem 0;
+  border-radius: 6px;
+}
+
+.cta-section h3 {
+  margin-top: 0;
+}
+
+.cta-section p {
+  margin-bottom: 1rem;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+  font-size: var(--font-size-base);
+}
+
+.cta-button:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.cta-button-secondary {
+  background-color: transparent;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.cta-button-secondary:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* --- Section Headers --- */
+.section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-header h2 {
+  margin-top: 0;
+  color: var(--color-primary);
+}
+
+.section-header .subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  max-width: 600px;
+  margin: 0.75rem auto;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero .subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding: 3rem 0;
+  }
+
+  .section {
+    padding: 1.5rem 0 2rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem;
+  }
+
+  .featured-card .thumbnail {
+    height: 150px;
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+  }
+
+  .stat-card .number {
+    font-size: var(--font-size-3xl);
+  }
+
+  .cta-button {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .site-nav {
+    gap: 0.25rem 1rem;
+  }
+}
