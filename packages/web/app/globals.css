@@ -9,7 +9,7 @@
   }
 
   a {
-    @apply text-primary-600 transition-colors duration-150 hover:text-primary-700;
+    @apply text-blue-600 transition-colors duration-150 hover:text-blue-700;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -18,7 +18,7 @@
   }
 
   h2 {
-    @apply text-primary-700;
+    @apply text-blue-700;
   }
 
   p {
@@ -49,7 +49,7 @@
   }
 
   .site-title {
-    @apply text-xl font-bold text-primary-700 no-underline flex-shrink-0 hover:text-primary-600 transition-colors;
+    @apply text-xl font-bold text-blue-700 no-underline flex-shrink-0 hover:text-blue-600 transition-colors;
   }
 
   .site-nav {
@@ -57,7 +57,7 @@
   }
 
   .site-nav a {
-    @apply text-sm font-medium text-gray-600 px-3 py-2 rounded-lg transition-all hover:bg-primary-100 hover:text-primary-700 hover:no-underline;
+    @apply text-sm font-medium text-gray-600 px-3 py-2 rounded-lg transition-all hover:bg-blue-100 hover:text-blue-700 hover:no-underline;
   }
 
   /* Main Content */
@@ -71,7 +71,7 @@
 
   /* Hero Section */
   .hero {
-    @apply relative py-24 md:py-32 bg-gradient-to-br from-primary-700 to-primary-600 text-white text-center overflow-hidden;
+    @apply relative py-24 md:py-32 bg-gradient-to-br from-blue-700 to-blue-600 text-white text-center overflow-hidden;
   }
 
   .hero::before {
@@ -95,7 +95,7 @@
   }
 
   .cta-primary {
-    @apply inline-block bg-accent-green hover:bg-accent-green-dark text-white font-semibold px-8 py-3 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105;
+    @apply inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-105 no-underline;
     animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s backwards;
   }
 
@@ -118,12 +118,12 @@
   }
 
   .stat-card {
-    @apply bg-white border border-gray-200 rounded-xl p-8 text-center transition-all duration-200 relative overflow-hidden hover:border-primary-300 hover:shadow-lg hover:-translate-y-1;
+    @apply bg-white border border-gray-200 rounded-xl p-8 text-center transition-all duration-200 relative overflow-hidden hover:border-blue-300 hover:shadow-lg hover:-translate-y-1;
   }
 
   .stat-card::before {
     content: '';
-    @apply absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-600 to-accent-green opacity-0 transition-opacity;
+    @apply absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-green-600 opacity-0 transition-opacity;
   }
 
   .stat-card:hover::before {
@@ -131,7 +131,7 @@
   }
 
   .stat-card .number {
-    @apply text-4xl md:text-5xl font-bold text-primary-600 mb-2;
+    @apply text-4xl md:text-5xl font-bold text-blue-600 mb-2;
   }
 
   .stat-card .label {
@@ -144,11 +144,11 @@
   }
 
   .featured-card {
-    @apply bg-white border border-gray-200 rounded-xl overflow-hidden transition-all duration-200 hover:border-primary-400 hover:shadow-xl hover:-translate-y-2;
+    @apply bg-white border border-gray-200 rounded-xl overflow-hidden transition-all duration-200 hover:border-blue-400 hover:shadow-xl hover:-translate-y-2;
   }
 
   .featured-card .thumbnail {
-    @apply w-full h-48 bg-gradient-to-br from-primary-600 to-primary-500 flex items-center justify-center text-5xl transition-transform duration-200;
+    @apply w-full h-48 bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center text-5xl transition-transform duration-200;
   }
 
   .featured-card:hover .thumbnail {
@@ -160,7 +160,7 @@
   }
 
   .featured-card h3 {
-    @apply text-xl font-bold text-primary-700 mb-3;
+    @apply text-xl font-bold text-blue-700 mb-3;
   }
 
   .featured-card p {
@@ -168,16 +168,16 @@
   }
 
   .featured-card a {
-    @apply text-primary-600 font-semibold inline-flex items-center gap-1 transition-all hover:gap-2;
+    @apply text-blue-600 font-semibold inline-flex items-center gap-1 transition-all hover:gap-2 no-underline;
   }
 
   /* CTA Sections */
   .cta-section {
-    @apply bg-gradient-to-r from-primary-100 to-primary-200 border-l-4 border-primary-600 p-8 my-6 rounded-lg transition-all hover:shadow-md hover:border-l-accent-green;
+    @apply bg-gradient-to-r from-blue-100 to-blue-200 border-l-4 border-blue-600 p-8 my-6 rounded-lg transition-all hover:shadow-md hover:border-l-green-600;
   }
 
   .cta-section h3 {
-    @apply text-xl font-bold text-primary-700 mt-0 mb-3;
+    @apply text-xl font-bold text-blue-700 mt-0 mb-3;
   }
 
   .cta-section p {
@@ -186,11 +186,11 @@
 
   /* CTA Button */
   .cta-button {
-    @apply inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 no-underline;
+    @apply inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 no-underline;
   }
 
   .cta-button-secondary {
-    @apply bg-transparent border-2 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white;
+    @apply bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white;
   }
 
   /* Footer */
@@ -203,7 +203,18 @@
   }
 
   .site-footer a {
-    @apply text-primary-300 hover:text-accent-green no-underline;
+    @apply text-blue-300 hover:text-green-400 no-underline;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
