@@ -27,9 +27,9 @@ export default function RootLayout({
             </Link>
             <nav className="site-nav" aria-label="Menu principal">
               <Link href="/" data-current="true">Início</Link>
+              <Link href="/ranking">Ranking</Link>
               <Link href="/amendments">Emendas</Link>
               <Link href="/expenses">Despesas</Link>
-              <Link href="/voting">Votações</Link>
               <Link href="/about">Sobre</Link>
             </nav>
           </div>
