@@ -38,108 +38,120 @@ export default async function ParlamentarPage({ params }: Props) {
   const casa = p.casa_legislativa === "senado" ? "Senado Federal" : "Câmara dos Deputados";
 
   return (
-    <div className="container py-12">
-      {/* Breadcrumb */}
-      <p className="text-sm text-gray-500 mb-8">
-        <Link href="/ranking" className="text-blue-600 hover:text-blue-800 no-underline">
-          Ranking
-        </Link>
-        {" / "}
-        <span className="text-gray-700">{nomeExibido}</span>
-      </p>
-
+    <>
       {/* Cabeçalho */}
-      <div className="border-b border-gray-200 pb-8 mb-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{nomeExibido}</h1>
-        <p className="text-gray-500 mb-4">
-          {p.partido} · {p.uf} · {casa}
-          {!p.ativo && (
-            <span className="ml-3 px-2 py-0.5 text-xs bg-gray-100 border border-gray-300 rounded text-gray-500">
-              Inativo
+      <section style={{ borderBottom: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--background))" }}>
+        <div className="container" style={{ padding: "2rem 1.5rem" }}>
+
+          {/* Breadcrumb */}
+          <p style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", marginBottom: "1rem", fontFamily: "var(--font-sans)" }}>
+            <Link href="/ranking" style={{ color: "hsl(var(--primary))", textDecoration: "none" }}>Ranking</Link>
+            <span style={{ margin: "0 0.375rem", color: "hsl(var(--border))" }}>/</span>
+            <span>{nomeExibido}</span>
+          </p>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+            <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
+            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>{nomeExibido}</h1>
+            {!p.ativo && (
+              <span className="badge-neutral" style={{ marginLeft: "0.5rem" }}>Inativo</span>
+            )}
+          </div>
+
+          <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", marginBottom: "1.25rem", fontFamily: "var(--font-sans)" }}>
+            {p.partido} · {p.uf} · {casa}
+          </p>
+
+          <div style={{ display: "inline-flex", alignItems: "baseline", gap: "0.5rem" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "1.75rem", fontWeight: 700, color: "hsl(var(--text-headline))", letterSpacing: "-0.02em" }}>
+              {fmtBRL(totalEmpenhado)}
             </span>
-          )}
-        </p>
-        <p className="text-3xl font-bold text-blue-700">
-          {fmtBRL(totalEmpenhado)}
-          <span className="text-base font-normal text-gray-500 ml-2">
-            total empenhado (todos os anos)
-          </span>
-        </p>
-      </div>
+            <span style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
+              total empenhado (todos os anos)
+            </span>
+          </div>
+        </div>
+      </section>
 
-      {/* Histórico por ano */}
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Histórico por Ano</h2>
+      {/* Histórico */}
+      <div className="container" style={{ padding: "2rem 1.5rem 3rem" }}>
 
-      {historico.length === 0 ? (
-        <p className="text-gray-500">Este parlamentar não aparece no ranking de emendas.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {historico.map((h) => {
-            const execColor =
-              h.metricas.taxa_execucao >= 80
-                ? "#228B22"
-                : h.metricas.taxa_execucao >= 50
-                ? "#e65100"
-                : "#c62828";
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
+          <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
+          <h2 style={{ fontSize: "1.125rem", margin: 0, fontFamily: "var(--font-sans)" }}>Histórico por Ano</h2>
+        </div>
 
-            return (
-              <div
-                key={h.ano}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-md transition-all"
-              >
-                <div className="flex justify-between items-center mb-5">
-                  <span className="text-2xl font-bold text-gray-900">{h.ano}</span>
-                  <span className="text-sm text-gray-500">#{h.posicao} no ranking</span>
-                </div>
+        {historico.length === 0 ? (
+          <p style={{ color: "hsl(var(--text-caption))" }}>Este parlamentar não aparece no ranking de emendas.</p>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1px", backgroundColor: "hsl(var(--border))" }}>
+            {historico.map((h) => {
+              const execColor =
+                h.metricas.taxa_execucao >= 80 ? "hsl(142 60% 65%)"
+                : h.metricas.taxa_execucao >= 50 ? "hsl(38 90% 60%)"
+                : "hsl(350 73% 65%)";
+              const badgeCls = h.metricas.taxa_execucao >= 80 ? "badge-success" : h.metricas.taxa_execucao >= 50 ? "badge-warn" : "badge-danger";
 
-                <dl className="space-y-2 text-sm mb-5">
-                  <div className="flex justify-between">
-                    <dt className="text-gray-500">Empenhado</dt>
-                    <dd className="font-semibold text-gray-900">{fmtBRL(h.metricas.valor_empenhado)}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-gray-500">Pago</dt>
-                    <dd className="text-gray-700">{fmtBRL(h.metricas.valor_pago)}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-gray-500">Liquidado</dt>
-                    <dd className="text-gray-700">{fmtBRL(h.metricas.valor_liquidado)}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-gray-500">Emendas</dt>
-                    <dd className="text-gray-700">{h.metricas.total_emendas}</dd>
-                  </div>
-                </dl>
+              return (
+                <div key={h.ano} className="bloomberg-card" style={{ borderRadius: 0, border: "none" }}>
 
-                {/* Barra de execução */}
-                <div>
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>Taxa de execução</span>
-                    <span className="font-semibold" style={{ color: execColor }}>
-                      {h.metricas.taxa_execucao}%
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem" }}>
+                    <span style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 700, color: "hsl(var(--text-headline))" }}>
+                      {h.ano}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)" }}>
+                      #{h.posicao} no ranking
                     </span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div
-                      className="h-1.5 rounded-full transition-all"
-                      style={{
+
+                  <dl style={{ marginBottom: "1.25rem" }}>
+                    {[
+                      { label: "Empenhado", value: fmtBRL(h.metricas.valor_empenhado), bold: true },
+                      { label: "Pago", value: fmtBRL(h.metricas.valor_pago), bold: false },
+                      { label: "Liquidado", value: fmtBRL(h.metricas.valor_liquidado), bold: false },
+                      { label: "Emendas", value: String(h.metricas.total_emendas), bold: false },
+                    ].map((row) => (
+                      <div key={row.label} style={{ display: "flex", justifyContent: "space-between", padding: "0.35rem 0", borderBottom: "1px solid hsl(var(--border-subtle))" }}>
+                        <dt style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))" }}>{row.label}</dt>
+                        <dd style={{ fontSize: "0.8125rem", fontFamily: "var(--font-mono)", fontWeight: row.bold ? 600 : 400, color: row.bold ? "hsl(var(--text-headline))" : "hsl(var(--text-body))" }}>
+                          {row.value}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+
+                  {/* Taxa de execução */}
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                      <span style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))" }}>
+                        Taxa de execução
+                      </span>
+                      <span className={badgeCls}>{h.metricas.taxa_execucao}%</span>
+                    </div>
+                    <div style={{ width: "100%", backgroundColor: "hsl(var(--border))", height: "3px" }}>
+                      <div style={{
+                        height: "3px",
                         width: `${Math.min(h.metricas.taxa_execucao, 100)}%`,
                         backgroundColor: execColor,
-                      }}
-                    />
+                        transition: "width 0.4s ease",
+                      }} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
 
-      <p className="mt-10">
-        <Link href="/ranking" className="text-blue-600 hover:text-blue-800 no-underline font-medium">
-          ← Voltar ao ranking
-        </Link>
-      </p>
-    </div>
+        <div style={{ marginTop: "2rem" }}>
+          <Link
+            href="/ranking"
+            style={{ fontSize: "0.875rem", fontWeight: 600, color: "hsl(var(--primary))", textDecoration: "none" }}
+          >
+            ← Voltar ao ranking
+          </Link>
+        </div>
+      </div>
+    </>
   );
 }
