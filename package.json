@@ -5,12 +5,14 @@
   "workspaces": [
     "packages/ingestao-portal",
     "packages/ingestao-camara",
+    "packages/enriquecimento",
     "packages/web"
   ],
   "scripts": {
     "typecheck": "npm run typecheck -w @transparencia/ingestao-portal -w @transparencia/ingestao-camara -w @transparencia/enriquecimento -w @transparencia/analytics -w @transparencia/api -w @transparencia/web",
     "ingestao-portal": "npm run ingestao-portal:ts -w @transparencia/ingestao-portal",
-    "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara"
+    "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara",
+    "enriquecimento": "npm run enriquecimento:ts -w @transparencia/enriquecimento"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
