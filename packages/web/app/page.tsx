@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getCobertura } from "../src/services/ranking.js";
+import { getCobertura } from "~/services/ranking";
 
 export const dynamic = "force-dynamic";
 

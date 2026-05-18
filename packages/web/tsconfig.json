@@ -3,8 +3,13 @@
   "compilerOptions": {
     "jsx": "preserve",
     "plugins": [{ "name": "next" }],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
-    "paths": { "@/*": ["./app/*"] }
+    "paths": {
+      "@/*": ["./app/*"],
+      "~/*": ["./src/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

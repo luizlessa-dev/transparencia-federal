@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { getRanking } from "../../src/services/ranking.js";
-import { ValorBRL } from "../../src/components/ValorBRL.js";
-import { FotoAvatar } from "../../src/components/FotoAvatar.js";
+import { getRanking } from "~/services/ranking";
+import { ValorBRL } from "~/components/ValorBRL";
+import { FotoAvatar } from "~/components/FotoAvatar";
 
 export const dynamic = "force-dynamic";
 

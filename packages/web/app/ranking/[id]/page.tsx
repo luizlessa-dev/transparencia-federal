@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getParlamentar } from "../../../src/services/ranking.js";
-import { ValorBRL } from "../../../src/components/ValorBRL.js";
-import { FotoAvatar } from "../../../src/components/FotoAvatar.js";
+import { getParlamentar } from "~/services/ranking";
+import { ValorBRL } from "~/components/ValorBRL";
+import { FotoAvatar } from "~/components/FotoAvatar";
 
 export const dynamic = "force-dynamic";
 

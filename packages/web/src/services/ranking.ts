@@ -1,4 +1,4 @@
-import { getSupabase } from "../lib/supabase-server.js";
+import { getSupabase } from "../lib/supabase-server";
 
 export interface RankingEntry {
   posicao: number;
