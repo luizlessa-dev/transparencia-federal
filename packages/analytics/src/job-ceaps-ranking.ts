@@ -7,7 +7,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const JOB_NOME = "job_ceaps_ranking";
-const ANOS_DEFAULT = [2023, 2024];
+const ANOS_DEFAULT = [2023, 2024, 2025];
 
 export interface JobCeapsRankingConfig {
   supabaseUrl: string;

@@ -7,7 +7,7 @@ interface Props {
   searchParams: Promise<{ ano?: string; page?: string }>;
 }
 
-const ANOS = [2023, 2024];
+const ANOS = [2023, 2024, 2025];
 
 function fmtBRL(valor: number) {
   return new Intl.NumberFormat("pt-BR", {
@@ -31,7 +31,7 @@ export function generateMetadata() {
 
 export default async function ExpensesPage({ searchParams }: Props) {
   const sp = await searchParams;
-  const ano = ANOS.includes(Number(sp.ano)) ? Number(sp.ano) : 2024;
+  const ano = ANOS.includes(Number(sp.ano)) ? Number(sp.ano) : 2025;
   const page = Math.max(1, Number(sp.page ?? 1));
   const PER_PAGE = 50;
 

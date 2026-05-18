@@ -28,7 +28,7 @@ export interface DespesaDeputadoDetalhe {
   }[];
 }
 
-const ANOS_VALIDOS = [2023, 2024];
+const ANOS_VALIDOS = [2023, 2024, 2025];
 
 export async function getDespesasRanking(
   ano: number,
