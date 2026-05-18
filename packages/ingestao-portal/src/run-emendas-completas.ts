@@ -35,6 +35,7 @@ const resultado = await jobIngestaoEmendasCompletas({
 });
 
 console.log(`\n  Status: ${resultado.status}`);
+if (resultado.erro) console.error(`  Erro: ${resultado.erro}`);
 for (const r of resultado.resultados_por_ano) {
   const rp9Flag = r.rp9 > 0 ? ` (${r.rp9} RP9)` : "";
   console.log(`  ${r.ano}: ${r.total} emendas${rp9Flag} — ${r.duracao_ms}ms${r.erro ? ` ERRO=${r.erro}` : ""}`);

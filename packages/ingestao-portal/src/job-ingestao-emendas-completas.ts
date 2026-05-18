@@ -191,7 +191,14 @@ export async function jobIngestaoEmendasCompletas(
 
         if (chunk.length === 0) break;
 
-        const rows = chunk.map((item) => mapearEmenda(item, ano));
+        const rawRows = chunk.map((item) => mapearEmenda(item, ano));
+
+        // Deduplicar por (codigo_emenda, ano) — Portal pode retornar múltiplas
+        // ações da mesma emenda na mesma página, causando conflito no upsert
+        const rows = Array.from(
+          new Map(rawRows.map((r) => [`${r.codigo_emenda}|${r.ano}`, r])).values()
+        );
+
         total += rows.length;
         rp9 += rows.filter((r) => String(r.tipo_emenda).toLowerCase().includes("relator")).length;
 
