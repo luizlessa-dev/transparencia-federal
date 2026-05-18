@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { getRanking } from "~/services/ranking";
-import { ValorBRL } from "~/components/ValorBRL";
-import { FotoAvatar } from "~/components/FotoAvatar";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +17,35 @@ interface SearchParams {
   page?: string;
 }
 
+function fmtBRL(valor: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(valor);
+}
+
+function badgeExecucao(taxa: number) {
+  const cor =
+    taxa >= 80 ? "#228B22" : taxa >= 50 ? "#e65100" : "#c62828";
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "0.15em 0.5em",
+        borderRadius: "3px",
+        fontSize: "0.8125rem",
+        fontWeight: 600,
+        backgroundColor: cor + "18",
+        color: cor,
+        border: `1px solid ${cor}44`,
+      }}
+    >
+      {taxa}%
+    </span>
+  );
+}
+
 export default async function RankingPage({
   searchParams,
 }: {
@@ -33,93 +60,80 @@ export default async function RankingPage({
 
   return (
     <section className="section">
-      <div className="section-header">
-        <h1 className="page-title">Ranking de Emendas Parlamentares</h1>
-        <p className="lead">
-          Parlamentares ordenados pelo valor total empenhado no orçamento federal.
-          Dados do Portal da Transparência do Governo Federal.
-        </p>
-      </div>
+      <h1 className="page-title">Ranking de Emendas Parlamentares</h1>
+      <p className="lead">
+        Parlamentares ordenados pelo valor total empenhado no orçamento federal.
+        Fonte: Portal da Transparência do Governo Federal.
+      </p>
 
       {/* Filtro de ano */}
-      <div className="flex gap-2 mt-6 mb-8">
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem" }}>
+        <span style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>Ano:</span>
         {ANOS.map((a) => (
           <Link
             key={a}
             href={`/ranking?ano=${a}`}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors no-underline ${
-              a === ano
-                ? "bg-blue-700 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-700"
-            }`}
+            style={{
+              padding: "0.3em 0.9em",
+              borderRadius: "4px",
+              fontSize: "0.875rem",
+              fontWeight: a === ano ? 600 : 400,
+              textDecoration: "none",
+              backgroundColor: a === ano ? "var(--color-primary)" : "#f0f0f0",
+              color: a === ano ? "#fff" : "#444",
+              border: `1px solid ${a === ano ? "var(--color-primary)" : "#ddd"}`,
+            }}
           >
             {a}
           </Link>
         ))}
-        <span className="ml-auto text-sm text-gray-500 self-center">
+        <span style={{ marginLeft: "auto", fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>
           {total.toLocaleString("pt-BR")} parlamentares
         </span>
       </div>
 
       {/* Tabela */}
-      <div className="overflow-x-auto rounded-xl border border-gray-200">
-        <table className="w-full text-sm">
+      <div style={{ overflowX: "auto" }}>
+        <table>
           <thead>
-            <tr className="bg-gray-50 text-left text-gray-500 text-xs uppercase tracking-wide">
-              <th className="px-4 py-3 w-12">#</th>
-              <th className="px-4 py-3">Parlamentar</th>
-              <th className="px-4 py-3 text-right">Empenhado</th>
-              <th className="px-4 py-3 text-right hidden md:table-cell">Pago</th>
-              <th className="px-4 py-3 text-right hidden md:table-cell">Execução</th>
-              <th className="px-4 py-3 text-right hidden lg:table-cell">Emendas</th>
+            <tr>
+              <th style={{ width: "3rem" }}>#</th>
+              <th>Parlamentar</th>
+              <th style={{ textAlign: "right" }}>Empenhado</th>
+              <th style={{ textAlign: "right" }}>Pago</th>
+              <th style={{ textAlign: "right" }}>Execução</th>
+              <th style={{ textAlign: "right" }}>Emendas</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody>
             {data.map((row) => {
               const p = row.parlamentares;
-              const posicaoGlobal = (page - 1) * PER_PAGE + row.posicao;
               return (
-                <tr key={p.id} className="hover:bg-blue-50 transition-colors">
-                  <td className="px-4 py-3 font-mono text-gray-400 text-xs">
-                    {posicaoGlobal}
+                <tr key={p.id}>
+                  <td style={{ color: "var(--color-text-light)", fontVariantNumeric: "tabular-nums", fontSize: "0.8125rem" }}>
+                    {row.posicao}
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <Link
                       href={`/ranking/${p.id}`}
-                      className="flex items-center gap-3 no-underline group"
+                      style={{ textDecoration: "none", color: "var(--color-primary)", fontWeight: 500 }}
                     >
-                      <FotoAvatar src={p.foto_url} nome={p.nome_parlamentar || p.nome} size={36} />
-                      <div>
-                        <div className="font-medium text-gray-900 group-hover:text-blue-700 transition-colors">
-                          {p.nome_parlamentar || p.nome}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {p.partido} · {p.uf} ·{" "}
-                          {p.casa_legislativa === "senado" ? "Senado" : "Câmara"}
-                        </div>
-                      </div>
+                      {p.nome_parlamentar || p.nome}
                     </Link>
-                  </td>
-                  <td className="px-4 py-3 text-right font-semibold text-gray-900">
-                    <ValorBRL valor={row.metricas.valor_empenhado} />
-                  </td>
-                  <td className="px-4 py-3 text-right text-gray-600 hidden md:table-cell">
-                    <ValorBRL valor={row.metricas.valor_pago} />
-                  </td>
-                  <td className="px-4 py-3 text-right hidden md:table-cell">
-                    <span
-                      className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        row.metricas.taxa_execucao >= 80
-                          ? "bg-green-100 text-green-700"
-                          : row.metricas.taxa_execucao >= 50
-                          ? "bg-yellow-100 text-yellow-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {row.metricas.taxa_execucao}%
+                    <span style={{ display: "block", fontSize: "0.8125rem", color: "var(--color-text-secondary)", marginTop: "0.1rem" }}>
+                      {p.partido} · {p.uf} · {p.casa_legislativa === "senado" ? "Senado" : "Câmara"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-500 hidden lg:table-cell">
+                  <td style={{ textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+                    {fmtBRL(row.metricas.valor_empenhado)}
+                  </td>
+                  <td style={{ textAlign: "right", color: "var(--color-text-secondary)", fontVariantNumeric: "tabular-nums" }}>
+                    {fmtBRL(row.metricas.valor_pago)}
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    {badgeExecucao(row.metricas.taxa_execucao)}
+                  </td>
+                  <td style={{ textAlign: "right", color: "var(--color-text-secondary)" }}>
                     {row.metricas.total_emendas}
                   </td>
                 </tr>
@@ -131,24 +145,18 @@ export default async function RankingPage({
 
       {/* Paginação */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6 text-sm">
-          <span className="text-gray-500">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.5rem" }}>
+          <span style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>
             Página {page} de {totalPages}
           </span>
-          <div className="flex gap-2">
+          <div style={{ display: "flex", gap: "0.5rem" }}>
             {page > 1 && (
-              <Link
-                href={`/ranking?ano=${ano}&page=${page - 1}`}
-                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-700 no-underline transition-colors"
-              >
+              <Link href={`/ranking?ano=${ano}&page=${page - 1}`} className="cta-button" style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}>
                 ← Anterior
               </Link>
             )}
             {page < totalPages && (
-              <Link
-                href={`/ranking?ano=${ano}&page=${page + 1}`}
-                className="px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-600 no-underline transition-colors"
-              >
+              <Link href={`/ranking?ano=${ano}&page=${page + 1}`} className="cta-button" style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}>
                 Próxima →
               </Link>
             )}
@@ -156,10 +164,9 @@ export default async function RankingPage({
         </div>
       )}
 
-      {/* Nota metodológica */}
-      <p className="text-xs text-gray-400 mt-8">
-        Fonte: Portal da Transparência do Governo Federal. Ranking por valor empenhado. Taxa de
-        execução = valor pago / valor empenhado. Dados atualizados mensalmente.
+      <p style={{ fontSize: "0.8125rem", color: "var(--color-text-light)", marginTop: "2rem" }}>
+        Ranking por valor empenhado. Taxa de execução = valor pago / valor empenhado.
+        Dados atualizados mensalmente a partir do Portal da Transparência.
       </p>
     </section>
   );

@@ -12,11 +12,7 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
@@ -26,7 +22,7 @@ export default function RootLayout({
               Transparência Federal
             </Link>
             <nav className="site-nav" aria-label="Menu principal">
-              <Link href="/" data-current="true">Início</Link>
+              <Link href="/">Início</Link>
               <Link href="/ranking">Ranking</Link>
               <Link href="/amendments">Emendas</Link>
               <Link href="/expenses">Despesas</Link>
@@ -42,16 +38,22 @@ export default function RootLayout({
         <footer className="site-footer">
           <div className="container">
             <p>
-              <strong>Transparência Federal</strong> — Dados públicos sobre emendas parlamentares, despesas de gabinete
-              e votações da Câmara dos Deputados. Para cidadãos, jornalistas, pesquisadores e ONGs.
+              <strong>Transparência Federal</strong> — Dados públicos sobre emendas parlamentares,
+              despesas de gabinete e votações da Câmara dos Deputados.
             </p>
-            <p>
-              Dados de:
-              <a href="https://www.gov.br/transparencia" target="_blank" style={{marginLeft: "0.25rem"}}>Portal da Transparência</a>
+            <p style={{ marginTop: "0.5rem" }}>
+              Dados de:{" "}
+              <a href="https://www.gov.br/transparencia" target="_blank" rel="noreferrer">
+                Portal da Transparência
+              </a>
               {" • "}
-              <a href="https://dadosabertos.camara.leg.br" target="_blank">Câmara dos Deputados</a>
+              <a href="https://dadosabertos.camara.leg.br" target="_blank" rel="noreferrer">
+                Câmara dos Deputados
+              </a>
               {" • "}
-              <a href="https://github.com" target="_blank">Código Aberto</a>
+              <a href="https://github.com/luizlessa-dev/transparencia-federal" target="_blank" rel="noreferrer">
+                Código Aberto
+              </a>
             </p>
           </div>
         </footer>
