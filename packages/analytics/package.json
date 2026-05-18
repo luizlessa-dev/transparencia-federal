@@ -5,9 +5,15 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "analytics:ts": "tsx src/run.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.0",
     "typescript": "^5.0.0"
   }
 }
