@@ -5,9 +5,18 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/server.ts",
+    "start": "node dist/server.js"
   },
   "devDependencies": {
+    "tsx": "^4.22.1",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.0.2",
+    "@supabase/supabase-js": "^2.105.4",
+    "dotenv": "^17.4.2",
+    "hono": "^4.12.19"
   }
 }

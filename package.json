@@ -7,6 +7,7 @@
     "packages/ingestao-camara",
     "packages/enriquecimento",
     "packages/analytics",
+    "packages/api",
     "packages/web"
   ],
   "scripts": {
@@ -15,7 +16,8 @@
     "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara",
     "enriquecimento": "npm run enriquecimento:ts -w @transparencia/enriquecimento",
     "analytics": "npm run analytics:ts -w @transparencia/analytics",
-    "publicar": "npm run publicar:ts -w @transparencia/analytics"
+    "publicar": "npm run publicar:ts -w @transparencia/analytics",
+    "api:dev": "npm run dev -w @transparencia/api"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
