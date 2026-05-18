@@ -7,7 +7,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "ingestao-portal": "node --experimental-strip-types dist/run.js",
-    "ingestao-portal:ts": "tsx src/run.ts"
+    "ingestao-portal:ts": "tsx src/run.ts",
+    "emendas-completas:ts": "tsx src/run-emendas-completas.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
