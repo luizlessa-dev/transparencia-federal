@@ -13,8 +13,8 @@ export default async function HomePage() {
         <div className="container">
           <h1>Transparência Federal</h1>
           <p className="subtitle">
-            Explore emendas parlamentares e dados do Congresso Nacional.
-            Dados públicos acessíveis para cidadãos, jornalistas e pesquisadores.
+            Explore emendas parlamentares, despesas de gabinete e dados do Congresso.
+            Dados públicos de fácil acesso para cidadãos, jornalistas e pesquisadores.
           </p>
           <Link href="/ranking" className="cta-primary">
             Ver Ranking de Emendas →
@@ -65,7 +65,7 @@ export default async function HomePage() {
               <div className="content">
                 <h3>Ranking de Emendas</h3>
                 <p>
-                  Quem empenhrou mais? Veja o ranking completo por valor de emendas,
+                  Quem empenhou mais? Veja o ranking completo por valor de emendas,
                   taxa de execução e histórico por ano.
                 </p>
                 <Link href="/ranking">Ver Ranking →</Link>
@@ -91,6 +91,52 @@ export default async function HomePage() {
                 <Link href="/expenses">Ver Despesas →</Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Para diferentes públicos */}
+      <section className="section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Para Diferentes Públicos</h2>
+            <p className="subtitle">Você é cidadão, jornalista, pesquisador ou representante de ONG?</p>
+          </div>
+
+          <div className="cta-section">
+            <h3>👥 Para Cidadãos</h3>
+            <p>
+              Entenda como parlamentares gastam recursos públicos, que emendas aprovam e qual impacto
+              têm na sua região. Fiscalize seus representantes com dados transparentes.
+            </p>
+            <Link href="/ranking" className="cta-button">Começar pelo Ranking</Link>
+          </div>
+
+          <div className="cta-section">
+            <h3>📰 Para Jornalistas</h3>
+            <p>
+              Acesse séries históricas, identifique padrões anômalos e contextualize investigações
+              com dados estruturados sobre orçamento e execução parlamentar.
+            </p>
+            <Link href="/ranking" className="cta-button">Explorar Dados</Link>
+          </div>
+
+          <div className="cta-section">
+            <h3>🎓 Para Pesquisadores</h3>
+            <p>
+              Estude padrões de gastos públicos com dados organizados por parlamentar, ano,
+              partido e unidade federativa. Metodologia aberta e reproduzível.
+            </p>
+            <Link href="/about" className="cta-button">Ver Metodologia</Link>
+          </div>
+
+          <div className="cta-section">
+            <h3>🤝 Para ONGs</h3>
+            <p>
+              Use nossos dados em campanhas de advocacy, relatórios de impacto e monitoramento
+              de políticas públicas. Acesso aberto para fins não comerciais.
+            </p>
+            <Link href="/about" className="cta-button">Saiba Mais</Link>
           </div>
         </div>
       </section>

@@ -26,21 +26,14 @@ function fmtBRL(valor: number) {
 }
 
 function badgeExecucao(taxa: number) {
-  const cor =
-    taxa >= 80 ? "#228B22" : taxa >= 50 ? "#e65100" : "#c62828";
+  const color =
+    taxa >= 80
+      ? "bg-green-100 text-green-800 border-green-300"
+      : taxa >= 50
+      ? "bg-orange-100 text-orange-800 border-orange-300"
+      : "bg-red-100 text-red-800 border-red-300";
   return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "0.15em 0.5em",
-        borderRadius: "3px",
-        fontSize: "0.8125rem",
-        fontWeight: 600,
-        backgroundColor: cor + "18",
-        color: cor,
-        border: `1px solid ${cor}44`,
-      }}
-    >
+    <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold border ${color}`}>
       {taxa}%
     </span>
   );
@@ -59,7 +52,7 @@ export default async function RankingPage({
   const totalPages = Math.ceil(total / PER_PAGE);
 
   return (
-    <section className="section">
+    <div className="container py-12">
       <h1 className="page-title">Ranking de Emendas Parlamentares</h1>
       <p className="lead">
         Parlamentares ordenados pelo valor total empenhado no orçamento federal.
@@ -67,73 +60,68 @@ export default async function RankingPage({
       </p>
 
       {/* Filtro de ano */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem" }}>
-        <span style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>Ano:</span>
+      <div className="flex items-center gap-2 mb-8">
+        <span className="text-sm text-gray-500">Ano:</span>
         {ANOS.map((a) => (
           <Link
             key={a}
             href={`/ranking?ano=${a}`}
-            style={{
-              padding: "0.3em 0.9em",
-              borderRadius: "4px",
-              fontSize: "0.875rem",
-              fontWeight: a === ano ? 600 : 400,
-              textDecoration: "none",
-              backgroundColor: a === ano ? "var(--color-primary)" : "#f0f0f0",
-              color: a === ano ? "#fff" : "#444",
-              border: `1px solid ${a === ano ? "var(--color-primary)" : "#ddd"}`,
-            }}
+            className={`px-4 py-1.5 rounded-lg text-sm font-medium no-underline border transition-all ${
+              a === ano
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-blue-50 hover:border-blue-300"
+            }`}
           >
             {a}
           </Link>
         ))}
-        <span style={{ marginLeft: "auto", fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>
+        <span className="ml-auto text-sm text-gray-500">
           {total.toLocaleString("pt-BR")} parlamentares
         </span>
       </div>
 
       {/* Tabela */}
-      <div style={{ overflowX: "auto" }}>
-        <table>
+      <div className="overflow-x-auto rounded-xl border border-gray-200">
+        <table className="w-full text-sm">
           <thead>
-            <tr>
-              <th style={{ width: "3rem" }}>#</th>
-              <th>Parlamentar</th>
-              <th style={{ textAlign: "right" }}>Empenhado</th>
-              <th style={{ textAlign: "right" }}>Pago</th>
-              <th style={{ textAlign: "right" }}>Execução</th>
-              <th style={{ textAlign: "right" }}>Emendas</th>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              <th className="text-left px-4 py-3 font-semibold text-gray-700 w-12">#</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">Parlamentar</th>
+              <th className="text-right px-4 py-3 font-semibold text-gray-700">Empenhado</th>
+              <th className="text-right px-4 py-3 font-semibold text-gray-700">Pago</th>
+              <th className="text-right px-4 py-3 font-semibold text-gray-700">Execução</th>
+              <th className="text-right px-4 py-3 font-semibold text-gray-700">Emendas</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {data.map((row) => {
               const p = row.parlamentares;
               return (
-                <tr key={p.id}>
-                  <td style={{ color: "var(--color-text-light)", fontVariantNumeric: "tabular-nums", fontSize: "0.8125rem" }}>
+                <tr key={p.id} className="hover:bg-blue-50 transition-colors">
+                  <td className="px-4 py-3 text-gray-400 tabular-nums text-xs">
                     {row.posicao}
                   </td>
-                  <td>
+                  <td className="px-4 py-3">
                     <Link
                       href={`/ranking/${p.id}`}
-                      style={{ textDecoration: "none", color: "var(--color-primary)", fontWeight: 500 }}
+                      className="font-semibold text-blue-700 hover:text-blue-900 no-underline"
                     >
                       {p.nome_parlamentar || p.nome}
                     </Link>
-                    <span style={{ display: "block", fontSize: "0.8125rem", color: "var(--color-text-secondary)", marginTop: "0.1rem" }}>
+                    <span className="block text-xs text-gray-500 mt-0.5">
                       {p.partido} · {p.uf} · {p.casa_legislativa === "senado" ? "Senado" : "Câmara"}
                     </span>
                   </td>
-                  <td style={{ textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+                  <td className="px-4 py-3 text-right font-semibold tabular-nums text-gray-900">
                     {fmtBRL(row.metricas.valor_empenhado)}
                   </td>
-                  <td style={{ textAlign: "right", color: "var(--color-text-secondary)", fontVariantNumeric: "tabular-nums" }}>
+                  <td className="px-4 py-3 text-right tabular-nums text-gray-500">
                     {fmtBRL(row.metricas.valor_pago)}
                   </td>
-                  <td style={{ textAlign: "right" }}>
+                  <td className="px-4 py-3 text-right">
                     {badgeExecucao(row.metricas.taxa_execucao)}
                   </td>
-                  <td style={{ textAlign: "right", color: "var(--color-text-secondary)" }}>
+                  <td className="px-4 py-3 text-right text-gray-500">
                     {row.metricas.total_emendas}
                   </td>
                 </tr>
@@ -145,18 +133,24 @@ export default async function RankingPage({
 
       {/* Paginação */}
       {totalPages > 1 && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.5rem" }}>
-          <span style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>
+        <div className="flex justify-between items-center mt-6">
+          <span className="text-sm text-gray-500">
             Página {page} de {totalPages}
           </span>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className="flex gap-2">
             {page > 1 && (
-              <Link href={`/ranking?ano=${ano}&page=${page - 1}`} className="cta-button" style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}>
+              <Link
+                href={`/ranking?ano=${ano}&page=${page - 1}`}
+                className="cta-button text-sm px-4 py-2"
+              >
                 ← Anterior
               </Link>
             )}
             {page < totalPages && (
-              <Link href={`/ranking?ano=${ano}&page=${page + 1}`} className="cta-button" style={{ padding: "0.5rem 1rem", fontSize: "0.875rem" }}>
+              <Link
+                href={`/ranking?ano=${ano}&page=${page + 1}`}
+                className="cta-button text-sm px-4 py-2"
+              >
                 Próxima →
               </Link>
             )}
@@ -164,10 +158,10 @@ export default async function RankingPage({
         </div>
       )}
 
-      <p style={{ fontSize: "0.8125rem", color: "var(--color-text-light)", marginTop: "2rem" }}>
+      <p className="text-xs text-gray-400 mt-8">
         Ranking por valor empenhado. Taxa de execução = valor pago / valor empenhado.
         Dados atualizados mensalmente a partir do Portal da Transparência.
       </p>
-    </section>
+    </div>
   );
 }

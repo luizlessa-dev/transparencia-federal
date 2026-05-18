@@ -31,17 +31,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main className="main-content">
-          <div className="container">
-            {children}
-          </div>
+          {children}
         </main>
         <footer className="site-footer">
           <div className="container">
             <p>
               <strong>Transparência Federal</strong> — Dados públicos sobre emendas parlamentares,
               despesas de gabinete e votações da Câmara dos Deputados.
+              Para cidadãos, jornalistas, pesquisadores e ONGs.
             </p>
-            <p style={{ marginTop: "0.5rem" }}>
+            <p>
               Dados de:{" "}
               <a href="https://www.gov.br/transparencia" target="_blank" rel="noreferrer">
                 Portal da Transparência
