@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "analytics:ts": "tsx src/run.ts"
+    "analytics:ts": "tsx src/run.ts",
+    "publicar:ts": "tsx src/run-publicar.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

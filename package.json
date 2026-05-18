@@ -14,7 +14,8 @@
     "ingestao-portal": "npm run ingestao-portal:ts -w @transparencia/ingestao-portal",
     "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara",
     "enriquecimento": "npm run enriquecimento:ts -w @transparencia/enriquecimento",
-    "analytics": "npm run analytics:ts -w @transparencia/analytics"
+    "analytics": "npm run analytics:ts -w @transparencia/analytics",
+    "publicar": "npm run publicar:ts -w @transparencia/analytics"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

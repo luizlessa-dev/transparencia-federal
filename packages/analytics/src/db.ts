@@ -77,7 +77,7 @@ export async function inserirSnapshot(
 export async function registrarExecucao(
   sb: SupabaseClient,
   status: string,
-  detalhes: Record<string, unknown>
+  detalhes: Record<string, unknown> | object
 ): Promise<string> {
   const { data, error } = await sb
     .from("execucoes_pipeline")
@@ -92,7 +92,7 @@ export async function finalizarExecucao(
   sb: SupabaseClient,
   id: string,
   status: string,
-  detalhes: Record<string, unknown>
+  detalhes: Record<string, unknown> | object
 ): Promise<void> {
   await sb
     .from("execucoes_pipeline")
