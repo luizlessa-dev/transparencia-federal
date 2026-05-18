@@ -1,0 +1,137 @@
+name: Pipeline Mensal — Monitor + Ingestão
+
+on:
+  schedule:
+    # Dia 1 de cada mês às 09:00 BRT (12:00 UTC)
+    - cron: "0 12 1 * *"
+  workflow_dispatch:
+    inputs:
+      ano:
+        description: "Ano a verificar/ingerir (ex: 2025)"
+        required: false
+        default: "2025"
+      forcar:
+        description: "Forçar ingestão mesmo sem dados novos no Portal?"
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  verificar:
+    name: Verificar disponibilidade no Portal
+    runs-on: ubuntu-latest
+    outputs:
+      dados_disponiveis: ${{ steps.check.outputs.dados_disponiveis }}
+      ano: ${{ steps.check.outputs.ano }}
+      registros_pagina1: ${{ steps.check.outputs.registros_pagina1 }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Verificar dados ${{ github.event.inputs.ano || '2025' }} no Portal
+        id: check
+        env:
+          PORTAL_TRANSPARENCIA_API_KEY: ${{ secrets.PORTAL_TRANSPARENCIA_API_KEY }}
+        run: |
+          ANO="${{ github.event.inputs.ano || '2025' }}"
+          node scripts/check-2025.mjs $ANO
+          EXIT=$?
+          if [ $EXIT -eq 1 ] && [ "${{ github.event.inputs.forcar }}" = "true" ]; then
+            echo "⚠️  Sem dados mas forcar=true — sobrescrevendo output."
+            echo "dados_disponiveis=true" >> $GITHUB_OUTPUT
+            echo "ano=${ANO}" >> $GITHUB_OUTPUT
+          fi
+
+  pipeline:
+    name: Executar pipeline completo
+    needs: verificar
+    if: needs.verificar.outputs.dados_disponiveis == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: "F1 — Ingestão Portal (${{ needs.verificar.outputs.ano }})"
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          PORTAL_TRANSPARENCIA_API_KEY: ${{ secrets.PORTAL_TRANSPARENCIA_API_KEY }}
+        run: npm run ingestao-portal -- emendas
+        timeout-minutes: 30
+
+      - name: "F2 — Enriquecimento"
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run enriquecimento
+        timeout-minutes: 15
+
+      - name: "F3 — Analytics build"
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run analytics
+        timeout-minutes: 10
+
+      - name: "F4 — Publicar ranking"
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run publicar
+        timeout-minutes: 5
+
+      - name: Abrir issue — dados ${{ needs.verificar.outputs.ano }} disponíveis
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const ano = '${{ needs.verificar.outputs.ano }}';
+            const regs = '${{ needs.verificar.outputs.registros_pagina1 }}';
+            const hoje = new Date().toLocaleDateString('pt-BR');
+
+            // Verifica se já existe issue aberta para este ano
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: `dados-${ano}`,
+            });
+
+            if (issues.data.length > 0) {
+              console.log(`Issue para ${ano} já existe (#${issues.data[0].number})`);
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `✅ Dados de emendas ${ano} ingeridos — ${hoje}`,
+              body: [
+                `## Pipeline executado com sucesso`,
+                ``,
+                `O Portal da Transparência liberou os primeiros registros de emendas **${ano}**.`,
+                `O pipeline completo foi executado automaticamente.`,
+                ``,
+                `**Registros detectados (pág 1):** ${regs || 'N/A'}`,
+                `**Data:** ${hoje}`,
+                ``,
+                `### Próximos passos`,
+                `- [ ] Verificar qualidade dos dados no Supabase`,
+                `- [ ] Confirmar que o ranking ${ano} aparece no site`,
+                `- [ ] Atualizar \`ANOS\` em \`job-ranking-build.ts\` se necessário`,
+                `- [ ] Atualizar filtros de ano na UI (\`app/ranking/page.tsx\`)`,
+              ].join('\n'),
+              labels: [`dados-${ano}`, 'pipeline'],
+            });
