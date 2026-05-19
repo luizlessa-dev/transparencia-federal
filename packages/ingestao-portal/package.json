@@ -8,7 +8,9 @@
     "typecheck": "tsc --noEmit",
     "ingestao-portal": "node --experimental-strip-types dist/run.js",
     "ingestao-portal:ts": "tsx src/run.ts",
-    "emendas-completas:ts": "tsx src/run-emendas-completas.ts"
+    "emendas-completas:ts": "tsx src/run-emendas-completas.ts",
+    "tse-receitas:ts": "tsx src/run-tse-receitas.ts",
+    "tse-receitas-local:ts": "tsx src/run-tse-receitas-local.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

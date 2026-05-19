@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "analytics:ts": "tsx src/run.ts",
     "publicar:ts": "tsx src/run-publicar.ts",
-    "ceaps:ts": "tsx src/run-ceaps.ts"
+    "ceaps:ts": "tsx src/run-ceaps.ts",
+    "tse-agg:ts": "tsx src/run-tse-receitas-agg.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

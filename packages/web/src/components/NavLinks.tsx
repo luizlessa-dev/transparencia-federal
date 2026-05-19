@@ -8,6 +8,7 @@ const NAV = [
   { label: "Orç. Secreto", href: "/rp9" },
   { label: "Emendas", href: "/amendments" },
   { label: "Despesas", href: "/expenses" },
+  { label: "Financiamento", href: "/funding" },
   { label: "Sobre", href: "/about" },
 ];
 
