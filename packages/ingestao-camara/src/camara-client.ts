@@ -59,6 +59,47 @@ export interface Voto {
   [key: string]: unknown;
 }
 
+/** Evento de votação (endpoint /votacoes) — campos reais retornados pela API */
+export interface VotacaoResumo {
+  id: string;
+  uri: string;
+  data: string;                   // "YYYY-MM-DD"
+  dataHoraRegistro: string;       // ISO datetime
+  siglaOrgao: string;             // "PLEN" | "CCJC" | "CFT" | ...
+  uriOrgao: string;
+  uriEvento: string;
+  proposicaoObjeto: string | null;    // ex: "PL 1234/2023" (campo real da API)
+  uriProposicaoObjeto: string | null; // URI da proposição (campo real da API)
+  descricao: string | null;
+  aprovacao: number | null;       // 1=aprovada, 0=rejeitada, null=sem resultado
+}
+
+/** Voto individual de um deputado em uma votação (endpoint /votacoes/{id}/votos) */
+export interface VotoIndividual {
+  tipoVoto: string;              // "Sim" | "Não" | "Abstenção" | "Obstrução" | "Art. 17"
+  dataRegistroVoto: string | null;
+  deputado_: {
+    id: number;
+    uri: string;
+    nome: string;
+    siglaPartido: string;
+    uriPartido: string;
+    siglaUf: string;
+    idLegislatura: number;
+    urlFoto: string;
+  };
+}
+
+/** Orientação de bancada em uma votação (endpoint /votacoes/{id}/orientacoes) */
+export interface OrientacaoBancada {
+  orientacaoVoto: string;        // "Sim" | "Não" | "Abstenção" | "Obstrução" | "Liberado"
+  codTipoLideranca: string;
+  siglaPartidoBloco: string;     // sigla do partido ou bancada (PT, PL, GOVERNO, etc.)
+  codPartidoBloco: number | null;
+  uriPartidoBloco: string | null;
+  [key: string]: unknown;
+}
+
 interface RespostaCamara<T> {
   dados: T[];
   links: Array<{ rel: string; href: string }>;
@@ -79,18 +120,35 @@ export class CamaraClient {
     this.baseUrl = (baseUrl ?? DEFAULT_BASE_URL).replace(/\/$/, "");
   }
 
-  private async get<T>(path: string, params: Record<string, string> = {}): Promise<RespostaCamara<T>> {
+  private async get<T>(
+    path: string,
+    params: Record<string, string> = {},
+    retries = 3
+  ): Promise<RespostaCamara<T>> {
     const url = new URL(`${this.baseUrl}${path}`);
     for (const [k, v] of Object.entries(params)) {
       url.searchParams.set(k, v);
     }
-    const res = await fetch(url.toString(), {
-      headers: { Accept: "application/json" },
-    });
-    if (!res.ok) {
+
+    for (let tentativa = 1; tentativa <= retries; tentativa++) {
+      const res = await fetch(url.toString(), {
+        headers: { Accept: "application/json" },
+        signal: AbortSignal.timeout(45_000), // 45s timeout por request
+      });
+
+      if (res.ok) return res.json() as Promise<RespostaCamara<T>>;
+
+      // Retry em 5xx (instabilidade do servidor da Câmara)
+      if (res.status >= 500 && tentativa < retries) {
+        const espera = tentativa * 2000; // 2s, 4s
+        await new Promise((r) => setTimeout(r, espera));
+        continue;
+      }
+
       throw new Error(`Câmara API erro ${res.status} em ${path}: ${res.statusText}`);
     }
-    return res.json() as Promise<RespostaCamara<T>>;
+
+    throw new Error(`Câmara API: esgotadas ${retries} tentativas em ${path}`);
   }
 
   /** Busca todos os deputados da legislatura atual. */
@@ -195,5 +253,96 @@ export class CamaraClient {
     }
 
     return todos;
+  }
+
+  /**
+   * Busca todas as votações do plenário (siglaOrgao="PLEN") de uma legislatura.
+   *
+   * Restrições da API /votacoes:
+   *  - NÃO suporta: siglaOrgao, idLegislatura, dataFim (isolado funciona, combinado com dataInicio = 400)
+   *  - Suporta: dataInicio sozinho
+   *  - Range longo (>~2 anos) com DESC ordering causa 504
+   *
+   * Estratégia: por ano, com ordem=ASC, coletando páginas até a data cruzar o próximo ano.
+   * Isso limita cada request ao período do ano + evita 504.
+   */
+  async buscarVotacoesPlenario(opts?: {
+    itens?: number;
+    dataInicio?: string; // "YYYY-MM-DD" — define o ano inicial
+    anos?: number[];     // override manual de anos
+  }): Promise<VotacaoResumo[]> {
+    const itens = opts?.itens ?? 100;
+
+    // Determina quais anos buscar
+    let anos: number[];
+    if (opts?.anos) {
+      anos = opts.anos;
+    } else {
+      const anoInicio = opts?.dataInicio ? parseInt(opts.dataInicio.slice(0, 4), 10) : 2023;
+      const anoFim    = new Date().getFullYear();
+      anos = Array.from({ length: anoFim - anoInicio + 1 }, (_, i) => anoInicio + i);
+    }
+
+    const todas: VotacaoResumo[] = [];
+
+    for (const ano of anos) {
+      const dataInicio = ano === 2023 ? "2023-02-01" : `${ano}-01-01`;
+      const proxAno    = `${ano + 1}-01-01`;
+
+      const params: Record<string, string> = {
+        pagina:     "1",
+        itens:      String(itens),
+        ordem:      "ASC",           // ASC: começa pelo início do ano — menos dados por página
+        ordenarPor: "dataHoraRegistro",
+        dataInicio,
+      };
+
+      const plenAno: VotacaoResumo[] = [];
+      let pagina = 1;
+
+      while (true) {
+        const resp = await this.get<VotacaoResumo>("/votacoes", { ...params, pagina: String(pagina) });
+        if (!resp.dados || resp.dados.length === 0) break;
+
+        let encerrou = false;
+        for (const v of resp.dados) {
+          // Para quando cruza para o próximo ano
+          if (v.data >= proxAno) { encerrou = true; break; }
+          if (v.siglaOrgao === "PLEN") plenAno.push(v);
+        }
+
+        if (encerrou) break;
+
+        // Verifica última página
+        const ultima = extrairUltimaPagina(resp.links);
+        if (pagina >= ultima) break;
+        pagina++;
+      }
+
+      console.log(`  [${ano}] ${plenAno.length} votações PLEN`);
+      todas.push(...plenAno);
+    }
+
+    return todas;
+  }
+
+  /**
+   * Busca todos os votos individuais de uma votação específica.
+   * Retorna os deputados presentes e como votaram.
+   */
+  async buscarVotosDeVotacao(votacaoId: string): Promise<VotoIndividual[]> {
+    // Nota: /votacoes/{id}/votos NÃO aceita parâmetros pagina/itens — retorna tudo em um único response
+    const resp = await this.get<VotoIndividual>(`/votacoes/${votacaoId}/votos`, {});
+    return resp.dados;
+  }
+
+  /**
+   * Busca as orientações de bancadas para uma votação.
+   * Permite calcular disciplina partidária.
+   */
+  async buscarOrientacoesDeVotacao(votacaoId: string): Promise<OrientacaoBancada[]> {
+    // Nota: /votacoes/{id}/orientacoes NÃO aceita parâmetros pagina/itens — retorna tudo em um único response
+    const resp = await this.get<OrientacaoBancada>(`/votacoes/${votacaoId}/orientacoes`, {});
+    return resp.dados;
   }
 }

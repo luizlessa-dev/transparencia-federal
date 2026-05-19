@@ -81,7 +81,7 @@ async function main(): Promise<void> {
     console.log("▶ Iniciando job_ingestao_votacoes...");
     const r = await jobIngestaoVotacoes({ supabaseUrl, supabaseServiceRoleKey: supabaseKey });
     console.log(`  Execução: ${r.execucao_id} | Status: ${r.status}`);
-    console.log(`  Total: ${r.total} | Inseridos: ${r.inseridos}${r.erro ? ` ERRO=${r.erro}` : ""}`);
+    console.log(`  Votações: ${r.total_votacoes} | Novas: ${r.votacoes_novas} | Votos: ${r.total_votos}${r.erro ? ` ERRO=${r.erro}` : ""}`);
     if (r.status === "erro") statusGeral = 1;
     console.log();
   }

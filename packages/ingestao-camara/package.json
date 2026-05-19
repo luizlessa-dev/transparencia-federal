@@ -7,7 +7,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "ingestao-camara": "node --experimental-strip-types dist/run.js",
-    "ingestao-camara:ts": "tsx src/run.ts"
+    "ingestao-camara:ts": "tsx src/run.ts",
+    "votacoes:ts": "tsx src/run-votacoes.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
