@@ -9,6 +9,7 @@ const NAV = [
   { label: "Emendas", href: "/amendments" },
   { label: "Despesas", href: "/expenses" },
   { label: "Financiamento", href: "/funding" },
+  { label: "CEAPS Senado", href: "/senate-expenses" },
   { label: "Sobre", href: "/about" },
 ];
 
