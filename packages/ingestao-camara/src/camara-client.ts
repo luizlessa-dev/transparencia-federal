@@ -6,6 +6,18 @@
 
 const DEFAULT_BASE_URL = "https://dadosabertos.camara.leg.br/api/v2";
 
+export interface ProposicaoResumo {
+  id: number;
+  uri: string;
+  siglaTipo: string;
+  codTipo: number;
+  numero: number | null;
+  ano: number | null;
+  ementa: string | null;
+  dataApresentacao: string | null;
+  [key: string]: unknown;
+}
+
 export interface DeputadoResumo {
   id: number;
   uri: string;
@@ -344,5 +356,34 @@ export class CamaraClient {
     // Nota: /votacoes/{id}/orientacoes NÃO aceita parâmetros pagina/itens — retorna tudo em um único response
     const resp = await this.get<OrientacaoBancada>(`/votacoes/${votacaoId}/orientacoes`, {});
     return resp.dados;
+  }
+
+  /** Busca todas as proposições de autoria de um deputado. */
+  async buscarProposicoesDeputado(deputadoId: number, opts?: { itens?: number }): Promise<ProposicaoResumo[]> {
+    const itens = opts?.itens ?? 100;
+    const primeira = await this.get<ProposicaoResumo>("/proposicoes", {
+      idDeputadoAutor: String(deputadoId),
+      pagina: "1",
+      itens: String(itens),
+      ordem: "DESC",
+      ordenarPor: "ano",
+    });
+
+    const ultimaPagina = extrairUltimaPagina(primeira.links);
+    const todas: ProposicaoResumo[] = [...primeira.dados];
+
+    for (let p = 2; p <= ultimaPagina; p++) {
+      const resp = await this.get<ProposicaoResumo>("/proposicoes", {
+        idDeputadoAutor: String(deputadoId),
+        pagina: String(p),
+        itens: String(itens),
+        ordem: "DESC",
+        ordenarPor: "ano",
+      });
+      todas.push(...resp.dados);
+      if (resp.dados.length === 0) break;
+    }
+
+    return todas;
   }
 }

@@ -97,6 +97,106 @@ export async function getTseCandidatoHistorico(sqCandidato: string): Promise<Can
   return (data ?? []) as CandidatoReceita[];
 }
 
+// ─── G2: Declaração de Bens ──────────────────────────────────────────────────
+
+export interface CandidatoBens {
+  sq_candidato: string;
+  ano_eleicao: number;
+  nm_candidato: string;
+  cd_cargo: number;
+  ds_cargo: string;
+  sg_uf: string;
+  sg_partido: string | null;
+  total_patrimonio: number;
+  total_bens: number;
+}
+
+export interface BensPage {
+  data: CandidatoBens[];
+  total: number;
+}
+
+export async function getTseBensRanking(
+  ano: number,
+  page: number,
+  perPage: number,
+  filters?: { cargo?: string; uf?: string; partido?: string }
+): Promise<BensPage> {
+  const sb = getSupabase();
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
+  const { data: bens, error: errBens, count } = await sb
+    .from("tse_bens_agg")
+    .select("sq_candidato, ano_eleicao, total_patrimonio, total_bens", { count: "exact" })
+    .eq("ano_eleicao", ano)
+    .order("total_patrimonio", { ascending: false })
+    .range(from, to);
+
+  if (errBens) throw new Error(`getTseBensRanking: ${errBens.message}`);
+  if (!bens || bens.length === 0) return { data: [], total: count ?? 0 };
+
+  type BensRow = { sq_candidato: string; ano_eleicao: number; total_patrimonio: number; total_bens: number };
+  const sqList = (bens as BensRow[]).map((b) => b.sq_candidato);
+
+  const { data: cands } = await sb
+    .from("tse_candidatos_receitas_agg")
+    .select("sq_candidato, nm_candidato, cd_cargo, ds_cargo, sg_uf, sg_partido")
+    .eq("ano_eleicao", ano)
+    .in("sq_candidato", sqList);
+
+  type CandRow = {
+    sq_candidato: string;
+    nm_candidato: string;
+    cd_cargo: number;
+    ds_cargo: string;
+    sg_uf: string;
+    sg_partido: string | null;
+  };
+  const candMap = new Map(
+    (cands ?? []).map((c: CandRow) => [c.sq_candidato, c])
+  );
+
+  let result = (bens as BensRow[]).map((b) => {
+    const c = candMap.get(b.sq_candidato);
+    return {
+      sq_candidato: b.sq_candidato,
+      ano_eleicao: b.ano_eleicao,
+      nm_candidato: c?.nm_candidato ?? b.sq_candidato,
+      cd_cargo: c?.cd_cargo ?? 0,
+      ds_cargo: c?.ds_cargo ?? "",
+      sg_uf: c?.sg_uf ?? "",
+      sg_partido: c?.sg_partido ?? null,
+      total_patrimonio: Number(b.total_patrimonio),
+      total_bens: b.total_bens,
+    } as CandidatoBens;
+  });
+
+  if (filters?.cargo === "deputado") result = result.filter((r) => r.cd_cargo === 6);
+  else if (filters?.cargo === "senador") result = result.filter((r) => r.cd_cargo === 5);
+  if (filters?.uf) result = result.filter((r) => r.sg_uf === filters.uf);
+  if (filters?.partido) result = result.filter((r) => r.sg_partido === filters.partido);
+
+  return { data: result, total: count ?? 0 };
+}
+
+export async function getTseBensDetalhe(
+  sqCandidato: string,
+  ano: number
+): Promise<Array<{ nr_ordem: number; ds_tipo: string; ds_bem: string; vr_bem: number }>> {
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("tse_bens_candidatos")
+    .select("nr_ordem, ds_tipo, ds_bem, vr_bem")
+    .eq("sq_candidato", sqCandidato)
+    .eq("ano_eleicao", ano)
+    .order("vr_bem", { ascending: false });
+  if (error) return [];
+  return (data ?? []) as Array<{ nr_ordem: number; ds_tipo: string; ds_bem: string; vr_bem: number }>;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export async function getTseStats(ano: number): Promise<{
   total_candidatos: number;
   total_arrecadado: number;

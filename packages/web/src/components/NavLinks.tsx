@@ -11,6 +11,7 @@ const NAV = [
   { label: "Financiamento", href: "/funding" },
   { label: "CEAPS Senado", href: "/senate-expenses" },
   { label: "Votações", href: "/voting" },
+  { label: "Proposições", href: "/proposicoes" },
   { label: "Sobre", href: "/about" },
 ];
 
