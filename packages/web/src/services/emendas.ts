@@ -137,6 +137,17 @@ export async function getEmendasParlamentar(
   return { data: (data ?? []) as EmendaCompleta[], total: count ?? 0 };
 }
 
+export async function getEmendaById(id: string): Promise<EmendaCompleta | null> {
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("emendas_completas")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) return null;
+  return data as EmendaCompleta;
+}
+
 export async function getEmendasListing(
   ano: number,
   page: number,

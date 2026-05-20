@@ -191,12 +191,14 @@ export default async function AmendmentsPage({ searchParams }: Props) {
                       {(page - 1) * PER_PAGE + i + 1}
                     </td>
                     <td>
-                      <div style={{ fontWeight: 600, color: "hsl(var(--text-headline))", fontSize: "0.8125rem" }}>
-                        {emenda.autor_nome ?? "RELATOR GERAL"}
-                      </div>
-                      <div style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)", marginTop: "0.125rem" }}>
-                        {emenda.codigo_emenda}
-                      </div>
+                      <Link href={`/amendments/${emenda.id}`} style={{ textDecoration: "none" }}>
+                        <div style={{ fontWeight: 600, color: "hsl(var(--primary))", fontSize: "0.8125rem" }}>
+                          {emenda.autor_nome ?? "RELATOR GERAL"}
+                        </div>
+                        <div style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)", marginTop: "0.125rem" }}>
+                          {emenda.codigo_emenda}
+                        </div>
+                      </Link>
                     </td>
                     <td>
                       <span className={tipoBadge(emenda.tipo_emenda)}>
