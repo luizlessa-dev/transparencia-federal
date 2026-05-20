@@ -46,12 +46,12 @@ if (error) {
 const resultado = data as {
   status: string;
   legislatura: number;
-  total_votacoes: number;
+  total_votacoes_nominais: number;
   deputados_processados: number;
 };
 
 console.log(`\n  Status: ${resultado.status}`);
 console.log(`  Legislatura: ${resultado.legislatura}`);
-console.log(`  Total votações: ${resultado.total_votacoes}`);
+console.log(`  Votações nominais: ${resultado.total_votacoes_nominais}`);
 console.log(`  Deputados processados: ${resultado.deputados_processados}`);
 console.log(`  Duração: ${duracao_ms}ms`);
