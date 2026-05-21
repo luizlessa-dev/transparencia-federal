@@ -57,12 +57,24 @@ function nomeCsvNoZip(zipPath: string, ano: number): string | null {
     const entries = out
       .split("\n")
       .map((l) => l.trim())
-      .filter(Boolean);
-    // Procura pelo arquivo principal, ex: bem_candidato_2022.csv
-    const alvo = entries.find(
-      (e) => e.toLowerCase().includes(`bem_candidato_${ano}`) && e.endsWith(".csv")
+      .filter((e) => e.endsWith(".csv"));
+
+    // Prioridade: BRASIL > BR > qualquer outro CSV com o ano
+    // (alguns anos têm bem_candidato_2018_BRASIL.csv como arquivo completo
+    //  e bem_candidato_2018_BR.csv como arquivo reduzido/por estado)
+    const brasil = entries.find((e) =>
+      e.toLowerCase().includes(`bem_candidato_${ano}_brasil`)
     );
-    return alvo ?? entries.find((e) => e.endsWith(".csv")) ?? null;
+    if (brasil) return brasil;
+
+    const br = entries.find((e) =>
+      e.toLowerCase().includes(`bem_candidato_${ano}_br`) &&
+      !e.toLowerCase().includes("brasil")
+    );
+    if (br) return br;
+
+    // fallback: primeiro CSV com o ano no nome
+    return entries.find((e) => e.includes(String(ano))) ?? entries[0] ?? null;
   } catch {
     return null;
   }
@@ -141,20 +153,24 @@ export async function jobIngestaoTseBens(
       const lines = content.split("\n");
       console.log(`  [${ano}] ${lines.length} linhas lidas do CSV`);
 
-      // 4. Carregar candidatos válidos em memória
+      // 4. Carregar candidatos válidos em memória (paginado — Supabase limite 1000/query)
       console.log(`  [${ano}] Carregando candidatos válidos do Supabase...`);
-      const { data: candidatosDb, error: errCands } = await sb
-        .from("tse_candidatos_receitas_agg")
-        .select("sq_candidato")
-        .eq("ano_eleicao", ano);
+      const candidatosValidos = new Set<string>();
+      let page = 0;
+      const PAGE_SIZE = 1000;
+      while (true) {
+        const { data: candidatosDb, error: errCands } = await sb
+          .from("tse_candidatos_receitas_agg")
+          .select("sq_candidato")
+          .eq("ano_eleicao", ano)
+          .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
-      if (errCands) {
-        throw new Error(`Erro ao buscar candidatos: ${errCands.message}`);
+        if (errCands) throw new Error(`Erro ao buscar candidatos: ${errCands.message}`);
+        if (!candidatosDb || candidatosDb.length === 0) break;
+        for (const c of candidatosDb) candidatosValidos.add(c.sq_candidato);
+        if (candidatosDb.length < PAGE_SIZE) break;
+        page++;
       }
-
-      const candidatosValidos = new Set<string>(
-        (candidatosDb ?? []).map((c: { sq_candidato: string }) => c.sq_candidato)
-      );
       console.log(`  [${ano}] ${candidatosValidos.size} candidatos válidos`);
 
       // 5. Parsear linhas
