@@ -22,9 +22,11 @@ supabase db push --dry-run              # ver o que será aplicado
 supabase db push                        # aplicar no banco remoto
 
 # Ingestão — Portal da Transparência (packages/ingestao-portal)
-npm run emendas-completas:ts -w @transparencia/ingestao-portal   # emendas 2019–2024
+npm run emendas-completas:ts -w @transparencia/ingestao-portal   # emendas via API (até 2024)
+npm run emendas-csv:ts -w @transparencia/ingestao-portal -- /caminho/EmendasParlamentares.csv 2025,2026  # CSV bulk do Portal (2015–2026)
 npm run tse-receitas:ts -w @transparencia/ingestao-portal        # receitas TSE 2022/2018
 npm run ceaps-senado:ts -w @transparencia/ingestao-portal        # CEAP Senado (passa anos: "2019,2025,2026")
+npm run ceaps:ts -w @transparencia/ingestao-camara               # CEAP Câmara (passa anos: "2019,2020,2021,2022")
 npm run tse-bens:ts -w @transparencia/ingestao-portal            # bens TSE (passa ano: "2022")
 
 # Ingestão — Câmara dos Deputados (packages/ingestao-camara)
@@ -78,7 +80,7 @@ O `packages/web` **nunca escreve no banco** exceto via Server Actions de auth, e
 
 | Tabela | Fonte | Período |
 |--------|-------|---------|
-| `emendas_completas` | Portal Transparência API | 2019–2024 |
+| `emendas_completas` | Portal Transparência API + CSV bulk | 2015–2026 |
 | `ceaps_ranking` | Câmara API (CEAP) | 2023–2025 |
 | `ceaps_senado` | Senado CSV | 2019–2026 |
 | `plen_votacoes` + `plen_votos` | Câmara API | fev/2023–atual |
