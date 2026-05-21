@@ -25,7 +25,7 @@ export async function cadastroAction(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.transparenciafederal.com"}/login`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.transparenciafederal.com"}/auth/confirm`,
     },
   });
 

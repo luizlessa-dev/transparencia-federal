@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 interface Props {
-  searchParams: Promise<{ ativado?: string }>;
+  searchParams: Promise<{ ativado?: string; confirmado?: string }>;
 }
 
 const PLANO_LABEL: Record<string, string> = {
@@ -38,7 +38,7 @@ export default async function ContaPage({ searchParams }: Props) {
   const user = await getUser();
   if (!user) redirect("/login?next=/conta");
 
-  const { ativado } = await searchParams;
+  const { ativado, confirmado } = await searchParams;
 
   const plano = await getPlano(user.id);
 
@@ -63,7 +63,25 @@ export default async function ContaPage({ searchParams }: Props) {
     >
       <div style={{ maxWidth: "480px", margin: "0 auto" }}>
 
-        {/* Banner de ativação */}
+        {/* Banner de confirmação de e-mail */}
+        {confirmado && (
+          <div
+            style={{
+              backgroundColor: "hsl(var(--primary) / 0.1)",
+              border: "1px solid hsl(var(--primary) / 0.3)",
+              borderRadius: "2px",
+              padding: "0.75rem 1rem",
+              marginBottom: "1.5rem",
+              fontSize: "0.8125rem",
+              color: "hsl(var(--primary))",
+              fontWeight: 600,
+            }}
+          >
+            ✓ E-mail confirmado. Bem-vindo ao Transparência Federal!
+          </div>
+        )}
+
+        {/* Banner de ativação de código */}
         {ativado && (
           <div
             style={{
