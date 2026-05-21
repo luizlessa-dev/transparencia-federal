@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Inter, Playfair_Display } from "next/font/google";
 import { NavLinks } from "~/components/NavLinks";
+import { AuthButton } from "~/components/AuthButton";
 import "./globals.css";
 
 const inter = Inter({
@@ -107,8 +108,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </Link>
 
             {/* Nav */}
-            <div style={{ marginLeft: "auto" }}>
+            <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
               <NavLinks />
+              <AuthButton />
             </div>
           </div>
         </header>

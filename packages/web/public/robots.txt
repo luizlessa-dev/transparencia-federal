@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+Allow: /risco
+Allow: /frentes
+Allow: /planos
+Allow: /sobre
+Allow: /about
+
+Disallow: /conta
+Disallow: /ativar
+Disallow: /ranking
+Disallow: /patrimonios
+Disallow: /amendments
+Disallow: /expenses
+Disallow: /funding
+Disallow: /senate-expenses
+Disallow: /proposicoes
+Disallow: /voting
+Disallow: /sancionados
+Disallow: /rp9
+Disallow: /risco/
+Disallow: /frentes/
+
+Sitemap: https://www.transparenciafederal.com/sitemap.xml

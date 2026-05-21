@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getRiscoRanking, getPartidosRisco, getUfsRisco } from "~/services/risco";
+import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -72,19 +73,33 @@ function BarraRisco({ valor, cor }: { valor: number; cor: string }) {
   );
 }
 
+const FREE_LIMIT = 10;
+
 export default async function RiscoPage({ searchParams }: Props) {
   const sp = await searchParams;
   const page = Math.max(1, parseInt(sp.page ?? "1", 10));
   const partido = sp.partido;
   const uf = sp.uf;
 
-  const [{ data, total }, partidos, ufs] = await Promise.all([
-    getRiscoRanking(page, PER_PAGE, { partido, uf }),
+  // Verifica acesso
+  const user = await getUser();
+  const pago = user ? await hasPaidAccess(user.id) : false;
+
+  // Usuários sem acesso pago veem apenas página 1 sem filtros
+  const paginaEfetiva = pago ? page : 1;
+  const partidoEfetivo = pago ? partido : undefined;
+  const ufEfetiva = pago ? uf : undefined;
+
+  const [{ data: allData, total }, partidos, ufs] = await Promise.all([
+    getRiscoRanking(paginaEfetiva, PER_PAGE, { partido: partidoEfetivo, uf: ufEfetiva }),
     getPartidosRisco(),
     getUfsRisco(),
   ]);
 
-  const totalPages = Math.ceil(total / PER_PAGE);
+  // Para free: limitar a 10 resultados
+  const data = pago ? allData : allData.slice(0, FREE_LIMIT);
+
+  const totalPages = pago ? Math.ceil(total / PER_PAGE) : 1;
   const vazio = total === 0;
 
   function buildUrl(overrides: Record<string, string | undefined>) {
@@ -140,8 +155,8 @@ export default async function RiscoPage({ searchParams }: Props) {
 
       <div className="container" style={{ padding: "1.5rem 1.5rem 3rem" }}>
 
-        {/* ── Filtros ──────────────────────────────────────────────────── */}
-        {partidos.length > 0 && (
+        {/* ── Filtros (apenas para usuários com acesso pago) ───────────── */}
+        {pago && partidos.length > 0 && (
           <div style={{ display: "flex", gap: "0.375rem", flexWrap: "wrap", marginBottom: "0.75rem", alignItems: "center" }}>
             <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", marginRight: "0.25rem" }}>
               Partido:
@@ -153,7 +168,7 @@ export default async function RiscoPage({ searchParams }: Props) {
           </div>
         )}
 
-        {ufs.length > 0 && (
+        {pago && ufs.length > 0 && (
           <div style={{ display: "flex", gap: "0.375rem", flexWrap: "wrap", marginBottom: "1.25rem", alignItems: "center" }}>
             <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", marginRight: "0.25rem" }}>
               UF:
@@ -258,8 +273,76 @@ export default async function RiscoPage({ searchParams }: Props) {
           </div>
         )}
 
+        {/* ── Paywall CTA (free) ────────────────────────────────────────── */}
+        {!pago && !vazio && (
+          <div
+            style={{
+              position: "relative",
+              marginTop: "-2px",
+              padding: "2.5rem 1.5rem",
+              textAlign: "center",
+              backgroundColor: "hsl(var(--card))",
+              border: "1px solid hsl(var(--border))",
+              borderTop: "none",
+              borderRadius: "0 0 4px 4px",
+            }}
+          >
+            {/* Gradiente de blur sobre as últimas linhas */}
+            <div
+              style={{
+                position: "absolute",
+                top: "-80px",
+                left: 0,
+                right: 0,
+                height: "80px",
+                background: "linear-gradient(to bottom, transparent, hsl(var(--card)))",
+                pointerEvents: "none",
+              }}
+            />
+            <p style={{ fontSize: "0.9375rem", fontWeight: 700, color: "hsl(var(--text-headline))", margin: "0 0 0.375rem" }}>
+              Veja os 513 deputados
+            </p>
+            <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", margin: "0 0 1.25rem", lineHeight: 1.5 }}>
+              Perfis detalhados, filtros por partido e UF, histórico de mandatos e muito mais.
+            </p>
+            <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
+              <Link
+                href="/planos"
+                style={{
+                  padding: "0.625rem 1.5rem",
+                  backgroundColor: "hsl(var(--primary))",
+                  color: "hsl(var(--primary-foreground))",
+                  borderRadius: "2px",
+                  textDecoration: "none",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                }}
+              >
+                Ver planos
+              </Link>
+              {!user && (
+                <Link
+                  href="/cadastro"
+                  style={{
+                    padding: "0.625rem 1.5rem",
+                    border: "1px solid hsl(var(--border))",
+                    color: "hsl(var(--text-body))",
+                    borderRadius: "2px",
+                    textDecoration: "none",
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    backgroundColor: "hsl(var(--surface))",
+                  }}
+                >
+                  Criar conta gratuita
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* ── Paginação ─────────────────────────────────────────────────── */}
-        {totalPages > 1 && (
+        {pago && totalPages > 1 && (
           <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.5rem", justifyContent: "center", flexWrap: "wrap" }}>
             {page > 1 && (
               <Link
