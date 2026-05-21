@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit",
     "ingestao-camara": "node --experimental-strip-types dist/run.js",
     "ingestao-camara:ts": "tsx src/run.ts",
+    "ceaps:ts": "tsx src/run-ceaps.ts",
     "votacoes:ts": "tsx src/run-votacoes.ts",
     "proposicoes:ts": "tsx src/run-proposicoes.ts",
     "frentes-comissoes:ts": "tsx src/run-frentes-comissoes.ts",
