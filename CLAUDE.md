@@ -72,7 +72,7 @@ supabase/
 Fonte externa → job de ingestão → tabelas brutas/staging → analytics (RPC) → tabelas _agg → web (read-only)
 ```
 
-O `packages/web` **nunca escreve no banco** e usa apenas `SUPABASE_SERVICE_ROLE_KEY` pelo singleton `getSupabase()` em `src/lib/supabase-server.ts`. Não há anon key nem RLS ativa para as tabelas do projeto.
+O `packages/web` **nunca escreve no banco** exceto via Server Actions de auth, e usa `SUPABASE_SERVICE_ROLE_KEY` para todas as operações (leitura de dados + auth). Não há anon key. RLS está ativa apenas nas tabelas `user_profiles` e `codigos_acesso`.
 
 ### Tabelas principais e períodos cobertos
 
@@ -89,6 +89,8 @@ O `packages/web` **nunca escreve no banco** e usa apenas `SUPABASE_SERVICE_ROLE_
 | `cam_parlamentar_risco` | analytics/run-risco.ts | score G5, CPF, mandatos, frentes, comissões |
 | `cam_frentes` + `cam_frentes_membros` | Câmara API `/frentes` | 57ª legislatura (319 frentes) |
 | `cam_comissoes` + `cam_comissoes_membros` | Câmara API `/orgaos` | Comissões permanentes (30) |
+| `user_profiles` | Supabase Auth trigger | plano free/individual/institucional + validade |
+| `codigos_acesso` | manual via SQL/Studio | códigos enviados por e-mail para ativar plano |
 
 ### Web — design system
 
@@ -130,6 +132,44 @@ export const dynamic = "force-dynamic";
 Score composto por 5 dimensões: CEAP×0.30 + Presença×0.20 + Produção×0.15 + Financiamento×0.20 + RP9×0.15.
 Colunas adicionadas ao longo das sprints: `cpf`, `total_legislaturas`, `primeira_legislatura`, `cargo_anterior`, `total_frentes`, `total_comissoes`.
 Join TSE×Câmara é feito por CPF (nome parlamentar ≠ nome civil). Rodar `cpf-enrich:ts` antes de `risco:ts` se houver novos deputados.
+
+### Autenticação e paywall
+
+O sistema usa `@supabase/ssr` v0.10.3 com cookies de sessão. Toda lógica de auth é server-side.
+
+**Arquivos-chave:**
+- `packages/web/src/lib/supabase-auth.ts` — `createAuthClient()`, `getUser()`, `getPlano()`, `hasPaidAccess()`
+- `packages/web/middleware.ts` — protege rotas; redireciona para `/login?next=<path>` se sem sessão
+- `packages/web/app/auth/confirm/route.ts` — callback de confirmação de e-mail (troca `?code=` por sessão)
+
+**Rotas de auth:**
+
+| Rota | Tipo | Descrição |
+|------|------|-----------|
+| `/login` | Page + Action | Login com e-mail/senha |
+| `/cadastro` | Page + Action | Cadastro; envia e-mail de confirmação |
+| `/logout` | Route (POST) | SignOut + redirect para `/` |
+| `/auth/confirm` | Route (GET) | Callback de confirmação de e-mail |
+| `/ativar` | Page + Action | Usuário digita código → upgrada plano |
+| `/conta` | Page | Plano atual, validade, logout |
+| `/planos` | Page | Pricing: Gratuito / Individual / Institucional |
+
+**Rotas protegidas pelo middleware** (requerem sessão ativa):
+`/risco/[id]`, `/frentes/[id]`, `/ranking`, `/patrimonios`, `/amendments`, `/expenses`, `/funding`, `/senate-expenses`, `/proposicoes`, `/voting`, `/sancionados`, `/rp9`, `/conta`, `/ativar`
+
+**Planos:** `free` (padrão), `individual`, `institucional`. Armazenados em `user_profiles.plano` com `plano_valido_ate`.
+
+**Truncagem free em `/risco`:** usuários free veem apenas top 10, sem filtros de partido/UF. `hasPaidAccess(user.id)` retorna `false` para free ou plano expirado.
+
+**Criar código de acesso:**
+```sql
+INSERT INTO codigos_acesso (codigo, plano, validade_dias)
+VALUES ('TF-2026-XXXX', 'individual', 365);
+```
+
+**Supabase Dashboard — URL Configuration obrigatória:**
+- Site URL: `https://www.transparenciafederal.com`
+- Redirect URLs: `https://www.transparenciafederal.com/**`
 
 ### Jobs de ingestão — padrões
 
