@@ -37,6 +37,13 @@ export default async function ExpensaDeputadoPage({ params }: Props) {
 
   const totalGasto = dep.historico.reduce((acc, h) => acc + h.total_liquido, 0);
 
+  // Passagens aéreas: soma todos os anos da chave correta
+  const PASSAGEM_KEY = "PASSAGEM AÉREA - SIGEPA";
+  const totalPassagens = dep.historico.reduce((acc, h) => {
+    const cats = h.por_categoria ?? {};
+    return acc + (cats[PASSAGEM_KEY] ?? 0);
+  }, 0);
+
   return (
     <>
       {/* Cabeçalho */}
@@ -59,13 +66,25 @@ export default async function ExpensaDeputadoPage({ params }: Props) {
             {dep.sigla_partido} · {dep.sigla_uf} · Câmara dos Deputados
           </p>
 
-          <div style={{ display: "inline-flex", alignItems: "baseline", gap: "0.5rem" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "1.75rem", fontWeight: 700, color: "hsl(var(--text-headline))", letterSpacing: "-0.02em" }}>
-              {fmtBRL(totalGasto)}
-            </span>
-            <span style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
-              total CEAP (todos os anos)
-            </span>
+          <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap", alignItems: "flex-end" }}>
+            <div style={{ display: "inline-flex", alignItems: "baseline", gap: "0.5rem" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "1.75rem", fontWeight: 700, color: "hsl(var(--text-headline))", letterSpacing: "-0.02em" }}>
+                {fmtBRL(totalGasto)}
+              </span>
+              <span style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
+                total CEAP (todos os anos)
+              </span>
+            </div>
+            {totalPassagens > 0 && (
+              <div style={{ display: "inline-flex", alignItems: "baseline", gap: "0.5rem" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "1.25rem", fontWeight: 600, color: "hsl(var(--warning))", letterSpacing: "-0.02em" }}>
+                  {fmtBRL(totalPassagens)}
+                </span>
+                <span style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
+                  ✈ passagens aéreas
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -84,7 +103,7 @@ export default async function ExpensaDeputadoPage({ params }: Props) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1px", backgroundColor: "hsl(var(--border))" }}>
             {dep.historico.map((h) => {
               const cats = h.por_categoria ?? {};
-              const catEntries = Object.entries(cats).sort((a, b) => b[1] - a[1]).slice(0, 5);
+              const catEntries = Object.entries(cats).sort((a, b) => b[1] - a[1]).slice(0, 8);
 
               return (
                 <div key={h.ano} className="bloomberg-card" style={{ borderRadius: 0, border: "none" }}>
