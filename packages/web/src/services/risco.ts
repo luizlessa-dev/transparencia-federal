@@ -23,6 +23,11 @@ export interface ParlamentarRisco {
   patrimonio_2022: number | null;
   fornecedores_sancionados: number;
   doadores_sancionados: number;
+  total_legislaturas: number | null;
+  primeira_legislatura: number | null;
+  cargo_anterior: string | null;
+  total_frentes: number;
+  total_comissoes: number;
 }
 
 export interface RiscoPage {

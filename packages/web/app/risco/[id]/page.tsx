@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getParlamentarRisco } from "~/services/risco";
+import { getFrentesDeDeputado, getComissoesDeDeputado } from "~/services/frentes";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +61,11 @@ export default async function ParlamentarRiscoPage({ params }: Props) {
 
   if (isNaN(deputadoId)) notFound();
 
-  const dep = await getParlamentarRisco(deputadoId);
+  const [dep, frentes, comissoes] = await Promise.all([
+    getParlamentarRisco(deputadoId),
+    getFrentesDeDeputado(deputadoId),
+    getComissoesDeDeputado(deputadoId),
+  ]);
   if (!dep) notFound();
 
   const scoreCor = corScore(dep.score_total);
@@ -289,6 +294,103 @@ export default async function ParlamentarRiscoPage({ params }: Props) {
             </tbody>
           </table>
         </div>
+
+        {/* ── Mandatos & contexto ──────────────────────────────────────── */}
+        {(dep.total_legislaturas != null || dep.cargo_anterior) && (
+          <div className="bloomberg-card" style={{ padding: "1.25rem", marginTop: "1.5rem" }}>
+            <h2 style={{ fontSize: "0.875rem", fontWeight: 700, margin: "0 0 1rem", color: "hsl(var(--text-headline))", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Histórico
+            </h2>
+            <table className="bloomberg-table">
+              <tbody>
+                {dep.total_legislaturas != null && (
+                  <tr>
+                    <td style={{ color: "hsl(var(--text-caption))", fontWeight: 500 }}>Legislaturas federais</td>
+                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)" }}>
+                      {dep.total_legislaturas}ª desde {dep.primeira_legislatura ?? "—"}
+                    </td>
+                  </tr>
+                )}
+                {dep.cargo_anterior && (
+                  <tr>
+                    <td style={{ color: "hsl(var(--text-caption))", fontWeight: 500 }}>Ocupação anterior</td>
+                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>{dep.cargo_anterior}</td>
+                  </tr>
+                )}
+                {dep.total_frentes != null && dep.total_frentes > 0 && (
+                  <tr>
+                    <td style={{ color: "hsl(var(--text-caption))", fontWeight: 500 }}>Frentes parlamentares</td>
+                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)" }}>{dep.total_frentes}</td>
+                  </tr>
+                )}
+                {dep.total_comissoes != null && dep.total_comissoes > 0 && (
+                  <tr>
+                    <td style={{ color: "hsl(var(--text-caption))", fontWeight: 500 }}>Comissões permanentes</td>
+                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)" }}>{dep.total_comissoes}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* ── Frentes parlamentares ─────────────────────────────────────── */}
+        {frentes.length > 0 && (
+          <div className="bloomberg-card" style={{ padding: "1.25rem", marginTop: "1.5rem" }}>
+            <h2 style={{ fontSize: "0.875rem", fontWeight: 700, margin: "0 0 0.875rem", color: "hsl(var(--text-headline))", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Frentes parlamentares ({frentes.length})
+            </h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
+              {frentes.map((f) => (
+                <Link
+                  key={f.frente_id}
+                  href={`/frentes/${f.frente_id}`}
+                  style={{
+                    display: "inline-block",
+                    padding: "0.2rem 0.5rem",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "2px",
+                    fontSize: "0.6875rem",
+                    color: "hsl(var(--primary))",
+                    textDecoration: "none",
+                    lineHeight: 1.4,
+                    maxWidth: "240px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={f.titulo}
+                >
+                  {f.titulo}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Comissões ─────────────────────────────────────────────────── */}
+        {comissoes.length > 0 && (
+          <div className="bloomberg-card" style={{ padding: "1.25rem", marginTop: "1.5rem" }}>
+            <h2 style={{ fontSize: "0.875rem", fontWeight: 700, margin: "0 0 0.875rem", color: "hsl(var(--text-headline))", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              Comissões permanentes
+            </h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+              {comissoes.map((c) => (
+                <div key={c.comissao_id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.8125rem" }}>
+                  <span style={{ color: "hsl(var(--text-body))" }}>
+                    {c.sigla ? <strong style={{ fontFamily: "var(--font-mono)", marginRight: "0.375rem" }}>{c.sigla}</strong> : null}
+                    {c.nome}
+                  </span>
+                  {c.titulo && (
+                    <span className="badge-neutral" style={{ fontSize: "0.625rem", flexShrink: 0, marginLeft: "0.5rem" }}>
+                      {c.titulo}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div style={{ marginTop: "1.5rem" }}>
           <Link

@@ -31,10 +31,15 @@ npm run tse-bens:ts -w @transparencia/ingestao-portal            # bens TSE (pas
 npm run votacoes:ts -w @transparencia/ingestao-camara            # votações plenário 57ª leg.
 npm run proposicoes:ts -w @transparencia/ingestao-camara         # proposições de autoria (resumível)
 npm run ingestao-camara:ts -w @transparencia/ingestao-camara     # deputados + CEAP câmara
+npm run frentes-comissoes:ts -w @transparencia/ingestao-camara  # frentes parlamentares + comissões permanentes
+npm run mandatos:ts -w @transparencia/ingestao-camara            # mandatos anteriores + ocupações por deputado
 
 # Analytics (packages/analytics)
 npm run votacoes-agg:ts -w @transparencia/analytics              # agrega plen_deputado_agg
 npm run ceaps:ts -w @transparencia/analytics                     # agrega ceaps_ranking
+npm run risco:ts -w @transparencia/analytics                     # recalcula score G5 de risco composto
+npm run cpf-enrich:ts -w @transparencia/analytics                # enriquece cam_parlamentar_risco com CPF (Câmara API)
+npm run doadores-sancionados:ts -w @transparencia/analytics      # cruza top_doadores TSE × portal_sancionados
 ```
 
 ## Variáveis de ambiente
@@ -80,7 +85,10 @@ O `packages/web` **nunca escreve no banco** e usa apenas `SUPABASE_SERVICE_ROLE_
 | `plen_deputado_agg` | RPC `computar_votacoes_agg` | 57ª legislatura |
 | `cam_proposicoes` + `cam_proposicoes_agg` | Câmara API | 2019–2026 |
 | `tse_candidatos_receitas_agg` | TSE CSV | 2018, 2022 |
-| `tse_bens_candidatos` + `tse_bens_agg` | TSE CSV | 2022 |
+| `tse_bens_candidatos` + `tse_bens_agg` | TSE CSV | 2022 (dep. federais + senadores) |
+| `cam_parlamentar_risco` | analytics/run-risco.ts | score G5, CPF, mandatos, frentes, comissões |
+| `cam_frentes` + `cam_frentes_membros` | Câmara API `/frentes` | 57ª legislatura (319 frentes) |
+| `cam_comissoes` + `cam_comissoes_membros` | Câmara API `/orgaos` | Comissões permanentes (30) |
 
 ### Web — design system
 
@@ -117,6 +125,12 @@ export const dynamic = "force-dynamic";
 - Ranges longos (> ~2 anos) com `ordem=DESC` causam 504 → estratégia: busca ano a ano com `ordem=ASC`
 - Campos reais: `orientacaoVoto` (não `orientacao`) e `siglaPartidoBloco` (não `bancada.apelido`)
 
+### Score G5 de risco (`cam_parlamentar_risco`)
+
+Score composto por 5 dimensões: CEAP×0.30 + Presença×0.20 + Produção×0.15 + Financiamento×0.20 + RP9×0.15.
+Colunas adicionadas ao longo das sprints: `cpf`, `total_legislaturas`, `primeira_legislatura`, `cargo_anterior`, `total_frentes`, `total_comissoes`.
+Join TSE×Câmara é feito por CPF (nome parlamentar ≠ nome civil). Rodar `cpf-enrich:ts` antes de `risco:ts` se houver novos deputados.
+
 ### Jobs de ingestão — padrões
 
 - Todos carregam `.env` da raiz via `dotenv.config({ path: resolve(__dirname, "../../../.env") })`
@@ -124,3 +138,6 @@ export const dynamic = "force-dynamic";
 - Upsert via `onConflict` explícito (nunca insert puro)
 - CSVs do TSE/Senado: encoding `latin-1`, separador `;`, primeira(s) linha(s) de metadado
 - Lotes de upsert: 200–500 registros para evitar timeout do PostgREST
+- Supabase tem limite de 1000 linhas por query — usar `.range()` paginado para tabelas com > 1000 registros
+- Câmara API: throttle 150ms entre chamadas; alguns endpoints retornam membros duplicados (frentes/comissões) — deduplicate com `Set` antes do upsert
+- Frentes/comissões: membros externos (senadores sem ID de deputado) têm `m.id = null` — filtrar com `.filter((m) => m.id != null)` antes do upsert

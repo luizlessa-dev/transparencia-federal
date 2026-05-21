@@ -13,6 +13,7 @@ const NAV = [
   { label: "Votações", href: "/voting" },
   { label: "Proposições", href: "/proposicoes" },
   { label: "Risco", href: "/risco" },
+  { label: "Frentes", href: "/frentes" },
   { label: "Sobre", href: "/about" },
 ];
 
