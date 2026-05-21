@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCobertura } from "~/services/ranking";
+import { AskBox } from "~/components/AskBox";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── CAIXA DE PESQUISA LIVRE (LLM) ────────────────────────── */}
+      <AskBox />
 
       {/* ── KPI STRIP ───────────────────────────────────────────── */}
       <div className="bloomberg-kpi-grid">
