@@ -5,15 +5,19 @@
   "workspaces": [
     "packages/ingestao-portal",
     "packages/ingestao-camara",
+    "packages/ingestao-almg",
     "packages/enriquecimento",
     "packages/analytics",
     "packages/api",
     "packages/web"
   ],
   "scripts": {
-    "typecheck": "npm run typecheck -w @transparencia/ingestao-portal -w @transparencia/ingestao-camara -w @transparencia/enriquecimento -w @transparencia/analytics -w @transparencia/api -w @transparencia/web",
+    "typecheck": "npm run typecheck -w @transparencia/ingestao-portal -w @transparencia/ingestao-camara -w @transparencia/ingestao-almg -w @transparencia/enriquecimento -w @transparencia/analytics -w @transparencia/api -w @transparencia/web",
     "ingestao-portal": "npm run ingestao-portal:ts -w @transparencia/ingestao-portal",
     "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara",
+    "ingestao-almg": "npm run verba:ts -w @transparencia/ingestao-almg",
+    "ingestao-almg:deputados": "npm run deputados:ts -w @transparencia/ingestao-almg",
+    "ingestao-almg:historico": "npm run verba:historico:ts -w @transparencia/ingestao-almg",
     "enriquecimento": "npm run enriquecimento:ts -w @transparencia/enriquecimento",
     "analytics": "npm run analytics:ts -w @transparencia/analytics",
     "publicar": "npm run publicar:ts -w @transparencia/analytics",

@@ -29,8 +29,34 @@ function needsAuth(pathname: string): boolean {
   });
 }
 
+// ── Host-based routing pra nós estaduais ────────────────────────────────
+// Cada subdomínio mapeia pra um segmento da App Router. Federal
+// (www.transparenciafederal.com) é o default — não entra aqui, não reescreve.
+const HOST_SEGMENT: Record<string, string> = {
+  "almg.transparenciafederal.org": "/almg",
+  "almg.transparenciafederal.com": "/almg",
+  "almg.localhost:3000": "/almg",
+};
+
+function segmentForHost(host: string | null): string | null {
+  if (!host) return null;
+  return HOST_SEGMENT[host.toLowerCase()] ?? null;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const segment = segmentForHost(request.headers.get("host"));
+
+  // Subdomínio estadual → rewrite pra /<segmento>/<path>. Mantém a URL na barra.
+  if (segment) {
+    if (!pathname.startsWith(segment)) {
+      const rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = pathname === "/" ? segment : `${segment}${pathname}`;
+      return NextResponse.rewrite(rewriteUrl);
+    }
+    // Já está no segmento certo — nós estaduais são públicos por enquanto.
+    return NextResponse.next();
+  }
 
   if (!needsAuth(pathname)) return NextResponse.next();
 
