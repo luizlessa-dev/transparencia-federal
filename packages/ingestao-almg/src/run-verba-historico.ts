@@ -1,13 +1,20 @@
 /**
- * CLI: load histórico completo de verba indenizatória ALMG.
+ * CLI: load histórico de verba indenizatória ALMG.
  *
  * Itera de (mes_inicio/ano_inicio) até (mes_fim/ano_fim) inclusive, mês a mês.
- * Volume estimado: 77 deputados × N meses × 1.1s = ~85s/mês × ~90 meses ≈ 2h
- * pra escopo 2019-01 até hoje.
+ *
+ * LIMITAÇÃO DESCOBERTA EM 2026-05-22:
+ *   O endpoint HTML da ALMG só aceita períodos presentes no dropdown do formulário,
+ *   que é uma janela rolante de ~15 meses (atualmente fev/2025–abr/2026). Períodos
+ *   anteriores a fev/2025 retornam o mês mais antigo disponível como fallback e
+ *   ignoram o parâmetro `periodo` do POST.
+ *   → Padrão ajustado para 2025-02 (primeiro mês disponível comprovado).
+ *
+ * Volume estimado: 77 deputados × 15 meses × 1.1s = ~85s/mês × 15 ≈ 21 min.
  *
  * Uso:
- *   npm run verba:historico:ts -w @transparencia/ingestao-almg                        # padrão 2019-01 → hoje
- *   npm run verba:historico:ts -w @transparencia/ingestao-almg -- 2024-01 2024-12     # só 2024
+ *   npm run verba:historico:ts -w @transparencia/ingestao-almg                        # padrão 2025-02 → mês anterior
+ *   npm run verba:historico:ts -w @transparencia/ingestao-almg -- 2025-06 2025-12     # range explícito
  *
  * Idempotente — pode reexecutar com segurança.
  */
@@ -36,8 +43,13 @@ function parseYM(s: string | undefined, fallback: { mes: number; ano: number }) 
 }
 
 const now = new Date();
-const fim = parseYM(process.argv[3], { mes: now.getMonth() + 1, ano: now.getFullYear() });
-const inicio = parseYM(process.argv[2], { mes: 1, ano: 2019 });
+// Fim padrão = mês anterior (o mês atual pode ainda não estar publicado)
+const mesAnterior = now.getMonth() === 0
+  ? { mes: 12, ano: now.getFullYear() - 1 }
+  : { mes: now.getMonth(), ano: now.getFullYear() };
+const fim = parseYM(process.argv[3], mesAnterior);
+// Início padrão = fev/2025 (primeiro mês comprovadamente disponível no endpoint)
+const inicio = parseYM(process.argv[2], { mes: 2, ano: 2025 });
 
 function ymKey(y: number, m: number) {
   return y * 12 + (m - 1);

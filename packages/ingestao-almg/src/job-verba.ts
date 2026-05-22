@@ -139,10 +139,12 @@ async function flushBatch(
     categoria: g.categoria,
     categoria_total: g.categoriaTotal,
     emitente: g.emitente || null,
-    cnpj_cpf: g.cnpjCpf || null,
-    num_documento: g.numeroDocumento || null,
+    // num_documento, cnpj_cpf e valor_despesa são NOT NULL na tabela (default '' / 0)
+    // para permitir UNIQUE CONSTRAINT simples (PostgREST onConflict não aceita índices funcionais).
+    cnpj_cpf: g.cnpjCpf || "",
+    num_documento: g.numeroDocumento || "",
     data_emissao: g.dataEmissao,
-    valor_despesa: Number.isFinite(g.valorDespesa) ? g.valorDespesa : null,
+    valor_despesa: Number.isFinite(g.valorDespesa) ? g.valorDespesa : 0,
     valor_reembolso: Number.isFinite(g.valorReembolso) ? g.valorReembolso : null,
     url_origem: g.urlOrigem,
   }));

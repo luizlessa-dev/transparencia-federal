@@ -14,8 +14,10 @@ cd packages/web && npm run dev          # dev server
 cd packages/web && npm run build        # build de produção (sempre rodar antes do deploy)
 cd packages/web && npm run typecheck    # verificação TypeScript sem build
 
-# Deploy (a partir da raiz ou de packages/web)
-vercel --prod --yes
+# Deploy — SEMPRE a partir de packages/web (não da raiz)
+# A raiz instala todos os workspaces incluindo ingestao-almg (jsdom/tsx), o que
+# falha no ambiente Vercel. De dentro de packages/web, só as deps do Next.js são instaladas.
+cd packages/web && vercel --prod --yes
 
 # Migrations
 supabase db push --dry-run              # ver o que será aplicado
@@ -26,7 +28,8 @@ npm run emendas-completas:ts -w @transparencia/ingestao-portal   # emendas via A
 npm run emendas-csv:ts -w @transparencia/ingestao-portal -- /caminho/EmendasParlamentares.csv 2025,2026  # CSV bulk do Portal (2015–2026)
 npm run tse-receitas:ts -w @transparencia/ingestao-portal        # receitas TSE 2022/2018
 npm run ceaps-senado:ts -w @transparencia/ingestao-portal        # CEAP Senado (passa anos: "2019,2025,2026")
-npm run ceaps:ts -w @transparencia/ingestao-camara               # CEAP Câmara (passa anos: "2019,2020,2021,2022")
+npm run ceaps:ts -w @transparencia/ingestao-camara               # CEAP Câmara — deputados ATUAIS (57ª leg.) por ano via API
+npm run ceaps-historico:ts -w @transparencia/ingestao-camara    # CEAP Câmara histórico — CSV bulk (qualquer ano, inclui deputados de outras legislaturas)
 npm run tse-bens:ts -w @transparencia/ingestao-portal            # bens TSE (passa ano: "2022")
 
 # Ingestão — Câmara dos Deputados (packages/ingestao-camara)
@@ -81,13 +84,14 @@ O `packages/web` **nunca escreve no banco** exceto via Server Actions de auth, e
 | Tabela | Fonte | Período |
 |--------|-------|---------|
 | `emendas_completas` | Portal Transparência API + CSV bulk | 2015–2026 |
+| `ceaps_brutas` | Câmara CSV bulk + API | 2019–2026 (histórico: 2019–2022 via CSV bulk; atual: 2023–2026 via API) |
 | `ceaps_ranking` | Câmara API (CEAP) | 2023–2025 |
 | `ceaps_senado` | Senado CSV | 2019–2026 |
 | `plen_votacoes` + `plen_votos` | Câmara API | fev/2023–atual |
 | `plen_deputado_agg` | RPC `computar_votacoes_agg` | 57ª legislatura |
 | `cam_proposicoes` + `cam_proposicoes_agg` | Câmara API | 2019–2026 |
 | `tse_candidatos_receitas_agg` | TSE CSV | 2018, 2022 |
-| `tse_bens_candidatos` + `tse_bens_agg` | TSE CSV | 2022 (dep. federais + senadores) |
+| `tse_bens_candidatos` + `tse_bens_agg` | TSE CSV | 2018, 2022 (dep. federais + senadores) |
 | `cam_parlamentar_risco` | analytics/run-risco.ts | score G5, CPF, mandatos, frentes, comissões |
 | `cam_frentes` + `cam_frentes_membros` | Câmara API `/frentes` | 57ª legislatura (319 frentes) |
 | `cam_comissoes` + `cam_comissoes_membros` | Câmara API `/orgaos` | Comissões permanentes (30) |

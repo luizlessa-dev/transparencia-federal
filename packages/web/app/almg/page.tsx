@@ -75,8 +75,8 @@ export default function AlmgLandingPage() {
             }}
           >
             Nota a nota, fornecedor a fornecedor: os gastos dos 77 deputados
-            estaduais de Minas Gerais, com 7+ anos de histórico em vias de
-            ingestão.
+            estaduais de Minas Gerais. O portal da ALMG disponibiliza os últimos
+            15 meses via HTML — fev/2025 em diante, atualizado mensalmente.
           </p>
 
           <p
@@ -117,7 +117,7 @@ export default function AlmgLandingPage() {
           </h2>
           <div className="bloomberg-kpi-grid">
             <Kpi label="Deputados" value="77" sub="20ª legislatura" />
-            <Kpi label="Histórico" value="7 anos" sub="2019 → 2026" />
+            <Kpi label="Histórico" value="15 meses" sub="fev/2025 → abr/2026" />
             <Kpi label="Granularidade" value="Nota fiscal" sub="CNPJ + valor + data" />
             <Kpi label="Categorias" value="5" sub="Combustível, divulgação, locação, hospedagem, consultoria" />
           </div>
@@ -152,14 +152,19 @@ export default function AlmgLandingPage() {
             <strong style={{ color: "hsl(var(--text-headline))" }}>
               vazias em 100% dos registros
             </strong>
-            , do começo de 2019 até hoje. O dado real só existe na página HTML
-            renderizada no servidor, fora de qualquer formato baixável.
+            , desde 2019 até hoje. O dado real existe apenas na página HTML
+            renderizada no servidor, com uma janela rolante de{" "}
+            <strong style={{ color: "hsl(var(--text-headline))" }}>
+              ~15 meses disponíveis
+            </strong>{" "}
+            por vez — atualmente fev/2025 a abr/2026.
           </p>
           <p style={{ fontSize: "0.9375rem", color: "hsl(var(--text-body))", lineHeight: 1.65, margin: 0 }}>
-            Este nó faz a raspagem estruturada dessa página, nota a nota, e
-            disponibiliza os dados num formato que pode ser cruzado com a base
-            federal — mesmos fornecedores, mesmos CNPJs, mesmos doadores
-            apontando pra contratos públicos em escalas diferentes.
+            Este nó raspa essa página nota a nota e disponibiliza os dados num
+            formato cruzável com a base federal — mesmos fornecedores, mesmos
+            CNPJs, mesmos doadores em contratos públicos de escalas diferentes.
+            A cada mês, o período mais antigo some do portal; capturamos antes
+            que isso aconteça.
           </p>
         </div>
 
