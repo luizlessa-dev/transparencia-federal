@@ -1,0 +1,100 @@
+name: ALMG — Ingestão Mensal
+
+# O portal da ALMG disponibiliza cada mês com ~30 dias de atraso,
+# numa janela rolante de ~15 meses. Rodar no dia 5 de cada mês garante
+# que o mês anterior já está publicado antes de sair da janela.
+#
+# Exemplo: rodando em 05/jun/2026 → ingere mai/2026.
+
+on:
+  schedule:
+    # Dia 5 de cada mês às 12:00 UTC (09:00 BRT)
+    - cron: "0 12 5 * *"
+
+  workflow_dispatch:
+    inputs:
+      mes:
+        description: "Mês a ingerir (1–12). Deixe vazio para usar mês anterior."
+        required: false
+        default: ""
+      ano:
+        description: "Ano a ingerir (ex: 2026). Deixe vazio para usar ano anterior."
+        required: false
+        default: ""
+      modo:
+        description: "Modo de execução"
+        type: choice
+        required: false
+        default: "normal"
+        options:
+          - normal          # mês anterior (ou mes/ano explícitos)
+          - reprocessar     # mesmo período — idempotente, ignora duplicatas
+
+jobs:
+  ingerir:
+    name: Ingerir verba indenizatória ALMG
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Calcular período a ingerir
+        id: periodo
+        run: |
+          INPUT_MES="${{ github.event.inputs.mes }}"
+          INPUT_ANO="${{ github.event.inputs.ano }}"
+
+          if [ -n "$INPUT_MES" ] && [ -n "$INPUT_ANO" ]; then
+            MES="$INPUT_MES"
+            ANO="$INPUT_ANO"
+            echo "Período explícito: $MES/$ANO"
+          else
+            # Calcula mês anterior automaticamente
+            CURRENT_MES=$(date +%-m)
+            CURRENT_ANO=$(date +%Y)
+            if [ "$CURRENT_MES" -eq 1 ]; then
+              MES=12
+              ANO=$((CURRENT_ANO - 1))
+            else
+              MES=$((CURRENT_MES - 1))
+              ANO=$CURRENT_ANO
+            fi
+            echo "Período automático (mês anterior): $MES/$ANO"
+          fi
+
+          echo "mes=$MES"  >> "$GITHUB_OUTPUT"
+          echo "ano=$ANO"  >> "$GITHUB_OUTPUT"
+          echo "label=$(printf '%02d' $MES)/$ANO" >> "$GITHUB_OUTPUT"
+
+      - name: Atualizar lista de deputados
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run ingestao-almg:deputados
+
+      - name: Ingerir verba — ${{ steps.periodo.outputs.label }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          npm run ingestao-almg -- ${{ steps.periodo.outputs.mes }} ${{ steps.periodo.outputs.ano }}
+
+      - name: Resumo no log
+        if: always()
+        run: |
+          echo "### ALMG Ingestão — ${{ steps.periodo.outputs.label }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Campo | Valor |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Período | ${{ steps.periodo.outputs.label }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Modo | ${{ github.event.inputs.modo || 'normal (schedule)' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Trigger | ${{ github.event_name }} |" >> "$GITHUB_STEP_SUMMARY"
