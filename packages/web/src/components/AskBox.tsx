@@ -5,9 +5,16 @@
  * Backend: /api/ask (proxy server-side) → edge function ask/ no Supabase.
  *
  * Estilo segue o padrão da home: inline styles + CSS variables (hsl(var(--primary)) etc.).
+ *
+ * URL compartilhável:
+ *   - Aceita ?q=pergunta na URL e roda automaticamente ao carregar.
+ *   - Botão "Compartilhar" copia URL do tipo /?q=pergunta-codificada.
+ *   - Como o cache do backend é por hash da pergunta normalizada, perguntas
+ *     iguais via link viral retornam instantaneamente.
  */
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface AskResponse {
   ok: boolean;
@@ -92,13 +99,184 @@ function fmtCell(v: unknown): string {
   return String(v);
 }
 
+function fmtNum(v: number): string {
+  if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(1) + "bi";
+  if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(1) + "mi";
+  if (Math.abs(v) >= 1e3) return (v / 1e3).toFixed(0) + "k";
+  return v.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
+}
+
+/**
+ * Decide se o resultado é "graficável": tem 2-15 linhas, 1+ coluna texto pra label e
+ * 1+ coluna numérica com valores > 0. Retorna {labelCol, valueCol} ou null.
+ */
+function detectChartFields(rows: Record<string, unknown>[]): { labelCol: string; valueCol: string } | null {
+  if (!rows || rows.length < 2 || rows.length > 15) return null;
+  const cols = Object.keys(rows[0] ?? {});
+  if (cols.length < 2) return null;
+
+  // procura a ÚLTIMA coluna numérica como valor (geralmente é o agregado: sum, count, total)
+  let valueCol: string | null = null;
+  for (let i = cols.length - 1; i >= 0; i--) {
+    const c = cols[i];
+    const nums = rows.map((r) => Number(r[c])).filter((n) => Number.isFinite(n) && n !== 0);
+    if (nums.length >= Math.ceil(rows.length * 0.6)) {
+      valueCol = c;
+      break;
+    }
+  }
+  if (!valueCol) return null;
+
+  // procura a PRIMEIRA coluna não-numérica como label (geralmente é nome/UF/partido)
+  let labelCol: string | null = null;
+  for (const c of cols) {
+    if (c === valueCol) continue;
+    const isText = rows.some((r) => {
+      const v = r[c];
+      return typeof v === "string" && v.length > 0;
+    });
+    if (isText) {
+      labelCol = c;
+      break;
+    }
+  }
+  if (!labelCol) return null;
+
+  return { labelCol, valueCol };
+}
+
+interface BarChartProps {
+  rows: Record<string, unknown>[];
+  labelCol: string;
+  valueCol: string;
+}
+
+function BarChart({ rows, labelCol, valueCol }: BarChartProps) {
+  const data = rows.map((r) => ({
+    label: String(r[labelCol] ?? ""),
+    value: Number(r[valueCol]) || 0,
+  }));
+  const max = Math.max(...data.map((d) => d.value), 1);
+  // Limita label a 35 chars
+  const maxLabelLen = Math.max(...data.map((d) => d.label.length));
+  const labelWidth = Math.min(220, Math.max(80, maxLabelLen * 6));
+  const rowHeight = 22;
+  const padding = { top: 8, right: 60, bottom: 8, left: labelWidth + 8 };
+  const chartHeight = data.length * rowHeight + padding.top + padding.bottom;
+  const chartWidth = 600;
+  const barAreaWidth = chartWidth - padding.left - padding.right;
+
+  return (
+    <div style={{ overflowX: "auto", padding: "0.75rem 1rem", borderBottom: "1px solid hsl(var(--border))" }}>
+      <svg
+        width="100%"
+        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+        style={{ display: "block", minWidth: 320 }}
+        role="img"
+        aria-label={`Gráfico comparativo de ${labelCol} por ${valueCol}`}
+      >
+        {data.map((d, i) => {
+          const y = padding.top + i * rowHeight;
+          const w = (d.value / max) * barAreaWidth;
+          return (
+            <g key={i}>
+              <text
+                x={padding.left - 6}
+                y={y + rowHeight / 2}
+                textAnchor="end"
+                dominantBaseline="central"
+                fontSize="11"
+                fill="hsl(var(--foreground))"
+              >
+                {d.label.length > 38 ? d.label.slice(0, 35) + "..." : d.label}
+              </text>
+              <rect
+                x={padding.left}
+                y={y + 3}
+                width={Math.max(2, w)}
+                height={rowHeight - 6}
+                fill="hsl(var(--primary))"
+                opacity={0.85}
+              />
+              <text
+                x={padding.left + w + 4}
+                y={y + rowHeight / 2}
+                textAnchor="start"
+                dominantBaseline="central"
+                fontSize="11"
+                fontWeight="600"
+                fill="hsl(var(--foreground))"
+              >
+                {fmtNum(d.value)}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+      <p
+        style={{
+          fontSize: "0.6875rem",
+          textAlign: "center",
+          marginTop: "0.25rem",
+          color: "hsl(var(--muted-foreground, var(--foreground)))",
+        }}
+      >
+        {labelCol} × {valueCol}
+      </p>
+    </div>
+  );
+}
+
 export function AskBox() {
   const [pergunta, setPergunta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [resp, setResp] = useState<AskResponse | null>(null);
   const [mostrarSQL, setMostrarSQL] = useState(false);
   const [copiado, setCopiado] = useState(false);
+  const [linkCopiado, setLinkCopiado] = useState(false);
   const [verMaisExemplos, setVerMaisExemplos] = useState(false);
+  const searchParams = useSearchParams();
+  const autoExecutedRef = useRef(false);
+
+  // ── Detecta ?q=pergunta na URL e executa automaticamente ────────
+  useEffect(() => {
+    if (autoExecutedRef.current) return;
+    const q = searchParams.get("q");
+    if (q && q.trim()) {
+      autoExecutedRef.current = true;
+      perguntar(q.trim());
+      // rola pra caixa
+      setTimeout(() => {
+        document.getElementById("askbox")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  async function compartilhar() {
+    if (!resp?.pergunta) return;
+    const url = `${window.location.origin}/?q=${encodeURIComponent(resp.pergunta)}`;
+    try {
+      // Tenta a Web Share API primeiro (mobile principalmente)
+      if (typeof navigator.share === "function") {
+        await navigator.share({
+          title: "Transparência Federal",
+          text: resp.pergunta,
+          url,
+        });
+        return;
+      }
+    } catch {
+      /* user cancelou ou não suporta — cai pro clipboard */
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopiado(true);
+      setTimeout(() => setLinkCopiado(false), 2500);
+    } catch {
+      /* silent */
+    }
+  }
 
   async function perguntar(q?: string) {
     const texto = (q ?? pergunta).trim();
@@ -144,6 +322,7 @@ export function AskBox() {
 
   return (
     <section
+      id="askbox"
       style={{
         borderBottom: "1px solid hsl(var(--border))",
         backgroundColor: "hsl(var(--surface, var(--muted)))",
@@ -479,8 +658,36 @@ export function AskBox() {
                       >
                         {copiado ? "✓ Copiado" : "📋 Copiar"}
                       </button>
+                      <button
+                        onClick={compartilhar}
+                        style={{
+                          fontSize: "0.75rem",
+                          padding: "0.25rem 0.625rem",
+                          backgroundColor: "transparent",
+                          border: "1px solid hsl(var(--primary))",
+                          borderRadius: "0.125rem",
+                          cursor: "pointer",
+                          color: "hsl(var(--primary))",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {linkCopiado ? "✓ Link copiado" : "🔗 Compartilhar"}
+                      </button>
                     </div>
                   </div>
+
+                  {/* Gráfico inline (se aplicável) */}
+                  {(() => {
+                    const chartFields = detectChartFields(resp.resultado as Record<string, unknown>[]);
+                    if (!chartFields) return null;
+                    return (
+                      <BarChart
+                        rows={resp.resultado as Record<string, unknown>[]}
+                        labelCol={chartFields.labelCol}
+                        valueCol={chartFields.valueCol}
+                      />
+                    );
+                  })()}
 
                   {mostrarSQL && resp.sql && (
                     <pre
