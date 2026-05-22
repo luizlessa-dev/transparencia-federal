@@ -9,7 +9,7 @@ export const metadata = {
     "Ranking de parlamentares por valor total de emendas empenhadas no orçamento federal.",
 };
 
-const ANOS = [2024, 2023];
+const ANOS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
 const PER_PAGE = 50;
 
 interface SearchParams {
@@ -36,7 +36,7 @@ export default async function RankingPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
-  const ano = ANOS.includes(Number(params.ano)) ? Number(params.ano) : 2024;
+  const ano = ANOS.includes(Number(params.ano)) ? Number(params.ano) : 2025;
   const page = Math.max(1, Number(params.page ?? 1));
 
   const { data, total } = await getRanking(ano, page, PER_PAGE);

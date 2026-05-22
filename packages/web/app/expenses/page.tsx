@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getDespesasRanking } from "~/services/despesas";
 
+
 export const dynamic = "force-dynamic";
 
 interface Props {
@@ -23,9 +24,9 @@ function fmtN(n: number) {
 
 export function generateMetadata() {
   return {
-    title: "Despesas de Gabinete (CEAP) — Transparência Federal",
+    title: "Despesas de Gabinete — Câmara dos Deputados — Transparência Federal",
     description:
-      "Ranking dos deputados federais com maiores gastos da Cota para Exercício da Atividade Parlamentar (CEAP).",
+      "Ranking dos deputados federais com maiores gastos da CEAP (Cota para Exercício da Atividade Parlamentar). Dados de 2023 a 2025.",
   };
 }
 
@@ -45,10 +46,16 @@ export default async function ExpensesPage({ searchParams }: Props) {
         <div className="container" style={{ padding: "2rem 1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
             <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
-            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>Despesas de Gabinete</h1>
+            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>Despesas de Gabinete — Câmara dos Deputados</h1>
           </div>
           <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", marginLeft: "calc(3px + 0.75rem)", fontFamily: "var(--font-sans)" }}>
             CEAP — Cota para Exercício da Atividade Parlamentar · {fmtN(total)} deputados
+          </p>
+          <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", marginLeft: "calc(3px + 0.75rem)", fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
+            Senado Federal:{" "}
+            <Link href="/senate-expenses" style={{ color: "hsl(var(--primary))", textDecoration: "none", fontWeight: 500 }}>
+              ver CEAPS dos senadores →
+            </Link>
           </p>
         </div>
       </section>

@@ -47,7 +47,7 @@ export interface CoberturaStats {
   taxa_cobertura: number;
 }
 
-const ANOS_VALIDOS = [2023, 2024];
+const ANOS_VALIDOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
 export async function getRanking(
   ano: number,

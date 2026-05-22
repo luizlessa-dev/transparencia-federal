@@ -157,9 +157,13 @@ export default function PlanosPage() {
               <p style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.15em", color: "hsl(var(--primary))", marginBottom: "0.5rem" }}>
                 Individual
               </p>
-              <div style={{ display: "flex", alignItems: "baseline", gap: "0.375rem", marginBottom: "0.5rem" }}>
-                <span style={{ fontSize: "2rem", fontWeight: 700, fontFamily: "var(--font-mono)" }}>Sob consulta</span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.375rem", marginBottom: "0.25rem" }}>
+                <span style={{ fontSize: "2rem", fontWeight: 700, fontFamily: "var(--font-mono)" }}>R$ 29</span>
+                <span style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>/mês</span>
               </div>
+              <p style={{ fontSize: "0.75rem", color: "hsl(var(--primary))", margin: "0 0 0.375rem", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                ou R$ 249/ano · 2 meses grátis
+              </p>
               <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", margin: 0, lineHeight: 1.5 }}>
                 Para jornalistas, pesquisadores e ativistas independentes.
               </p>
@@ -192,6 +196,9 @@ export default function PlanosPage() {
             >
               Solicitar acesso
             </a>
+            <p style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", textAlign: "center", margin: "0.625rem 0 0", fontFamily: "var(--font-sans)" }}>
+              Aceita Pix e cartão de crédito
+            </p>
           </div>
 
           {/* Institucional */}

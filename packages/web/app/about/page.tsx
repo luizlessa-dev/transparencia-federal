@@ -59,10 +59,10 @@ export default function AboutPage() {
                 label: "dadosabertos.camara.leg.br",
               },
               {
-                title: "Senado Federal",
-                desc: "Dados de senadores e votações (em integração)",
-                url: null,
-                label: null,
+                title: "Senado Federal — Dados Abertos",
+                desc: "Dados de senadores e despesas CEAPS (2019–2026)",
+                url: "https://www12.senado.leg.br/dados-abertos",
+                label: "senado.leg.br/dados-abertos",
               },
             ].map((fonte) => (
               <div key={fonte.title} style={{ paddingLeft: "0.875rem", borderLeft: "2px solid hsl(var(--border))" }}>
@@ -142,6 +142,32 @@ export default function AboutPage() {
             </a>{" "}
             ou envie um e-mail com sua contribuição.
           </p>
+        </div>
+
+        {/* Cobertura de Dados */}
+        <div className="bloomberg-card" style={{ marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: "0.625rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", color: "hsl(var(--text-caption))", margin: "0 0 0.875rem 0" }}>
+            Cobertura de Dados
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "0.625rem" }}>
+            {[
+              { label: "Emendas Parlamentares", value: "2015 – 2026" },
+              { label: "Despesas CEAP (Câmara)", value: "2023 – 2025" },
+              { label: "Despesas CEAPS (Senado)", value: "2019 – 2026" },
+              { label: "Votações Plenárias", value: "fev/2023 – atual" },
+              { label: "Financiamento Eleitoral (TSE)", value: "2018 e 2022" },
+              { label: "Frentes Parlamentares", value: "57ª Legislatura" },
+            ].map((item) => (
+              <div key={item.label} style={{ padding: "0.625rem 0.875rem", backgroundColor: "hsl(var(--surface))", border: "1px solid hsl(var(--border))", borderRadius: "2px" }}>
+                <div style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", marginBottom: "0.25rem" }}>
+                  {item.label}
+                </div>
+                <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "hsl(var(--text-headline))", fontFamily: "var(--font-mono)" }}>
+                  {item.value}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Disclaimer */}

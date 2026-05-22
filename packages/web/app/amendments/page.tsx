@@ -12,7 +12,7 @@ interface Props {
   }>;
 }
 
-const ANOS = [2019, 2020, 2021, 2022, 2023, 2024];
+const ANOS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
 const TIPOS = [
   { label: "Todos", value: "" },
   { label: "Individual", value: "Individual" },
@@ -67,13 +67,13 @@ function buildUrl(base: Record<string, string | undefined>, override: Record<str
 export function generateMetadata() {
   return {
     title: "Emendas Parlamentares — Transparência Federal",
-    description: "Explore todas as emendas parlamentares de 2019 a 2024: individuais, de bancada, de comissão e do relator-geral (RP9).",
+    description: "Explore todas as emendas parlamentares de 2015 a 2026: individuais, de bancada, de comissão e do relator-geral (RP9).",
   };
 }
 
 export default async function AmendmentsPage({ searchParams }: Props) {
   const sp = await searchParams;
-  const ano = ANOS.includes(Number(sp.ano)) ? Number(sp.ano) : 2024;
+  const ano = ANOS.includes(Number(sp.ano)) ? Number(sp.ano) : 2025;
   const tipo = sp.tipo ?? "";
   const uf = sp.uf ?? "";
   const page = Math.max(1, Number(sp.page ?? 1));

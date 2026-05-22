@@ -36,7 +36,7 @@ export interface EmendasPage {
   total: number;
 }
 
-const ANOS_VALIDOS = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const ANOS_VALIDOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
 export async function getEmendasRp9(ano: number, page: number, perPage = 50): Promise<EmendasPage> {
   if (!ANOS_VALIDOS.includes(ano)) return { data: [], total: 0 };
@@ -146,6 +146,21 @@ export async function getEmendaById(id: string): Promise<EmendaCompleta | null> 
     .single();
   if (error) return null;
   return data as EmendaCompleta;
+}
+
+export async function getTopEmendasParlamentar(
+  autorNome: string,
+  limit = 10
+): Promise<EmendaCompleta[]> {
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("emendas_completas")
+    .select("*")
+    .ilike("autor_nome", `%${autorNome}%`)
+    .order("valor_empenhado", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as EmendaCompleta[];
 }
 
 export async function getEmendasListing(
