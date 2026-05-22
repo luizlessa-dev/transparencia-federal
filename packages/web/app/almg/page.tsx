@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "Transparência Federal — Minas Gerais (ALMG)",
@@ -230,8 +231,8 @@ export default function AlmgLandingPage() {
           >
             <RoadmapItem status="done" label="Schema canônico publicado" />
             <RoadmapItem status="done" label="Parser HTML validado em múltiplos meses" />
-            <RoadmapItem status="wip"  label="Load histórico 2019-2026 (~2h de ingestão)" />
-            <RoadmapItem status="next" label="Listagem pública de deputados e ranking de gastos" />
+            <RoadmapItem status="done" label="31.387 notas ingeridas (fev/2025–abr/2026)" />
+            <RoadmapItem status="done" label={<><a href="/ranking" style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}>Ranking público de gastos</a> por deputado</>} />
             <RoadmapItem status="next" label="Detalhe por deputado: notas, fornecedores recorrentes, cruzamento federal" />
             <RoadmapItem status="next" label="Cron mensal automático (GitHub Actions)" />
           </ul>
@@ -309,7 +310,7 @@ function Fonte({
   );
 }
 
-function RoadmapItem({ status, label }: { status: "done" | "wip" | "next"; label: string }) {
+function RoadmapItem({ status, label }: { status: "done" | "wip" | "next"; label: React.ReactNode }) {
   const cls =
     status === "done" ? "badge-success" : status === "wip" ? "badge-warn" : "badge-neutral";
   const txt = status === "done" ? "Pronto" : status === "wip" ? "Em curso" : "Próximo";
