@@ -9,7 +9,7 @@ import {
   finalizarExecucao,
 } from "./db.js";
 
-const ANOS = [2023, 2024];
+const ANOS = [2023, 2024, 2025, 2026];
 
 function calcularRanking(agregados: AgregadoParlamentar[], buildId: string): RankingBuildRow[] {
   // Ordena por valor_empenhado desc (métrica principal do ranking)
