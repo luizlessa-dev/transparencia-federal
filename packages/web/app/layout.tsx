@@ -18,13 +18,20 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://www.transparenciafederal.com"),
   title: "Transparência Federal — Emendas, Despesas e Dados do Congresso",
   description:
     "Explore dados públicos sobre emendas parlamentares, despesas de gabinete e votações da Câmara. Transparência para cidadãos, jornalistas, pesquisadores e ONGs.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Transparência Federal",
     description: "Dados públicos do Congresso Nacional em um único lugar",
+    url: "https://www.transparenciafederal.com",
+    siteName: "Transparência Federal",
     type: "website",
+    locale: "pt_BR",
   },
 };
 
