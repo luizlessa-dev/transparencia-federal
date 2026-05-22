@@ -1,6 +1,6 @@
 import { getSupabase } from "../lib/supabase-server";
 
-export const ANOS_CEAPS_SENADO = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+export const ANOS_CEAPS_SENADO = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019];
 
 export interface SenadorRanking {
   senador: string;
