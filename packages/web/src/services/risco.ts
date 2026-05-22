@@ -28,6 +28,8 @@ export interface ParlamentarRisco {
   cargo_anterior: string | null;
   total_frentes: number;
   total_comissoes: number;
+  cpf: string | null;
+  atualizado_em: string | null;
 }
 
 export interface RiscoPage {
