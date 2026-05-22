@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "enriquecimento:ts": "tsx src/run.ts"
+    "enriquecimento:ts": "tsx src/run.ts",
+    "bridge:ts": "tsx src/run-bridge-completas.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
