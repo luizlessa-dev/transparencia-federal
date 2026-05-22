@@ -120,7 +120,7 @@ export default function AlmgLandingPage() {
             <Kpi label="Deputados" value="77" sub="20ª legislatura" />
             <Kpi label="Histórico" value="15 meses" sub="fev/2025 → abr/2026" />
             <Kpi label="Granularidade" value="Nota fiscal" sub="CNPJ + valor + data" />
-            <Kpi label="Categorias" value="5" sub="Combustível, divulgação, locação, hospedagem, consultoria" />
+            <Kpi label="Categorias" value="9" sub="Combustível, divulgação, locação, consultoria e mais" />
           </div>
         </div>
       </section>

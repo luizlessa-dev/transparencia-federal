@@ -312,15 +312,17 @@ export default async function AlmgRankingPage({
                           />
                         </div>
                         <div>
-                          <div
+                          <Link
+                            href={`/ranking/${dep.id_almg}`}
                             style={{
                               fontSize: "0.875rem",
                               fontWeight: 600,
-                              color: "hsl(var(--text-headline))",
+                              color: "hsl(var(--primary))",
+                              textDecoration: "none",
                             }}
                           >
                             {dep.nome}
-                          </div>
+                          </Link>
                           <span
                             className="badge-neutral"
                             style={{ fontSize: "0.625rem", marginTop: "0.125rem" }}
