@@ -20,12 +20,67 @@ interface AskResponse {
   erro?: string;
 }
 
+interface CategoriaSugestao {
+  titulo: string;
+  perguntas: string[];
+}
+
+const CATEGORIAS: CategoriaSugestao[] = [
+  {
+    titulo: "Gastos parlamentares",
+    perguntas: [
+      "Qual deputado mais gastou em passagens aéreas?",
+      "Top 10 deputados que mais gastaram com combustível",
+      "Qual partido gastou mais com divulgação parlamentar em 2024?",
+      "Quem mais gastou com locação de veículos automotores?",
+    ],
+  },
+  {
+    titulo: "Emendas e orçamento secreto",
+    perguntas: [
+      "Quais empresas que receberam emendas de relator estão sancionadas?",
+      "Qual estado mais recebeu emendas Pix?",
+      "Top 10 beneficiários de emendas RP-9 por valor pago",
+      "Qual órgão executor recebeu mais emendas de relator?",
+      "Quanto foi pago via Restos a Pagar de emendas em 2024?",
+    ],
+  },
+  {
+    titulo: "Doações eleitorais",
+    perguntas: [
+      "Quem doou pra campanha de Lucas Gonzalez em 2022?",
+      "Top 10 maiores doadores de campanha em 2022",
+      "Quais doadores de campanha aparecem na lista CEIS?",
+      "Quanto Salim Mattar doou em campanhas eleitorais?",
+    ],
+  },
+  {
+    titulo: "Patrimônio e perfil",
+    perguntas: [
+      "Quem é o parlamentar com maior patrimônio declarado?",
+      "Quais deputados declararam aeronave no patrimônio?",
+      "Top 10 deputados com maior score de risco G5",
+      "Quanto patrimônio Ciro Nogueira declarou em 2018?",
+    ],
+  },
+  {
+    titulo: "Sancionados e contratos",
+    perguntas: [
+      "Quantas empresas sancionadas tem contrato federal?",
+      "Top 10 empresas em contratos federais por valor",
+      "Quais empresas sancionadas pela Codevasf têm contrato federal?",
+      "Quantos contratos a XCMG Brasil tem com o governo?",
+    ],
+  },
+];
+
+// 5 sugestões em destaque (uma por categoria) usadas como bloco inicial
 const SUGESTOES = [
   "Qual deputado mais gastou em passagens aéreas?",
   "Quais empresas que receberam emendas de relator estão sancionadas?",
-  "Qual estado mais recebeu emendas Pix?",
+  "Quem doou pra campanha de Lucas Gonzalez em 2022?",
   "Quem é o parlamentar com maior patrimônio declarado?",
-  "Top 10 deputados que mais gastaram com combustível",
+  "Quais empresas sancionadas têm contrato federal?",
 ];
 
 function fmtCell(v: unknown): string {
@@ -43,6 +98,7 @@ export function AskBox() {
   const [resp, setResp] = useState<AskResponse | null>(null);
   const [mostrarSQL, setMostrarSQL] = useState(false);
   const [copiado, setCopiado] = useState(false);
+  const [verMaisExemplos, setVerMaisExemplos] = useState(false);
 
   async function perguntar(q?: string) {
     const texto = (q ?? pergunta).trim();
@@ -208,6 +264,79 @@ export function AskBox() {
                 >
                   {s}
                 </button>
+              ))}
+              <button
+                onClick={() => setVerMaisExemplos((v) => !v)}
+                style={{
+                  fontSize: "0.75rem",
+                  padding: "0.25rem 0.75rem",
+                  backgroundColor: "transparent",
+                  border: "1px dashed hsl(var(--border))",
+                  borderRadius: "0.125rem",
+                  cursor: "pointer",
+                  color: "hsl(var(--primary))",
+                  fontWeight: 600,
+                }}
+              >
+                {verMaisExemplos ? "✕ esconder" : "+ mais exemplos"}
+              </button>
+            </div>
+          )}
+
+          {/* Bloco de categorias (expansível) */}
+          {!resp && !carregando && verMaisExemplos && (
+            <div
+              style={{
+                marginTop: "1.25rem",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "1rem",
+              }}
+            >
+              {CATEGORIAS.map((cat) => (
+                <div
+                  key={cat.titulo}
+                  style={{
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "hsl(var(--card, var(--background)))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "0.125rem",
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: "0.6875rem",
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                      color: "hsl(var(--primary))",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    {cat.titulo}
+                  </p>
+                  <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                    {cat.perguntas.map((p) => (
+                      <li key={p}>
+                        <button
+                          onClick={() => perguntar(p)}
+                          style={{
+                            fontSize: "0.8125rem",
+                            background: "transparent",
+                            border: "none",
+                            padding: "0.125rem 0",
+                            textAlign: "left",
+                            cursor: "pointer",
+                            color: "hsl(var(--foreground))",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          → {p}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
           )}
