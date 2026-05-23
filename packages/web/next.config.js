@@ -8,10 +8,25 @@ const nextConfig = {
       { protocol: "https", hostname: "www.camara.gov.br" },
     ],
   },
+  // radar.transparenciafederal.org → /radar/* (rewrite transparente, sem redirect)
+  async rewrites() {
+    return [
+      {
+        source: "/",
+        has: [{ type: "host", value: "radar.transparenciafederal.org" }],
+        destination: "/radar",
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "radar.transparenciafederal.org" }],
+        destination: "/radar/:path*",
+      },
+    ];
+  },
+
   // Canonical: www.transparenciafederal.com
   // .org e apex .com → 301 pra www.com (consolidação de SEO entre TLDs e hosts)
-  // Obs: enquanto houver Cloudflare Access (Basic Auth) na frente, o 401 do CF
-  // dispara antes do redirect chegar ao Vercel. Vira efetivo quando o auth cair.
+  // radar.transparenciafederal.org NÃO é redirecionado (tratado acima nos rewrites)
   async redirects() {
     return [
       {
