@@ -21,7 +21,6 @@ const NAV = [
   { label: "Análises",   href: "/" },
   { label: "Busca",      href: "/busca" },
   { label: "Histórico",  href: "/historico" },
-  { label: "Newsletter", href: "/newsletter" },
 ];
 
 export default async function RadarLayout({ children }: { children: ReactNode }) {
@@ -144,7 +143,6 @@ export default async function RadarLayout({ children }: { children: ReactNode })
                 { label: "Análises", href: "/" },
                 { label: "Busca",    href: "/busca" },
                 { label: "Histórico",href: "/historico" },
-                { label: "Newsletter",href: "/newsletter" },
               ].map(l => (
                 <Link key={l.label} href={l.href} style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", textDecoration: "none" }}>
                   {l.label}

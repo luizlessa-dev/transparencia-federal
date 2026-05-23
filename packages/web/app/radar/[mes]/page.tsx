@@ -127,41 +127,6 @@ export default async function AnaliseMesPage({ params }: { params: Promise<{ mes
           ) : <div />}
         </div>
 
-        {/* ── CTA NEWSLETTER ──────────────────────────────────── */}
-        <div
-          style={{
-            marginTop: "2rem",
-            padding: "1.5rem",
-            backgroundColor: "hsl(var(--surface))",
-            border: "1px solid hsl(var(--border))",
-            borderRadius: "2px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "1rem",
-            flexWrap: "wrap",
-          }}
-        >
-          <div>
-            <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "hsl(var(--text-headline))", marginBottom: "0.25rem" }}>
-              Receba a análise mensal
-            </div>
-            <div style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))" }}>
-              Newsletter Radar FAB — toda vez que novos dados são publicados.
-            </div>
-          </div>
-          <Link
-            href="/newsletter"
-            style={{
-              padding: "0.625rem 1rem", fontSize: "0.8125rem", fontWeight: 600,
-              backgroundColor: "hsl(350 73% 44%)", color: "#fff",
-              borderRadius: "2px", textDecoration: "none", flexShrink: 0,
-            }}
-          >
-            Ver edição →
-          </Link>
-        </div>
-
       </div>
 
       {/* Estilos do conteúdo markdown */}
