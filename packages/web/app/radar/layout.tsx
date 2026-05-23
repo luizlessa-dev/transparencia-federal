@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { headers } from "next/headers";
 
 export const metadata = {
   metadataBase: new URL("https://radar.transparenciafederal.org"),
@@ -23,14 +24,18 @@ const NAV = [
   { label: "Newsletter", href: "/radar/newsletter" },
 ];
 
-export default function RadarLayout({ children }: { children: ReactNode }) {
+export default async function RadarLayout({ children }: { children: ReactNode }) {
+  const h       = await headers();
+  const host    = h.get("host") ?? "";
+  const isRadar = host.startsWith("radar.");
+
   return (
     <div>
       {/* Barra de identidade Radar FAB */}
       <div
         style={{
           position: "sticky",
-          top: "4rem", // abaixo do header do TF
+          top: isRadar ? "0" : "4rem", // no subdomínio fica no topo; no TF, abaixo do header
           zIndex: 40,
           backgroundColor: "hsl(var(--card))",
           borderBottom: "1px solid hsl(var(--border))",
@@ -115,6 +120,47 @@ export default function RadarLayout({ children }: { children: ReactNode }) {
 
       {/* Conteúdo */}
       {children}
+
+      {/* Footer próprio — só no subdomínio radar */}
+      {isRadar && (
+        <footer style={{ borderTop: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))", marginTop: "auto" }}>
+          <div className="container" style={{ padding: "2rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+              <div style={{ height: "1.5rem", width: "1.5rem", borderRadius: "2px", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "hsl(350 73% 44%)", color: "#fff", fontSize: "0.5rem", fontWeight: 700 }}>
+                RF
+              </div>
+              <span style={{ fontSize: "0.8125rem", fontWeight: 700, fontFamily: "var(--font-display)", color: "hsl(var(--text-headline))" }}>
+                Radar FAB
+              </span>
+              <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))" }}>
+                · um produto do{" "}
+                <Link href="https://www.transparenciafederal.com" style={{ color: "hsl(var(--text-caption))" }}>
+                  Transparência Federal
+                </Link>
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: "1.5rem" }}>
+              {[
+                { label: "Análises", href: "/" },
+                { label: "Busca",    href: "/busca" },
+                { label: "Histórico",href: "/historico" },
+                { label: "Newsletter",href: "/newsletter" },
+              ].map(l => (
+                <Link key={l.label} href={l.href} style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", textDecoration: "none" }}>
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div style={{ borderTop: "1px solid hsl(var(--border))" }}>
+            <div className="container" style={{ padding: "0.625rem 1.5rem" }}>
+              <p style={{ fontSize: "0.625rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)" }}>
+                Fonte: GABAER / COMAER · Decreto nº 10.267/2020 · LAI nº 12.527/2011
+              </p>
+            </div>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

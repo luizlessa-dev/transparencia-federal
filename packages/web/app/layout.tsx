@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Inter, Playfair_Display } from "next/font/google";
+import { headers } from "next/headers";
 import { NavLinks } from "~/components/NavLinks";
 import { AuthButton } from "~/components/AuthButton";
 import "./globals.css";
@@ -22,8 +23,8 @@ export const metadata = {
   title: "Transparência Federal — Emendas, Despesas e Dados do Congresso",
   description:
     "Explore dados públicos sobre emendas parlamentares, despesas de gabinete e votações da Câmara. Transparência para cidadãos, jornalistas, pesquisadores e ONGs.",
-  alternates: {
-    canonical: "/",
+  verification: {
+    google: "a9D0U5aH8PUR2VKklJN0_SdPADucRPDegU1Ir-qID0A",
   },
   openGraph: {
     title: "Transparência Federal",
@@ -32,6 +33,20 @@ export const metadata = {
     siteName: "Transparência Federal",
     type: "website",
     locale: "pt_BR",
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Transparência Federal — Dados do Congresso Nacional",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Transparência Federal",
+    description: "Dados públicos do Congresso Nacional em um único lugar",
+    images: ["/og-default.png"],
   },
 };
 
@@ -39,9 +54,12 @@ const FOOTER_COLS = [
   {
     label: "Explorar",
     links: [
+      { label: "Score de Risco", href: "/risco" },
+      { label: "Frentes Parlamentares", href: "/frentes" },
       { label: "Ranking Nacional", href: "/ranking" },
       { label: "Emendas Parlamentares", href: "/amendments" },
       { label: "Gastos de Gabinete", href: "/expenses" },
+      { label: "Planos", href: "/planos" },
       { label: "Sobre o Projeto", href: "/about" },
     ],
   },
@@ -55,7 +73,11 @@ const FOOTER_COLS = [
   },
 ];
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const h    = await headers();
+  const host = h.get("host") ?? "";
+  const isRadar = host.startsWith("radar.");
+
   return (
     <html
       lang="pt-BR"
@@ -72,9 +94,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Barra de acento no topo */}
         <div className="accent-line" />
 
-        {/* Header */}
+        {/* Header — oculto no subdomínio radar (tem próprio header) */}
         <header
           style={{
+            display: isRadar ? "none" : undefined,
             position: "sticky",
             top: 0,
             zIndex: 50,
@@ -127,8 +150,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
         </main>
 
-        {/* Footer */}
-        <footer style={{ borderTop: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))", marginTop: "auto" }}>
+        {/* Footer — oculto no subdomínio radar */}
+        <footer style={{ display: isRadar ? "none" : undefined, borderTop: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))", marginTop: "auto" }}>
           <div className="container" style={{ padding: "2.5rem 1.5rem", display: "grid", gridTemplateColumns: "1fr", gap: "2rem" }}>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "2rem" }}>
