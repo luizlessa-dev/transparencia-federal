@@ -8,21 +8,26 @@ const nextConfig = {
       { protocol: "https", hostname: "www.camara.gov.br" },
     ],
   },
-  // Radar FAB: ambos os subdomínios → /radar/*
-  // Canonical: radar.transparenciafederal.com (o .org redireciona no bloco abaixo)
+  // Radar FAB: beforeFiles garante que o rewrite dispara antes do sistema de páginas.
+  // Sem isso, "/" e "/:path*" já existem como páginas do TF e o rewrite (afterFiles)
+  // nunca é alcançado.
   async rewrites() {
-    return [
-      {
-        source: "/",
-        has: [{ type: "host", value: "radar.transparenciafederal.com" }],
-        destination: "/radar",
-      },
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "radar.transparenciafederal.com" }],
-        destination: "/radar/:path*",
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: "/",
+          has: [{ type: "host", value: "radar.transparenciafederal.com" }],
+          destination: "/radar",
+        },
+        {
+          source: "/:path*",
+          has: [{ type: "host", value: "radar.transparenciafederal.com" }],
+          destination: "/radar/:path*",
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
 
   // Canonical: www.transparenciafederal.com
