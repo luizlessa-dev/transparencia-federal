@@ -40,7 +40,7 @@ export default async function RadarHomePage() {
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
             {ultima && (
               <Link
-                href={`/radar/${ultima.mes}`}
+                href={`/${ultima.mes}`}
                 style={{
                   display: "inline-flex", alignItems: "center", gap: "0.375rem",
                   padding: "0.75rem 1.25rem", fontSize: "0.875rem", fontWeight: 600,
@@ -52,7 +52,7 @@ export default async function RadarHomePage() {
               </Link>
             )}
             <Link
-              href="/radar/busca"
+              href="/busca"
               style={{
                 display: "inline-flex", alignItems: "center", gap: "0.375rem",
                 padding: "0.75rem 1.25rem", fontSize: "0.875rem", fontWeight: 500,
@@ -63,7 +63,7 @@ export default async function RadarHomePage() {
               Buscar por autoridade
             </Link>
             <Link
-              href="/radar/historico"
+              href="/historico"
               style={{
                 display: "inline-flex", alignItems: "center", gap: "0.375rem",
                 padding: "0.75rem 1.25rem", fontSize: "0.875rem", fontWeight: 500,
@@ -125,7 +125,7 @@ export default async function RadarHomePage() {
               {analises.map((a, idx) => (
                 <Link
                   key={a.mes}
-                  href={`/radar/${a.mes}`}
+                  href={`/${a.mes}`}
                   style={{
                     display: "block",
                     padding: "1.25rem",

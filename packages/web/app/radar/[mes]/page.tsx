@@ -43,7 +43,7 @@ export default async function AnaliseMesPage({ params }: { params: Promise<{ mes
       {/* ── BREADCRUMB + NAVEGAÇÃO ────────────────────────────── */}
       <div style={{ borderBottom: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))" }}>
         <div className="container" style={{ padding: "0.75rem 1.5rem", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
-          <Link href="/radar" style={{ color: "hsl(var(--text-caption))", textDecoration: "none" }}>Radar FAB</Link>
+          <Link href="/" style={{ color: "hsl(var(--text-caption))", textDecoration: "none" }}>Radar FAB</Link>
           <span>›</span>
           <span style={{ color: "hsl(var(--text-body))", fontWeight: 500 }}>{titulo}</span>
         </div>
@@ -94,7 +94,7 @@ export default async function AnaliseMesPage({ params }: { params: Promise<{ mes
         >
           {anterior ? (
             <Link
-              href={`/radar/${anterior.mes}`}
+              href={`/${anterior.mes}`}
               style={{
                 display: "flex", flexDirection: "column",
                 padding: "0.875rem 1rem",
@@ -111,7 +111,7 @@ export default async function AnaliseMesPage({ params }: { params: Promise<{ mes
 
           {proximo ? (
             <Link
-              href={`/radar/${proximo.mes}`}
+              href={`/${proximo.mes}`}
               style={{
                 display: "flex", flexDirection: "column", alignItems: "flex-end",
                 padding: "0.875rem 1rem",
@@ -151,7 +151,7 @@ export default async function AnaliseMesPage({ params }: { params: Promise<{ mes
             </div>
           </div>
           <Link
-            href="/radar/newsletter"
+            href="/newsletter"
             style={{
               padding: "0.625rem 1rem", fontSize: "0.8125rem", fontWeight: 600,
               backgroundColor: "hsl(350 73% 44%)", color: "#fff",

@@ -18,10 +18,10 @@ export const metadata = {
 };
 
 const NAV = [
-  { label: "Análises",   href: "/radar" },
-  { label: "Busca",      href: "/radar/busca" },
-  { label: "Histórico",  href: "/radar/historico" },
-  { label: "Newsletter", href: "/radar/newsletter" },
+  { label: "Análises",   href: "/" },
+  { label: "Busca",      href: "/busca" },
+  { label: "Histórico",  href: "/historico" },
+  { label: "Newsletter", href: "/newsletter" },
 ];
 
 export default async function RadarLayout({ children }: { children: ReactNode }) {
@@ -48,7 +48,7 @@ export default async function RadarLayout({ children }: { children: ReactNode })
         >
           {/* Brand */}
           <Link
-            href="/radar"
+            href="/"
             style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none", flexShrink: 0 }}
           >
             <div

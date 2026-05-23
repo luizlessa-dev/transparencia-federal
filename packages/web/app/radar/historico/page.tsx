@@ -18,7 +18,7 @@ export default async function RadarHistoricoPage() {
       {/* Breadcrumb */}
       <div style={{ borderBottom: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))" }}>
         <div className="container" style={{ padding: "0.75rem 1.5rem", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
-          <Link href="/radar" style={{ color: "hsl(var(--text-caption))", textDecoration: "none" }}>Radar FAB</Link>
+          <Link href="/" style={{ color: "hsl(var(--text-caption))", textDecoration: "none" }}>Radar FAB</Link>
           <span>›</span>
           <span style={{ color: "hsl(var(--text-body))", fontWeight: 500 }}>Histórico</span>
         </div>
@@ -52,7 +52,7 @@ export default async function RadarHistoricoPage() {
             />
             <div style={{ marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid hsl(var(--border))" }}>
               <Link
-                href="/radar"
+                href="/"
                 style={{ fontSize: "0.875rem", fontWeight: 600, color: "hsl(350 73% 44%)", textDecoration: "none" }}
               >
                 ← Ver análises mensais
