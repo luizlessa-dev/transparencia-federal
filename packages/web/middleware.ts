@@ -36,6 +36,12 @@ const HOST_SEGMENT: Record<string, string> = {
   "almg.transparenciafederal.org": "/almg",
   "almg.transparenciafederal.com": "/almg",
   "almg.localhost:3000": "/almg",
+  "alesp.transparenciafederal.org": "/alesp",
+  "alesp.transparenciafederal.com": "/alesp",
+  "alesp.localhost:3000": "/alesp",
+  "alerj.transparenciafederal.org": "/alerj",
+  "alerj.transparenciafederal.com": "/alerj",
+  "alerj.localhost:3000": "/alerj",
 };
 
 function segmentForHost(host: string | null): string | null {
