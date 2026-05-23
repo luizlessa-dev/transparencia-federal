@@ -8,25 +8,26 @@ const nextConfig = {
       { protocol: "https", hostname: "www.camara.gov.br" },
     ],
   },
-  // radar.transparenciafederal.org → /radar/* (rewrite transparente, sem redirect)
+  // Radar FAB: ambos os subdomínios → /radar/*
+  // Canonical: radar.transparenciafederal.com (o .org redireciona no bloco abaixo)
   async rewrites() {
     return [
       {
         source: "/",
-        has: [{ type: "host", value: "radar.transparenciafederal.org" }],
+        has: [{ type: "host", value: "radar.transparenciafederal.com" }],
         destination: "/radar",
       },
       {
         source: "/:path*",
-        has: [{ type: "host", value: "radar.transparenciafederal.org" }],
+        has: [{ type: "host", value: "radar.transparenciafederal.com" }],
         destination: "/radar/:path*",
       },
     ];
   },
 
   // Canonical: www.transparenciafederal.com
-  // .org e apex .com → 301 pra www.com (consolidação de SEO entre TLDs e hosts)
-  // radar.transparenciafederal.org NÃO é redirecionado (tratado acima nos rewrites)
+  // .org e apex .com → 301 pra www.com
+  // radar.transparenciafederal.org → 301 pra radar.transparenciafederal.com
   async redirects() {
     return [
       {
@@ -45,6 +46,13 @@ const nextConfig = {
         source: "/:path*",
         has: [{ type: "host", value: "transparenciafederal.com" }],
         destination: "https://www.transparenciafederal.com/:path*",
+        permanent: true,
+      },
+      // radar.org → radar.com (canônico)
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "radar.transparenciafederal.org" }],
+        destination: "https://radar.transparenciafederal.com/:path*",
         permanent: true,
       },
     ];
