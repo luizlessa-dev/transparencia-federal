@@ -1,8 +1,15 @@
 /**
- * Job: ingere lista de deputados em exercício na ALMG → public.almg_deputados.
+ * Job: ingere lista de deputados em exercício na ALMG → public.parlamentares.
  *
- * Idempotente via upsert por id_almg. Marca como `ativo=false` qualquer deputado
- * que sumiu da lista da API (suplente que saiu, etc).
+ * REFACTOR (2026-05-23): após a migration `20260523000000_create_canonical_casas_schema`,
+ * `almg_deputados` virou VIEW sobre `parlamentares`. Este job agora escreve
+ * direto na tabela canônica `parlamentares` com casa_id = ALMG.
+ *
+ * - id_externo = id_almg (cast pra TEXT)
+ * - casa_id = lookup de casas WHERE sigla='ALMG'
+ *
+ * Idempotente via upsert por (casa_id, id_externo). Marca como `ativo=false`
+ * qualquer deputado que sumiu da lista da API.
  */
 import { createClient } from "@supabase/supabase-js";
 import { fetchDeputadosEmExercicio } from "./deputados.js";
@@ -21,6 +28,8 @@ export type JobDeputadosResult = {
   erro?: string;
 };
 
+const SIGLA_CASA = "ALMG";
+
 export async function jobIngestaoDeputadosAlmg(
   opts: JobDeputadosOpts,
 ): Promise<JobDeputadosResult> {
@@ -30,14 +39,35 @@ export async function jobIngestaoDeputadosAlmg(
   const legislatura = opts.legislatura ?? 20;
 
   try {
+    // 1. Resolve casa_id ALMG
+    const { data: casa, error: casaErr } = await supabase
+      .from("casas")
+      .select("id")
+      .eq("sigla", SIGLA_CASA)
+      .maybeSingle();
+
+    if (casaErr || !casa) {
+      return {
+        status: "erro",
+        total: 0,
+        upsertados: 0,
+        desativados: 0,
+        erro: `casa ${SIGLA_CASA} não encontrada: ${casaErr?.message ?? "vazio"}`,
+      };
+    }
+    const casaId = casa.id as number;
+
+    // 2. Fetch da API XML da ALMG
     const deputados = await fetchDeputadosEmExercicio();
     if (deputados.length === 0) {
       return { status: "erro", total: 0, upsertados: 0, desativados: 0, erro: "lista vazia da API" };
     }
 
+    // 3. Upsert em parlamentares (canônica)
     const nowIso = new Date().toISOString();
     const rows = deputados.map((d) => ({
-      id_almg: d.id_almg,
+      casa_id: casaId,
+      id_externo: String(d.id_almg),
       nome: d.nome,
       partido: d.partido,
       tag_localizacao: d.tag_localizacao,
@@ -47,18 +77,18 @@ export async function jobIngestaoDeputadosAlmg(
     }));
 
     const { error: upErr } = await supabase
-      .from("almg_deputados")
-      .upsert(rows, { onConflict: "id_almg" });
+      .from("parlamentares_estaduais")
+      .upsert(rows, { onConflict: "casa_id,id_externo" });
     if (upErr) {
       return { status: "erro", total: rows.length, upsertados: 0, desativados: 0, erro: upErr.message };
     }
 
-    // Desativa deputados da legislatura atual que sumiram da lista.
-    // Implementação: busca todos os ativos e desativa os que não estão no set.
-    const idsAtivos = new Set(rows.map((r) => r.id_almg));
+    // 4. Desativa deputados da legislatura atual que sumiram da lista
+    const idsAtivos = new Set(rows.map((r) => r.id_externo));
     const { data: existentes, error: selErr } = await supabase
-      .from("almg_deputados")
-      .select("id_almg")
+      .from("parlamentares_estaduais")
+      .select("id_externo")
+      .eq("casa_id", casaId)
       .eq("legislatura", legislatura)
       .eq("ativo", true);
     if (selErr) {
@@ -72,15 +102,16 @@ export async function jobIngestaoDeputadosAlmg(
     }
 
     const aDesativar = (existentes ?? [])
-      .map((r) => r.id_almg as number)
+      .map((r) => String(r.id_externo))
       .filter((id) => !idsAtivos.has(id));
 
     let desativados = 0;
     if (aDesativar.length > 0) {
       const { error: deErr } = await supabase
-        .from("almg_deputados")
+        .from("parlamentares_estaduais")
         .update({ ativo: false, updated_at: nowIso })
-        .in("id_almg", aDesativar);
+        .eq("casa_id", casaId)
+        .in("id_externo", aDesativar);
       if (deErr) {
         return {
           status: "erro",

@@ -233,8 +233,10 @@ export default function AlmgLandingPage() {
             <RoadmapItem status="done" label="Parser HTML validado em múltiplos meses" />
             <RoadmapItem status="done" label="31.387 notas ingeridas (fev/2025–abr/2026)" />
             <RoadmapItem status="done" label={<><a href="/ranking" style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}>Ranking público de gastos</a> por deputado</>} />
-            <RoadmapItem status="next" label="Detalhe por deputado: notas, fornecedores recorrentes, cruzamento federal" />
-            <RoadmapItem status="next" label="Cron mensal automático (GitHub Actions)" />
+            <RoadmapItem status="done" label={<><a href="/ranking/1099" style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}>Detalhe por deputado</a>: notas, fornecedores recorrentes, evolução mensal</>} />
+            <RoadmapItem status="done" label="Cron mensal automático (GitHub Actions) — dia 5 de cada mês" />
+            <RoadmapItem status="next" label="Cruzamento federal: mesmos CNPJs entre verba ALMG e fornecedores de emendas/CEAP" />
+            <RoadmapItem status="next" label="Votações nominais (Diário do Legislativo MG — em avaliação técnica)" />
           </ul>
         </div>
       </div>
