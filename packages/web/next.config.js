@@ -55,6 +55,19 @@ const nextConfig = {
         destination: "https://radar.transparenciafederal.com/:path*",
         permanent: true,
       },
+      // /radar/* no domínio principal → subdomínio canônico
+      {
+        source: "/radar",
+        missing: [{ type: "host", value: "radar.transparenciafederal.com" }],
+        destination: "https://radar.transparenciafederal.com/",
+        permanent: false,
+      },
+      {
+        source: "/radar/:path*",
+        missing: [{ type: "host", value: "radar.transparenciafederal.com" }],
+        destination: "https://radar.transparenciafederal.com/:path*",
+        permanent: false,
+      },
     ];
   },
 };
