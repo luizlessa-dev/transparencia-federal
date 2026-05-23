@@ -45,6 +45,8 @@ export interface CoberturaStats {
   total_parlamentares: number;
   registros_vinculados: number;
   taxa_cobertura: number;
+  ano_min: number | null;
+  ano_max: number | null;
 }
 
 const ANOS_VALIDOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
@@ -108,23 +110,64 @@ export async function getParlamentar(id: string): Promise<{
 export async function getCobertura(): Promise<CoberturaStats> {
   const sb = getSupabase();
 
-  const [{ count: totalFin }, { count: totalParl }, { count: matchados }] =
-    await Promise.all([
-      sb.from("emendas_financeiro").select("*", { count: "exact", head: true }),
-      sb.from("parlamentares").select("*", { count: "exact", head: true }),
-      sb
-        .from("emendas_financeiro")
-        .select("*", { count: "exact", head: true })
-        .not("parlamentar_id", "is", null),
-    ]);
+  const [
+    { count: totalEmendas },
+    { count: totalParl },
+    { count: comAutor },
+    { data: anoMinRow },
+    { data: anoMaxRow },
+  ] = await Promise.all([
+    sb.from("emendas_completas").select("*", { count: "exact", head: true }),
+    sb.from("parlamentares").select("*", { count: "exact", head: true }),
+    sb
+      .from("emendas_completas")
+      .select("*", { count: "exact", head: true })
+      .not("autor_nome", "is", null),
+    sb.from("emendas_completas").select("ano").order("ano", { ascending: true }).limit(1).maybeSingle(),
+    sb.from("emendas_completas").select("ano").order("ano", { ascending: false }).limit(1).maybeSingle(),
+  ]);
 
   return {
-    total_registros_financeiro: totalFin ?? 0,
+    total_registros_financeiro: totalEmendas ?? 0,
     total_parlamentares: totalParl ?? 0,
-    registros_vinculados: matchados ?? 0,
+    registros_vinculados: comAutor ?? 0,
     taxa_cobertura:
-      totalFin && totalFin > 0
-        ? Math.round(((matchados ?? 0) / totalFin) * 100)
+      totalEmendas && totalEmendas > 0
+        ? Math.round(((comAutor ?? 0) / totalEmendas) * 100)
         : 0,
+    ano_min: (anoMinRow as { ano: number } | null)?.ano ?? null,
+    ano_max: (anoMaxRow as { ano: number } | null)?.ano ?? null,
   };
+}
+
+/**
+ * Pega top N parlamentares por valor empenhado no ano informado.
+ * Tenta o ano pedido; se vier vazio, faz fallback para o ano anterior.
+ */
+export async function getTopParlamentares(
+  ano: number,
+  limit = 8
+): Promise<{ ano: number; data: RankingEntry[] }> {
+  const sb = getSupabase();
+
+  async function fetchAno(a: number) {
+    const { data } = await sb
+      .from("ranking_parlamentar")
+      .select(
+        `posicao, valor_total, metricas, ano,
+         parlamentares!inner(id, nome, nome_parlamentar, partido, uf, foto_url, casa_legislativa)`
+      )
+      .eq("ano", a)
+      .order("posicao")
+      .range(0, limit - 1);
+    return (data ?? []) as unknown as RankingEntry[];
+  }
+
+  let dados = await fetchAno(ano);
+  let anoFinal = ano;
+  if (dados.length === 0 && ano > 2015) {
+    anoFinal = ano - 1;
+    dados = await fetchAno(anoFinal);
+  }
+  return { ano: anoFinal, data: dados };
 }
