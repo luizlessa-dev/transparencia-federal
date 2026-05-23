@@ -79,6 +79,38 @@ export async function getProposicoesDeputado(
   return { data: (data ?? []) as ProposicaoItem[], total: count ?? 0 };
 }
 
+export interface ProposicaoDetalhe extends ProposicaoItem {
+  autor: {
+    deputado_id: number;
+    nome: string;
+    sigla_partido: string;
+    sigla_uf: string;
+    url_foto: string | null;
+  } | null;
+}
+
+export async function getProposicao(id: number): Promise<ProposicaoDetalhe | null> {
+  const sb = getSupabase();
+  const { data: prop, error } = await sb
+    .from("cam_proposicoes")
+    .select("id, deputado_id, sigla_tipo, numero, ano, ementa, data_apresentacao")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !prop) return null;
+
+  const { data: autorRow } = await sb
+    .from("cam_proposicoes_agg")
+    .select("deputado_id, nome, sigla_partido, sigla_uf, url_foto")
+    .eq("deputado_id", (prop as ProposicaoItem).deputado_id)
+    .maybeSingle();
+
+  return {
+    ...(prop as ProposicaoItem),
+    autor: autorRow ? (autorRow as ProposicaoDetalhe["autor"]) : null,
+  };
+}
+
 export async function getDeputadoProposicaoAgg(deputadoId: number): Promise<ProposicaoAgg | null> {
   const sb = getSupabase();
   const { data, error } = await sb

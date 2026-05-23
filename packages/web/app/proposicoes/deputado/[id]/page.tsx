@@ -223,33 +223,60 @@ export default async function DeputadoProposicoesPage({ params, searchParams }: 
                   <th style={{ width: "8rem" }}>Número / Ano</th>
                   <th>Ementa</th>
                   <th style={{ width: "7rem", textAlign: "right" }}>Apresentação</th>
+                  <th style={{ width: "2rem" }} />
                 </tr>
               </thead>
               <tbody>
-                {proposicoes.map((prop) => (
-                  <tr key={prop.id}>
-                    <td>
-                      <BadgeTipo sigla={prop.sigla_tipo} />
-                    </td>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
-                      {prop.numero != null && prop.ano != null
-                        ? `${prop.numero}/${prop.ano}`
-                        : prop.numero != null
-                        ? String(prop.numero)
-                        : "—"}
-                    </td>
-                    <td style={{ fontSize: "0.8125rem", lineHeight: 1.45, maxWidth: "32rem" }}>
-                      {prop.ementa
-                        ? prop.ementa.length > 120
-                          ? prop.ementa.slice(0, 120) + "…"
-                          : prop.ementa
-                        : <span style={{ color: "hsl(var(--text-caption))" }}>Sem ementa</span>}
-                    </td>
-                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
-                      {fmtData(prop.data_apresentacao)}
-                    </td>
-                  </tr>
-                ))}
+                {proposicoes.map((prop) => {
+                  const href = `/proposicoes/${prop.id}`;
+                  const linkStyle = {
+                    display: "block",
+                    width: "100%",
+                    color: "inherit",
+                    textDecoration: "none",
+                  } as const;
+                  return (
+                    <tr key={prop.id} style={{ cursor: "pointer" }}>
+                      <td>
+                        <Link href={href} style={linkStyle} aria-label={`Abrir ${prop.sigla_tipo} ${prop.numero ?? ""}/${prop.ano ?? ""}`}>
+                          <BadgeTipo sigla={prop.sigla_tipo} />
+                        </Link>
+                      </td>
+                      <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
+                        <Link href={href} style={linkStyle}>
+                          {prop.numero != null && prop.ano != null
+                            ? `${prop.numero}/${prop.ano}`
+                            : prop.numero != null
+                            ? String(prop.numero)
+                            : "—"}
+                        </Link>
+                      </td>
+                      <td style={{ fontSize: "0.8125rem", lineHeight: 1.45, maxWidth: "32rem" }}>
+                        <Link href={href} style={{ ...linkStyle, color: "hsl(var(--text-body))" }}>
+                          {prop.ementa
+                            ? prop.ementa.length > 120
+                              ? prop.ementa.slice(0, 120) + "…"
+                              : prop.ementa
+                            : <span style={{ color: "hsl(var(--text-caption))" }}>Sem ementa</span>}
+                        </Link>
+                      </td>
+                      <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
+                        <Link href={href} style={linkStyle}>
+                          {fmtData(prop.data_apresentacao)}
+                        </Link>
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <Link
+                          href={href}
+                          style={{ fontSize: "0.875rem", color: "hsl(var(--primary))", textDecoration: "none", fontWeight: 600 }}
+                          aria-label="Abrir detalhe"
+                        >
+                          →
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

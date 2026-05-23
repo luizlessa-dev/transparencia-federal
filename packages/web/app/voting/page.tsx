@@ -215,38 +215,53 @@ export default async function VotingPage({ searchParams }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((v) => (
-                  <tr key={v.id}>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
-                      {fmtData(v.data)}
-                    </td>
-                    <td style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
-                      {v.proposicao_autora ?? "—"}
-                    </td>
-                    <td style={{ fontSize: "0.8125rem", lineHeight: 1.45, maxWidth: "28rem" }}>
-                      {v.descricao
-                        ? v.descricao.length > 100 ? v.descricao.slice(0, 100) + "…" : v.descricao
-                        : <span style={{ color: "hsl(var(--text-caption))" }}>Sem descrição</span>}
-                    </td>
-                    <td>
-                      <BadgeResultado aprovacao={v.aprovacao} />
-                    </td>
-                    <td style={{ textAlign: "right" }}>
-                      <PlacarMini
-                        sim={v.votos_sim}
-                        nao={v.votos_nao}
-                        outros={v.votos_abstencao + v.votos_obstrucao + v.votos_artigo17}
-                      />
-                    </td>
-                    <td style={{ textAlign: "center" }}>
-                      <Link
-                        href={`/voting/${encodeURIComponent(v.id)}`}
-                        style={{ fontSize: "0.75rem", color: "hsl(var(--primary))", textDecoration: "none" }}
-                        title="Ver detalhes desta votação"
-                      >→</Link>
-                    </td>
-                  </tr>
-                ))}
+                {rows.map((v) => {
+                  const href = `/voting/${encodeURIComponent(v.id)}`;
+                  const cellLink = {
+                    display: "block",
+                    width: "100%",
+                    color: "inherit",
+                    textDecoration: "none",
+                  } as const;
+                  return (
+                    <tr key={v.id} style={{ cursor: "pointer" }}>
+                      <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                        <Link href={href} style={cellLink}>{fmtData(v.data)}</Link>
+                      </td>
+                      <td style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
+                        <Link href={href} style={cellLink}>{v.proposicao_autora ?? "—"}</Link>
+                      </td>
+                      <td style={{ fontSize: "0.8125rem", lineHeight: 1.45, maxWidth: "28rem" }}>
+                        <Link href={href} style={{ ...cellLink, color: "hsl(var(--text-body))" }}>
+                          {v.descricao
+                            ? v.descricao.length > 100 ? v.descricao.slice(0, 100) + "…" : v.descricao
+                            : <span style={{ color: "hsl(var(--text-caption))" }}>Sem descrição</span>}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link href={href} style={cellLink}>
+                          <BadgeResultado aprovacao={v.aprovacao} />
+                        </Link>
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <Link href={href} style={cellLink}>
+                          <PlacarMini
+                            sim={v.votos_sim}
+                            nao={v.votos_nao}
+                            outros={v.votos_abstencao + v.votos_obstrucao + v.votos_artigo17}
+                          />
+                        </Link>
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <Link
+                          href={href}
+                          style={{ fontSize: "0.875rem", color: "hsl(var(--primary))", textDecoration: "none", fontWeight: 600 }}
+                          title="Ver detalhes desta votação"
+                        >→</Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
