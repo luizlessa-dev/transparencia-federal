@@ -8,27 +8,8 @@ const nextConfig = {
       { protocol: "https", hostname: "www.camara.gov.br" },
     ],
   },
-  // Radar FAB: beforeFiles garante que o rewrite dispara antes do sistema de páginas.
-  // Sem isso, "/" e "/:path*" já existem como páginas do TF e o rewrite (afterFiles)
-  // nunca é alcançado.
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: "/",
-          has: [{ type: "host", value: "radar.transparenciafederal.com" }],
-          destination: "/radar",
-        },
-        {
-          source: "/:path*",
-          has: [{ type: "host", value: "radar.transparenciafederal.com" }],
-          destination: "/radar/:path*",
-        },
-      ],
-      afterFiles: [],
-      fallback: [],
-    };
-  },
+  // Roteamento por subdomínio (radar.*, almg.*, etc.) é feito via middleware.ts.
+  // Não há rewrites aqui para evitar conflito com o matcher do middleware.
 
   // Canonical: www.transparenciafederal.com
   // .org e apex .com → 301 pra www.com

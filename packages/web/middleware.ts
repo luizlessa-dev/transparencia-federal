@@ -42,6 +42,9 @@ const HOST_SEGMENT: Record<string, string> = {
   "alerj.transparenciafederal.org": "/alerj",
   "alerj.transparenciafederal.com": "/alerj",
   "alerj.localhost:3000": "/alerj",
+  "radar.transparenciafederal.com": "/radar",
+  "radar.transparenciafederal.org": "/radar",
+  "radar.localhost:3000": "/radar",
 };
 
 function segmentForHost(host: string | null): string | null {
