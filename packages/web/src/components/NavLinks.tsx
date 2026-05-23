@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
+  { label: "Parlamentares", href: "/parlamentares" },
   { label: "Ranking", href: "/ranking" },
   { label: "Orç. Secreto", href: "/rp9" },
   { label: "Emendas", href: "/amendments" },

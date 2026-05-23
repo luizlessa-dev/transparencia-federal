@@ -51,6 +51,31 @@ export interface CoberturaStats {
 
 const ANOS_VALIDOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
+/**
+ * Lista todos os parlamentares ativos com dados básicos para listagem/busca.
+ * Inclui paginação manual (Supabase tem limite de 1000 por query).
+ */
+export async function listarParlamentares(): Promise<Parlamentar[]> {
+  const sb = getSupabase();
+  const PAGE = 1000;
+  const out: Parlamentar[] = [];
+
+  for (let offset = 0; ; offset += PAGE) {
+    const { data, error } = await sb
+      .from("parlamentares")
+      .select("id, nome, nome_parlamentar, partido, uf, foto_url, casa_legislativa, ativo")
+      .eq("ativo", true)
+      .order("nome_parlamentar", { ascending: true })
+      .range(offset, offset + PAGE - 1);
+
+    if (error) throw error;
+    const rows = (data ?? []) as Parlamentar[];
+    out.push(...rows);
+    if (rows.length < PAGE) break;
+  }
+  return out;
+}
+
 export async function getRanking(
   ano: number,
   page: number,
