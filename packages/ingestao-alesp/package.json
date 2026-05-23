@@ -1,0 +1,25 @@
+{
+  "name": "@transparencia/ingestao-alesp",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "deputados:ts": "tsx src/run-deputados.ts",
+    "despesas:ts": "tsx src/run-despesas.ts",
+    "despesas:incremental:ts": "tsx src/run-despesas-incremental.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "jsdom": "^25.0.0",
+    "saxes": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.0.0",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.0.0"
+  }
+}
