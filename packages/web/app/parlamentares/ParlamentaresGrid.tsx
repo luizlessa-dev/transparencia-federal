@@ -71,149 +71,114 @@ export function ParlamentaresGrid({ parlamentares }: Props) {
 
   const temFiltro = !!busca || !!partido || !!uf || casa !== "todos";
 
+  const selectStyle: React.CSSProperties = {
+    padding: "0.5rem 0.625rem",
+    fontSize: "0.8125rem",
+    fontFamily: "var(--font-sans)",
+    color: "hsl(var(--text-headline))",
+    backgroundColor: "hsl(var(--surface))",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "2px",
+    cursor: "pointer",
+    minWidth: "8rem",
+  };
+
   return (
     <div>
-      {/* Barra de busca */}
+      {/* Barra unificada de filtros (estilo CEAP) */}
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
+          display: "grid",
+          gridTemplateColumns: "1fr auto auto auto auto",
           gap: "0.5rem",
-          padding: "0.5rem 0.75rem",
+          alignItems: "center",
+          padding: "0.5rem",
           backgroundColor: "hsl(var(--card))",
           border: "1px solid hsl(var(--border))",
           borderRadius: "2px",
-          marginBottom: "1rem",
+          marginBottom: "1.25rem",
         }}
       >
-        <span style={{ fontSize: "1rem", color: "hsl(var(--text-caption))" }} aria-hidden="true">
-          🔎
-        </span>
-        <input
-          type="search"
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar por nome (ex.: Erika Hilton, Bolsonaro, Lula)"
-          aria-label="Buscar parlamentar por nome"
-          style={{
-            flex: 1,
-            background: "transparent",
-            border: "none",
-            outline: "none",
-            fontSize: "0.9375rem",
-            color: "hsl(var(--text-headline))",
-            padding: "0.5rem 0",
-          }}
-        />
-        {temFiltro && (
+        {/* Busca por nome (reativa) */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0 0.5rem", minWidth: 0 }}>
+          <span style={{ fontSize: "1rem", color: "hsl(var(--text-caption))" }} aria-hidden="true">🔎</span>
+          <input
+            type="search"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar por nome (ex.: Erika Hilton, Bolsonaro, Lula)"
+            aria-label="Buscar parlamentar por nome"
+            style={{
+              flex: 1,
+              minWidth: 0,
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontSize: "0.875rem",
+              color: "hsl(var(--text-headline))",
+              padding: "0.5rem 0",
+              fontFamily: "var(--font-sans)",
+            }}
+          />
+        </div>
+
+        {/* Casa */}
+        <select
+          value={casa}
+          onChange={(e) => setCasa(e.target.value as Casa)}
+          aria-label="Filtrar por casa legislativa"
+          style={selectStyle}
+        >
+          <option value="todos">Todas casas</option>
+          <option value="camara">Câmara</option>
+          <option value="senado">Senado</option>
+        </select>
+
+        {/* Partido */}
+        <select
+          value={partido ?? ""}
+          onChange={(e) => setPartido(e.target.value || null)}
+          aria-label="Filtrar por partido"
+          style={selectStyle}
+        >
+          <option value="">Todos partidos</option>
+          {partidos.map((sigla) => (
+            <option key={sigla} value={sigla}>{sigla}</option>
+          ))}
+        </select>
+
+        {/* UF */}
+        <select
+          value={uf ?? ""}
+          onChange={(e) => setUf(e.target.value || null)}
+          aria-label="Filtrar por estado"
+          style={selectStyle}
+        >
+          <option value="">Todas UFs</option>
+          {ufs.map((sigla) => (
+            <option key={sigla} value={sigla}>{sigla}</option>
+          ))}
+        </select>
+
+        {temFiltro ? (
           <button
             onClick={limparTudo}
             style={{
-              background: "transparent",
+              padding: "0.5rem 0.875rem",
+              fontSize: "0.75rem",
+              color: "hsl(var(--text-body))",
+              backgroundColor: "transparent",
               border: "1px solid hsl(var(--border))",
               borderRadius: "2px",
-              padding: "0.25rem 0.625rem",
-              fontSize: "0.75rem",
               cursor: "pointer",
-              color: "hsl(var(--text-body))",
+              fontFamily: "var(--font-sans)",
             }}
           >
             Limpar
           </button>
+        ) : (
+          <span />
         )}
-      </div>
-
-      {/* Toggle Casa */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontWeight: 600 }}>
-          Casa:
-        </span>
-        {(
-          [
-            { v: "todos", label: "Todos" },
-            { v: "camara", label: "Câmara" },
-            { v: "senado", label: "Senado" },
-          ] as { v: Casa; label: string }[]
-        ).map((opt) => {
-          const ativo = casa === opt.v;
-          return (
-            <button
-              key={opt.v}
-              onClick={() => setCasa(opt.v)}
-              style={{
-                padding: "0.3rem 0.75rem",
-                fontSize: "0.8125rem",
-                fontWeight: ativo ? 600 : 500,
-                borderRadius: "2px",
-                border: "1px solid",
-                borderColor: ativo ? "hsl(var(--primary))" : "hsl(var(--border))",
-                backgroundColor: ativo ? "hsl(var(--primary))" : "hsl(var(--card))",
-                color: ativo ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
-                cursor: "pointer",
-              }}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Chips Partido */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontWeight: 600, paddingTop: "0.3rem" }}>
-          Partido:
-        </span>
-        {partidos.map((sigla) => {
-          const ativo = partido === sigla;
-          return (
-            <button
-              key={sigla}
-              onClick={() => setPartido(ativo ? null : sigla)}
-              style={{
-                padding: "0.25rem 0.5rem",
-                fontSize: "0.75rem",
-                fontWeight: ativo ? 700 : 500,
-                borderRadius: "2px",
-                border: "1px solid",
-                borderColor: ativo ? "hsl(var(--primary))" : "hsl(var(--border))",
-                backgroundColor: ativo ? "hsl(var(--primary))" : "hsl(var(--card))",
-                color: ativo ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
-                cursor: "pointer",
-              }}
-            >
-              {sigla}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Chips UF */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "0.6875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontWeight: 600, paddingTop: "0.3rem" }}>
-          UF:
-        </span>
-        {ufs.map((sigla) => {
-          const ativo = uf === sigla;
-          return (
-            <button
-              key={sigla}
-              onClick={() => setUf(ativo ? null : sigla)}
-              style={{
-                padding: "0.25rem 0.5rem",
-                fontSize: "0.75rem",
-                fontWeight: ativo ? 700 : 500,
-                borderRadius: "2px",
-                border: "1px solid",
-                borderColor: ativo ? "hsl(var(--primary))" : "hsl(var(--border))",
-                backgroundColor: ativo ? "hsl(var(--primary))" : "hsl(var(--card))",
-                color: ativo ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
-                cursor: "pointer",
-              }}
-            >
-              {sigla}
-            </button>
-          );
-        })}
       </div>
 
       {/* Contador */}
