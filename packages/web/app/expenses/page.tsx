@@ -46,15 +46,12 @@ export default async function ExpensesPage({ searchParams }: Props) {
         <div className="container" style={{ padding: "2rem 1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
             <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
-            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>Despesas de Gabinete — Câmara dos Deputados</h1>
+            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>CEAP — Câmara dos Deputados</h1>
           </div>
           <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", marginLeft: "calc(3px + 0.75rem)", fontFamily: "var(--font-sans)" }}>
-            CEAP — Cota para Exercício da Atividade Parlamentar · {fmtN(total)} deputados
-          </p>
-          <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", marginLeft: "calc(3px + 0.75rem)", fontFamily: "var(--font-sans)", marginTop: "0.25rem" }}>
-            Senado Federal:{" "}
+            Cota para Exercício da Atividade Parlamentar · {fmtN(total)} deputados ·{" "}
             <Link href="/senate-expenses" style={{ color: "hsl(var(--primary))", textDecoration: "none", fontWeight: 500 }}>
-              ver CEAPS dos senadores →
+              ver CEAP do Senado →
             </Link>
           </p>
         </div>

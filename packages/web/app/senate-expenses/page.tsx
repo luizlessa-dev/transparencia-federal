@@ -47,10 +47,13 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
         <div className="container" style={{ padding: "2rem 1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
             <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
-            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>CEAPS — Senado Federal</h1>
+            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>CEAP — Senado Federal</h1>
           </div>
           <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", marginLeft: "calc(3px + 0.75rem)", fontFamily: "var(--font-sans)" }}>
-            Cota para o Exercício da Atividade Parlamentar dos Senadores · {ano} · {fmtN(total)} senadores
+            Cota para Exercício da Atividade Parlamentar dos Senadores · {ano} · {fmtN(total)} senadores ·{" "}
+            <Link href="/expenses" style={{ color: "hsl(var(--primary))", textDecoration: "none", fontWeight: 500 }}>
+              ver CEAP da Câmara →
+            </Link>
           </p>
         </div>
       </section>
@@ -100,17 +103,18 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
           <table className="bloomberg-table" style={{ width: "100%" }}>
             <thead>
               <tr>
-                <th style={{ width: "2.5rem" }}>#</th>
+                <th style={{ width: "2.5rem", textAlign: "center" }}>#</th>
                 <th>Senador</th>
                 <th style={{ textAlign: "right" }}>Total Reembolsado</th>
                 <th style={{ textAlign: "right" }}>Documentos</th>
                 <th style={{ textAlign: "right" }}>Média/Doc</th>
+                <th style={{ width: "2rem" }} />
               </tr>
             </thead>
             <tbody>
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: "center", padding: "3rem", color: "hsl(var(--text-caption))" }}>
+                  <td colSpan={6} style={{ textAlign: "center", padding: "3rem", color: "hsl(var(--text-caption))" }}>
                     Dados de {ano} ainda não disponíveis ou sendo processados.
                   </td>
                 </tr>
@@ -118,27 +122,36 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
                 data.map((s, i) => {
                   const mediaDocs = s.total_documentos > 0 ? s.total_reembolsado / s.total_documentos : 0;
                   const slug = encodeURIComponent(s.senador_normalizado);
+                  const href = `/senate-expenses/${slug}?ano=${ano}`;
+                  const link = {
+                    display: "block",
+                    width: "100%",
+                    color: "inherit",
+                    textDecoration: "none",
+                  } as const;
                   return (
-                    <tr key={s.senador_normalizado}>
-                      <td style={{ fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))", fontSize: "0.75rem" }}>
-                        {s.posicao ?? ((page - 1) * PER_PAGE + i + 1)}
+                    <tr key={s.senador_normalizado} style={{ cursor: "pointer" }}>
+                      <td style={{ fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))", fontSize: "0.75rem", textAlign: "center" }}>
+                        <Link href={href} style={link}>{s.posicao ?? ((page - 1) * PER_PAGE + i + 1)}</Link>
                       </td>
                       <td>
-                        <Link
-                          href={`/senate-expenses/${slug}?ano=${ano}`}
-                          style={{ fontWeight: 600, color: "hsl(var(--primary))", fontSize: "0.8125rem", textDecoration: "none" }}
-                        >
+                        <Link href={href} style={{ ...link, fontWeight: 600, color: "hsl(var(--text-headline))", fontSize: "0.875rem" }}>
                           {s.senador}
                         </Link>
                       </td>
-                      <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: 600, color: "hsl(var(--text-headline))", fontSize: "0.875rem" }}>
-                        {fmtBRL(s.total_reembolsado)}
+                      <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: 600, color: "hsl(var(--text-headline))", fontSize: "0.875rem", fontVariantNumeric: "tabular-nums" }}>
+                        <Link href={href} style={link}>{fmtBRL(s.total_reembolsado)}</Link>
                       </td>
-                      <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "hsl(var(--text-body))" }}>
-                        {fmtN(s.total_documentos)}
+                      <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "hsl(var(--text-body))", fontVariantNumeric: "tabular-nums" }}>
+                        <Link href={href} style={link}>{fmtN(s.total_documentos)}</Link>
                       </td>
-                      <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
-                        {fmtBRL(mediaDocs)}
+                      <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "hsl(var(--text-caption))", fontVariantNumeric: "tabular-nums" }}>
+                        <Link href={href} style={link}>{fmtBRL(mediaDocs)}</Link>
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <Link href={href} style={{ color: "hsl(var(--primary))", fontWeight: 600, fontSize: "0.875rem", textDecoration: "none" }}>
+                          →
+                        </Link>
                       </td>
                     </tr>
                   );

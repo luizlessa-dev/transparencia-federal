@@ -24,6 +24,52 @@ export interface CeapsSenadorPage {
   total: number;
 }
 
+export interface CeapsSenadoNota {
+  id: string;
+  cod_documento: string;
+  ano: number;
+  mes: number | null;
+  senador: string;
+  tipo_despesa: string | null;
+  cnpj_cpf: string | null;
+  fornecedor: string | null;
+  documento: string | null;
+  data: string | null;
+  detalhamento: string | null;
+  valor_reembolsado: number;
+}
+
+/**
+ * Lista todas as notas fiscais (CEAPS Senado) de um senador,
+ * paginando internamente para passar do limite de 1000 do Supabase.
+ */
+export async function getCeapsSenadoNotas(
+  senadorNormalizado: string,
+  limit = 3000
+): Promise<CeapsSenadoNota[]> {
+  const sb = getSupabase();
+  const PAGE = 1000;
+  const out: CeapsSenadoNota[] = [];
+
+  for (let offset = 0; offset < limit; offset += PAGE) {
+    const to = Math.min(offset + PAGE - 1, limit - 1);
+    const { data, error } = await sb
+      .from("ceaps_senado_brutas")
+      .select(
+        "id, cod_documento, ano, mes, senador, tipo_despesa, cnpj_cpf, fornecedor, documento, data, detalhamento, valor_reembolsado"
+      )
+      .eq("senador_normalizado", senadorNormalizado)
+      .order("data", { ascending: false, nullsFirst: false })
+      .order("valor_reembolsado", { ascending: false })
+      .range(offset, to);
+    if (error) throw error;
+    const rows = (data ?? []) as CeapsSenadoNota[];
+    out.push(...rows);
+    if (rows.length < PAGE) break;
+  }
+  return out;
+}
+
 export async function getCeapsSenadorListing(
   ano: number,
   page: number,
