@@ -21,7 +21,7 @@ const anos = anosArg ? anosArg.split(",").map(Number).filter(Boolean) : undefine
 
 console.log("▶ Iniciando job_ceaps_senado_ranking...");
 if (anos) console.log(`  Anos: ${anos.join(", ")}`);
-else console.log("  Anos: 2019–2025 (padrão)");
+else console.log("  Anos: 2019–2026 (padrão)");
 
 const resultado = await jobCeapsSenadorRanking({
   supabaseUrl: url,

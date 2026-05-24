@@ -5,7 +5,7 @@
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const ANOS_DEFAULT = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const ANOS_DEFAULT = [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 const PAGE_SIZE = 1000;
 
 interface BrutaRow {
