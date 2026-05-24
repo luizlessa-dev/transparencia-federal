@@ -155,18 +155,22 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                     {col.label}
                   </p>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                    {col.links.map((link) =>
-                      "external" in link && link.external ? (
-                        <a
-                          key={link.label}
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ fontSize: "0.75rem", color: "hsl(var(--text-body))", textDecoration: "none" }}
-                        >
-                          {link.label}
-                        </a>
-                      ) : (
+                    {col.links.map((link) => {
+                      if (!link.href) return null;
+                      if (link.external) {
+                        return (
+                          <a
+                            key={link.label}
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ fontSize: "0.75rem", color: "hsl(var(--text-body))", textDecoration: "none" }}
+                          >
+                            {link.label}
+                          </a>
+                        );
+                      }
+                      return (
                         <Link
                           key={link.label}
                           href={link.href}
@@ -174,8 +178,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                         >
                           {link.label}
                         </Link>
-                      )
-                    )}
+                      );
+                    })}
                   </div>
                 </div>
               ))}

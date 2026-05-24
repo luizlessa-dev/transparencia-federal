@@ -11,8 +11,11 @@
 
 export interface SiteNavLink {
   label: string;
-  href: string;
+  /** Quando ausente, o item é tratado como cabeçalho de dropdown (precisa `children`). */
+  href?: string;
   external?: boolean;
+  /** Se presente, vira um dropdown agrupado em vez de link direto. */
+  children?: SiteNavLink[];
 }
 
 export interface SiteFooterCol {
@@ -49,17 +52,33 @@ export const FEDERAL_CONFIG: SiteConfig = {
   nav: [
     { label: "Parlamentares", href: "/parlamentares" },
     { label: "Ranking", href: "/ranking" },
-    { label: "Orç. Secreto", href: "/rp9" },
-    { label: "Emendas", href: "/amendments" },
-    { label: "CEAP Câmara", href: "/expenses" },
-    { label: "CEAP Senado", href: "/senate-expenses" },
-    { label: "Financiamento", href: "/funding" },
-    { label: "Votações", href: "/voting" },
-    { label: "Proposições", href: "/proposicoes" },
-    { label: "Risco", href: "/risco" },
-    { label: "Frentes", href: "/frentes" },
-    { label: "Planos", href: "/planos" },
-    { label: "Sobre", href: "/about" },
+    {
+      label: "Despesas",
+      children: [
+        { label: "CEAP Câmara", href: "/expenses" },
+        { label: "CEAP Senado", href: "/senate-expenses" },
+        { label: "Emendas Parlamentares", href: "/amendments" },
+        { label: "Orçamento Secreto (RP9)", href: "/rp9" },
+        { label: "Financiamento Eleitoral", href: "/funding" },
+      ],
+    },
+    {
+      label: "Atividade",
+      children: [
+        { label: "Votações em Plenário", href: "/voting" },
+        { label: "Proposições", href: "/proposicoes" },
+        { label: "Frentes Parlamentares", href: "/frentes" },
+        { label: "Score de Risco G5", href: "/risco" },
+      ],
+    },
+    {
+      label: "Mais",
+      children: [
+        { label: "Empresas Sancionadas", href: "/sancionados" },
+        { label: "Planos", href: "/planos" },
+        { label: "Sobre o Projeto", href: "/about" },
+      ],
+    },
   ],
   footer: [
     {

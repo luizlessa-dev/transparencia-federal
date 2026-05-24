@@ -2,10 +2,153 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import type { SiteNavLink } from "~/lib/site-config";
 
 interface Props {
   items: SiteNavLink[];
+}
+
+function isActive(pathname: string, href?: string): boolean {
+  if (!href) return false;
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(href + "/");
+}
+
+function topLevelStyle(active: boolean): React.CSSProperties {
+  return {
+    padding: "0.5rem 0.875rem",
+    fontSize: "0.875rem",
+    fontWeight: active ? 600 : 500,
+    color: active ? "hsl(var(--text-headline))" : "hsl(var(--text-body))",
+    borderRadius: "2px",
+    textDecoration: "none",
+    backgroundColor: active ? "hsl(var(--surface))" : "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.25rem",
+    whiteSpace: "nowrap",
+  };
+}
+
+function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Click outside fecha
+  useEffect(() => {
+    if (!open) return;
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function escHandler(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("keydown", escHandler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("keydown", escHandler);
+    };
+  }, [open]);
+
+  const children = item.children ?? [];
+  const hasActive = children.some((c) => isActive(pathname, c.href));
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        onMouseEnter={() => setOpen(true)}
+        aria-expanded={open}
+        aria-haspopup="true"
+        style={topLevelStyle(hasActive)}
+      >
+        {item.label}
+        <span
+          style={{
+            fontSize: "0.625rem",
+            color: "hsl(var(--text-caption))",
+            transition: "transform 0.15s",
+            transform: open ? "rotate(180deg)" : "rotate(0)",
+            display: "inline-block",
+          }}
+          aria-hidden="true"
+        >
+          ▾
+        </span>
+      </button>
+
+      {open && (
+        <div
+          onMouseLeave={() => setOpen(false)}
+          style={{
+            position: "absolute",
+            top: "calc(100% + 0.25rem)",
+            right: 0,
+            minWidth: "13rem",
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "2px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+            padding: "0.375rem",
+            zIndex: 60,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {children.map((child) => {
+            const active = isActive(pathname, child.href);
+            if (child.external && child.href) {
+              return (
+                <a
+                  key={child.href}
+                  href={child.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setOpen(false)}
+                  style={{
+                    padding: "0.5rem 0.75rem",
+                    fontSize: "0.8125rem",
+                    color: "hsl(var(--text-body))",
+                    textDecoration: "none",
+                    borderRadius: "2px",
+                  }}
+                >
+                  {child.label} ↗
+                </a>
+              );
+            }
+            if (!child.href) return null;
+            return (
+              <Link
+                key={child.href}
+                href={child.href}
+                onClick={() => setOpen(false)}
+                style={{
+                  padding: "0.5rem 0.75rem",
+                  fontSize: "0.8125rem",
+                  fontWeight: active ? 700 : 500,
+                  color: active ? "hsl(var(--text-headline))" : "hsl(var(--text-body))",
+                  backgroundColor: active ? "hsl(var(--surface))" : "transparent",
+                  textDecoration: "none",
+                  borderRadius: "2px",
+                }}
+              >
+                {child.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function NavLinks({ items }: Props) {
@@ -14,47 +157,30 @@ export function NavLinks({ items }: Props) {
   return (
     <nav style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexWrap: "wrap" }}>
       {items.map((item) => {
-        // Links externos não destacam por pathname
-        if (item.external) {
+        // Dropdown
+        if (item.children && item.children.length > 0) {
+          return <NavDropdown key={item.label} item={item} pathname={pathname} />;
+        }
+
+        // External link
+        if (item.external && item.href) {
           return (
             <a
               key={item.href}
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                padding: "0.5rem 0.875rem",
-                fontSize: "0.875rem",
-                fontWeight: 500,
-                color: "hsl(var(--text-body))",
-                borderRadius: "2px",
-                textDecoration: "none",
-                backgroundColor: "transparent",
-              }}
+              style={topLevelStyle(false)}
             >
               {item.label}
             </a>
           );
         }
 
-        const active =
-          pathname === item.href ||
-          (item.href !== "/" && pathname.startsWith(item.href));
-
+        // Link interno simples
+        if (!item.href) return null;
         return (
-          <Link
-            key={item.href}
-            href={item.href}
-            style={{
-              padding: "0.5rem 0.875rem",
-              fontSize: "0.875rem",
-              fontWeight: active ? 600 : 500,
-              color: active ? "hsl(var(--text-headline))" : "hsl(var(--text-body))",
-              borderRadius: "2px",
-              textDecoration: "none",
-              backgroundColor: active ? "hsl(var(--surface))" : "transparent",
-            }}
-          >
+          <Link key={item.href} href={item.href} style={topLevelStyle(isActive(pathname, item.href))}>
             {item.label}
           </Link>
         );
