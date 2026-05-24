@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { getRanking } from "~/services/ranking";
+import { getRanking, getRankingTotais } from "~/services/ranking";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Ranking de Emendas — Transparência Federal",
   description:
-    "Ranking de parlamentares por valor total de emendas empenhadas no orçamento federal.",
+    "Parlamentares ordenados por valor total de emendas empenhadas no orçamento federal. Clique para ver detalhamento por tipo, ano, função e cada emenda individual.",
 };
 
 const ANOS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
@@ -25,9 +25,25 @@ function fmtBRL(valor: number) {
   }).format(valor);
 }
 
-function badgeExecucao(taxa: number) {
-  const cls = taxa >= 80 ? "badge-success" : taxa >= 50 ? "badge-warn" : "badge-danger";
-  return <span className={cls}>{taxa}%</span>;
+function fmtBRLShort(valor: number) {
+  if (valor >= 1e9) return `R$ ${(valor / 1e9).toFixed(1)} bi`;
+  if (valor >= 1e6) return `R$ ${(valor / 1e6).toFixed(1)} mi`;
+  if (valor >= 1e3) return `R$ ${(valor / 1e3).toFixed(0)} mil`;
+  return `R$ ${valor.toLocaleString("pt-BR")}`;
+}
+
+function fmtNum(valor: number) {
+  return new Intl.NumberFormat("pt-BR").format(valor);
+}
+
+function Kpi({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="bloomberg-kpi">
+      <div className="bloomberg-kpi-label">{label}</div>
+      <div className="bloomberg-kpi-value">{value}</div>
+      {sub && <div className="bloomberg-kpi-sub">{sub}</div>}
+    </div>
+  );
 }
 
 export default async function RankingPage({
@@ -39,30 +55,76 @@ export default async function RankingPage({
   const ano = ANOS.includes(Number(params.ano)) ? Number(params.ano) : 2025;
   const page = Math.max(1, Number(params.page ?? 1));
 
-  const { data, total } = await getRanking(ano, page, PER_PAGE);
+  const [{ data, total }, totais] = await Promise.all([
+    getRanking(ano, page, PER_PAGE),
+    getRankingTotais(ano),
+  ]);
   const totalPages = Math.ceil(total / PER_PAGE);
+  const topEmp = totais?.top_empenhado ?? data[0]?.valor_total ?? 1;
 
   return (
     <>
-      {/* Cabeçalho da página */}
-      <section style={{ borderBottom: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--background))" }}>
-        <div className="container" style={{ padding: "2rem 1.5rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
-            <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
-            <h1 style={{ fontSize: "1.75rem", margin: 0 }}>Ranking de Emendas</h1>
+      {/* ── Cabeçalho ─────────────────────────────────────────── */}
+      <section
+        style={{
+          borderBottom: "1px solid hsl(var(--border))",
+          backgroundColor: "hsl(var(--background))",
+        }}
+      >
+        <div className="container" style={{ padding: "2rem 1.5rem 1.5rem", maxWidth: "1080px" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", flexWrap: "wrap" }}>
+            <h1 style={{ fontSize: "1.625rem", margin: 0, lineHeight: 1.2 }}>
+              Ranking de Emendas
+            </h1>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.15em",
+                color: "hsl(var(--accent))",
+              }}
+            >
+              Câmara + Senado · {ano}
+            </span>
           </div>
-          <p style={{ fontSize: "0.9375rem", color: "hsl(var(--text-body))", maxWidth: "40rem" }}>
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "hsl(var(--text-body))",
+              margin: "0.5rem 0 0",
+              maxWidth: "640px",
+            }}
+          >
             Parlamentares ordenados pelo valor total empenhado no orçamento federal.
-            Fonte: Portal da Transparência do Governo Federal.
+            Clique em qualquer linha para ver detalhamento por tipo, ano, função e cada
+            emenda individual. Fonte: Portal da Transparência.
           </p>
         </div>
       </section>
 
-      <div className="container" style={{ padding: "1.5rem 1.5rem 3rem" }}>
-
-        {/* Filtro de ano + contagem */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.25rem" }}>
-          <span style={{ fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)" }}>
+      <div className="container" style={{ padding: "1.5rem 1.5rem 4rem", maxWidth: "1080px" }}>
+        {/* ── Filtros de ano ─────────────────────────────── */}
+        <div
+          style={{
+            display: "flex",
+            gap: "0.375rem",
+            marginBottom: "1.25rem",
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.6875rem",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              color: "hsl(var(--text-caption))",
+              fontFamily: "var(--font-sans)",
+              marginRight: "0.25rem",
+            }}
+          >
             Ano:
           </span>
           {ANOS.map((a) => (
@@ -72,86 +134,316 @@ export default async function RankingPage({
               style={{
                 padding: "0.3rem 0.75rem",
                 fontSize: "0.8125rem",
-                fontWeight: a === ano ? 600 : 400,
+                fontWeight: a === ano ? 700 : 500,
                 textDecoration: "none",
                 borderRadius: "2px",
-                border: "1px solid",
-                borderColor: a === ano ? "hsl(var(--primary))" : "hsl(var(--border))",
-                backgroundColor: a === ano ? "hsl(var(--primary))" : "hsl(var(--card))",
-                color: a === ano ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
-                transition: "all 0.15s",
+                border: `1px solid ${a === ano ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
+                backgroundColor:
+                  a === ano ? "hsl(var(--primary) / 0.08)" : "transparent",
+                color: a === ano ? "hsl(var(--primary))" : "hsl(var(--text-body))",
+                fontFamily: "var(--font-sans)",
               }}
             >
               {a}
             </Link>
           ))}
-          <span style={{ marginLeft: "auto", fontSize: "0.75rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)" }}>
-            {total.toLocaleString("pt-BR")} parlamentares
-          </span>
         </div>
 
-        {/* Tabela */}
-        <div style={{ overflowX: "auto", border: "1px solid hsl(var(--border))" }}>
-          <table className="bloomberg-table">
-            <thead>
-              <tr>
-                <th style={{ width: "3rem" }}>#</th>
-                <th>Parlamentar</th>
-                <th style={{ textAlign: "right" }}>Empenhado</th>
-                <th style={{ textAlign: "right" }}>Pago</th>
-                <th style={{ textAlign: "right" }}>Execução</th>
-                <th style={{ textAlign: "right" }}>Emendas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row) => {
-                const p = row.parlamentares;
-                return (
-                  <tr key={p.id}>
-                    <td style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "hsl(var(--text-caption))" }}>
-                      {row.posicao}
-                    </td>
-                    <td>
-                      <Link
-                        href={`/ranking/${p.id}`}
-                        style={{ fontWeight: 600, color: "hsl(var(--text-headline))", textDecoration: "none", fontSize: "0.875rem" }}
+        {/* ── KPIs do ano ────────────────────────────────── */}
+        {totais && (
+          <div className="bloomberg-kpi-grid" style={{ marginBottom: "1.5rem" }}>
+            <Kpi
+              label="Total empenhado"
+              value={fmtBRLShort(totais.total_empenhado)}
+              sub={`${ano}`}
+            />
+            <Kpi
+              label="Total pago"
+              value={fmtBRLShort(totais.total_pago)}
+              sub={
+                totais.total_empenhado > 0
+                  ? `${Math.round((totais.total_pago / totais.total_empenhado) * 100)}% executado`
+                  : "—"
+              }
+            />
+            <Kpi
+              label="Parlamentares"
+              value={fmtNum(totais.parlamentares)}
+              sub="com emendas no ano"
+            />
+            <Kpi
+              label="Média por parlamentar"
+              value={fmtBRLShort(totais.media)}
+              sub={`${fmtNum(totais.total_emendas)} emendas`}
+            />
+          </div>
+        )}
+
+        {/* ── Tabela ─────────────────────────────────────── */}
+        {data.length === 0 ? (
+          <div
+            style={{
+              padding: "2.5rem 1.5rem",
+              textAlign: "center",
+              border: "1px dashed hsl(var(--border))",
+              borderRadius: "2px",
+              color: "hsl(var(--text-caption))",
+            }}
+          >
+            Sem dados de ranking para {ano}.
+          </div>
+        ) : (
+          <div className="bloomberg-card" style={{ padding: 0, overflow: "hidden" }}>
+            <table className="bloomberg-table" style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th style={{ width: "2.75rem", textAlign: "center" }}>#</th>
+                  <th>Parlamentar</th>
+                  <th style={{ textAlign: "right", width: "11rem" }}>Empenhado</th>
+                  <th style={{ textAlign: "right", width: "10rem" }}>Pago</th>
+                  <th style={{ textAlign: "right", width: "5rem" }}>Exec.</th>
+                  <th style={{ textAlign: "right", width: "5rem" }}>Emendas</th>
+                  <th style={{ width: "2rem" }} />
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((row, idx) => {
+                  const p = row.parlamentares;
+                  const nome = p.nome_parlamentar || p.nome;
+                  const pct = topEmp > 0 ? (row.valor_total / topEmp) * 100 : 0;
+                  const rankGlobal = (page - 1) * PER_PAGE + idx + 1;
+                  const exec = row.metricas.taxa_execucao;
+                  const execColor =
+                    exec >= 80
+                      ? "badge-success"
+                      : exec >= 50
+                      ? "badge-warn"
+                      : "badge-danger";
+                  const barColor =
+                    rankGlobal === 1
+                      ? "hsl(var(--accent))"
+                      : rankGlobal <= 5
+                      ? "hsl(var(--primary))"
+                      : "hsl(var(--text-caption))";
+                  const href = `/ranking/${p.id}`;
+                  const link = {
+                    display: "block",
+                    width: "100%",
+                    color: "inherit",
+                    textDecoration: "none",
+                  } as const;
+                  return (
+                    <tr key={p.id} style={{ cursor: "pointer" }}>
+                      <td
+                        style={{
+                          textAlign: "center",
+                          color: "hsl(var(--text-caption))",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.75rem",
+                          fontVariantNumeric: "tabular-nums",
+                        }}
                       >
-                        {p.nome_parlamentar || p.nome}
-                      </Link>
-                      <span style={{ display: "block", fontSize: "0.75rem", color: "hsl(var(--text-caption))", marginTop: "0.125rem", fontFamily: "var(--font-sans)" }}>
-                        {p.partido} · {p.uf} · {p.casa_legislativa === "senado" ? "Senado" : "Câmara"}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: "right", fontWeight: 600, fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "hsl(var(--text-headline))" }}>
-                      {fmtBRL(row.metricas.valor_empenhado)}
-                    </td>
-                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "hsl(var(--text-body))" }}>
-                      {fmtBRL(row.metricas.valor_pago)}
-                    </td>
-                    <td style={{ textAlign: "right" }}>
-                      {badgeExecucao(row.metricas.taxa_execucao)}
-                    </td>
-                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
-                      {row.metricas.total_emendas}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                        <Link href={href} style={link}>{rankGlobal}</Link>
+                      </td>
+                      <td>
+                        <Link href={href} style={link}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                            {p.foto_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={p.foto_url}
+                                alt={nome}
+                                width={32}
+                                height={32}
+                                loading="lazy"
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  objectFit: "cover",
+                                  flexShrink: 0,
+                                  border: "1px solid hsl(var(--border))",
+                                }}
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  width: "32px",
+                                  height: "32px",
+                                  borderRadius: "50%",
+                                  backgroundColor: "hsl(var(--muted))",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "0.75rem",
+                                  fontWeight: 600,
+                                  color: "hsl(var(--text-caption))",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {nome.charAt(0)}
+                              </div>
+                            )}
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                              <div
+                                style={{
+                                  fontSize: "0.875rem",
+                                  fontWeight: 600,
+                                  color: "hsl(var(--text-headline))",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  maxWidth: "22rem",
+                                }}
+                              >
+                                {nome}
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "0.375rem",
+                                  marginTop: "0.25rem",
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    fontSize: "0.6875rem",
+                                    color: "hsl(var(--text-caption))",
+                                    fontFamily: "var(--font-sans)",
+                                  }}
+                                >
+                                  {p.partido} · {p.uf} ·{" "}
+                                  {p.casa_legislativa === "senado" ? "Senado" : "Câmara"}
+                                </span>
+                              </div>
+                              {/* Barra proporcional ao topo */}
+                              <div
+                                style={{
+                                  marginTop: "0.4rem",
+                                  width: "10rem",
+                                  height: "3px",
+                                  borderRadius: "2px",
+                                  backgroundColor: "hsl(var(--border))",
+                                  overflow: "hidden",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: `${Math.min(pct, 100).toFixed(1)}%`,
+                                    height: "100%",
+                                    borderRadius: "2px",
+                                    backgroundColor: barColor,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      </td>
+                      <td
+                        style={{
+                          textAlign: "right",
+                          fontWeight: 700,
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.8125rem",
+                          color: "hsl(var(--text-headline))",
+                          fontVariantNumeric: "tabular-nums",
+                        }}
+                      >
+                        <Link href={href} style={link}>
+                          {fmtBRL(row.metricas.valor_empenhado)}
+                        </Link>
+                      </td>
+                      <td
+                        style={{
+                          textAlign: "right",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.75rem",
+                          color: "hsl(var(--text-body))",
+                          fontVariantNumeric: "tabular-nums",
+                        }}
+                      >
+                        <Link href={href} style={link}>
+                          {fmtBRL(row.metricas.valor_pago)}
+                        </Link>
+                      </td>
+                      <td style={{ textAlign: "right" }}>
+                        <Link href={href} style={link}>
+                          <span className={execColor} style={{ fontSize: "0.6875rem" }}>
+                            {exec}%
+                          </span>
+                        </Link>
+                      </td>
+                      <td
+                        style={{
+                          textAlign: "right",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.75rem",
+                          color: "hsl(var(--text-caption))",
+                          fontVariantNumeric: "tabular-nums",
+                        }}
+                      >
+                        <Link href={href} style={link}>
+                          {fmtNum(row.metricas.total_emendas)}
+                        </Link>
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <Link
+                          href={href}
+                          style={{
+                            color: "hsl(var(--primary))",
+                            fontWeight: 600,
+                            fontSize: "0.875rem",
+                            textDecoration: "none",
+                          }}
+                        >
+                          →
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        {/* Paginação */}
+        {/* ── Paginação ─────────────────────────────────── */}
         {totalPages > 1 && (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.25rem" }}>
-            <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)" }}>
-              Página {page} de {totalPages}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "1.25rem",
+              flexWrap: "wrap",
+              gap: "0.75rem",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.75rem",
+                color: "hsl(var(--text-caption))",
+                fontFamily: "var(--font-mono)",
+              }}
+            >
+              Página {page} de {totalPages} · {fmtNum(total)} parlamentares
             </span>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               {page > 1 && (
                 <Link
                   href={`/ranking?ano=${ano}&page=${page - 1}`}
-                  style={{ padding: "0.4rem 0.875rem", fontSize: "0.8125rem", fontWeight: 500, border: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--card))", color: "hsl(var(--text-body))", borderRadius: "2px", textDecoration: "none" }}
+                  style={{
+                    padding: "0.4rem 0.875rem",
+                    fontSize: "0.8125rem",
+                    fontWeight: 500,
+                    border: "1px solid hsl(var(--border))",
+                    backgroundColor: "hsl(var(--card))",
+                    color: "hsl(var(--text-body))",
+                    borderRadius: "2px",
+                    textDecoration: "none",
+                  }}
                 >
                   ← Anterior
                 </Link>
@@ -159,7 +451,15 @@ export default async function RankingPage({
               {page < totalPages && (
                 <Link
                   href={`/ranking?ano=${ano}&page=${page + 1}`}
-                  style={{ padding: "0.4rem 0.875rem", fontSize: "0.8125rem", fontWeight: 500, backgroundColor: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))", borderRadius: "2px", textDecoration: "none" }}
+                  style={{
+                    padding: "0.4rem 0.875rem",
+                    fontSize: "0.8125rem",
+                    fontWeight: 500,
+                    backgroundColor: "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
+                    borderRadius: "2px",
+                    textDecoration: "none",
+                  }}
                 >
                   Próxima →
                 </Link>
@@ -168,8 +468,16 @@ export default async function RankingPage({
           </div>
         )}
 
-        <p style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", marginTop: "2rem", fontFamily: "var(--font-mono)" }}>
-          Ranking por valor empenhado · Taxa de execução = valor pago / valor empenhado · Dados: Portal da Transparência
+        <p
+          style={{
+            fontSize: "0.75rem",
+            color: "hsl(var(--text-caption))",
+            marginTop: "1.5rem",
+            lineHeight: 1.6,
+          }}
+        >
+          Ranking por valor empenhado. Taxa de execução = valor pago / valor empenhado.
+          Fonte: Portal da Transparência do Governo Federal. Valores em R$ nominais.
         </p>
       </div>
     </>

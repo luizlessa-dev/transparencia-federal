@@ -166,6 +166,49 @@ export async function getCobertura(): Promise<CoberturaStats> {
 }
 
 /**
+ * Estatísticas agregadas do ranking do ano (totais + máximo).
+ * Lê toda a tabela do ano (594 linhas cabe em 1 query).
+ */
+export interface RankingTotais {
+  total_empenhado: number;
+  total_pago: number;
+  total_emendas: number;
+  parlamentares: number;
+  media: number;
+  top_empenhado: number;
+}
+
+export async function getRankingTotais(ano: number): Promise<RankingTotais | null> {
+  if (!ANOS_VALIDOS.includes(ano)) return null;
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("ranking_parlamentar")
+    .select("valor_total, metricas")
+    .eq("ano", ano)
+    .order("valor_total", { ascending: false })
+    .limit(1000);
+  if (error || !data || data.length === 0) return null;
+
+  let totalEmp = 0;
+  let totalPago = 0;
+  let totalEmendas = 0;
+  for (const r of data as { valor_total: number; metricas: { valor_pago?: number; total_emendas?: number } }[]) {
+    totalEmp += Number(r.valor_total) || 0;
+    totalPago += Number(r.metricas?.valor_pago) || 0;
+    totalEmendas += Number(r.metricas?.total_emendas) || 0;
+  }
+  const parlamentares = data.length;
+  return {
+    total_empenhado: totalEmp,
+    total_pago: totalPago,
+    total_emendas: totalEmendas,
+    parlamentares,
+    media: parlamentares > 0 ? totalEmp / parlamentares : 0,
+    top_empenhado: Number((data[0] as { valor_total: number }).valor_total) || 0,
+  };
+}
+
+/**
  * Pega top N parlamentares por valor empenhado no ano informado.
  * Tenta o ano pedido; se vier vazio, faz fallback para o ano anterior.
  */

@@ -163,6 +163,36 @@ export async function getTopEmendasParlamentar(
   return (data ?? []) as EmendaCompleta[];
 }
 
+/**
+ * Lista todas as emendas de um parlamentar (até `limit`) para
+ * agregações em memória (KPIs, por tipo, por ano, por função, etc.).
+ * Pagina internamente para superar o limite de 1000 do Supabase.
+ */
+export async function getEmendasParlamentarFull(
+  autorNome: string,
+  limit = 2000
+): Promise<EmendaCompleta[]> {
+  const sb = getSupabase();
+  const PAGE = 1000;
+  const out: EmendaCompleta[] = [];
+
+  for (let offset = 0; offset < limit; offset += PAGE) {
+    const to = Math.min(offset + PAGE - 1, limit - 1);
+    const { data, error } = await sb
+      .from("emendas_completas")
+      .select("*")
+      .ilike("autor_nome", `%${autorNome}%`)
+      .order("ano", { ascending: false })
+      .order("valor_empenhado", { ascending: false })
+      .range(offset, to);
+    if (error) throw error;
+    const rows = (data ?? []) as EmendaCompleta[];
+    out.push(...rows);
+    if (rows.length < PAGE) break;
+  }
+  return out;
+}
+
 export async function getEmendasListing(
   ano: number,
   page: number,
