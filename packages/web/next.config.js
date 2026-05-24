@@ -8,8 +8,8 @@ const nextConfig = {
       { protocol: "https", hostname: "www.camara.gov.br" },
     ],
   },
-  // Roteamento por subdomínio (radar.*, almg.*, etc.) é feito via middleware.ts.
-  // Não há rewrites aqui para evitar conflito com o matcher do middleware.
+  // Roteamento por subdomínio (radar.*, almg.*, alesp.*, alerj.*) é feito via proxy.ts.
+  // Não há rewrites aqui para evitar conflito com o matcher do proxy.
 
   // Canonical: www.transparenciafederal.com
   // .org e apex .com → 301 pra www.com

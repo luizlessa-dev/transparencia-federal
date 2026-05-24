@@ -52,7 +52,10 @@ function segmentForHost(host: string | null): string | null {
   return HOST_SEGMENT[host.toLowerCase()] ?? null;
 }
 
-export async function middleware(request: NextRequest) {
+// Next.js 16 renomeou a convenção `middleware` pra `proxy` — mesma semântica:
+// roda em todas as requests (filtradas por `config.matcher`) antes do
+// route handler. Anteriormente em packages/web/middleware.ts.
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const segment = segmentForHost(request.headers.get("host"));
 
