@@ -33,20 +33,14 @@ export const metadata = {
     siteName: "Transparência Federal",
     type: "website",
     locale: "pt_BR",
-    images: [
-      {
-        url: "/og-default.png",
-        width: 1200,
-        height: 630,
-        alt: "Transparência Federal — Dados do Congresso Nacional",
-      },
-    ],
+    // images: gerado dinamicamente por app/opengraph-image.tsx (federal)
+    //        e por app/{almg,alesp,alerj}/opengraph-image.tsx (estaduais)
   },
   twitter: {
     card: "summary_large_image",
     title: "Transparência Federal",
     description: "Dados públicos do Congresso Nacional em um único lugar",
-    images: ["/og-default.png"],
+    // images: o Next.js usa automaticamente o opengraph-image como twitter:image
   },
 };
 
