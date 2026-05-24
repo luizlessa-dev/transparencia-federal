@@ -8,7 +8,7 @@ interface Props {
   searchParams: Promise<{ ano?: string; page?: string }>;
 }
 
-const ANOS = [2023, 2024, 2025];
+const ANOS = [2026, 2025, 2024, 2023];
 
 function fmtBRL(valor: number) {
   return new Intl.NumberFormat("pt-BR", {
@@ -26,7 +26,7 @@ export function generateMetadata() {
   return {
     title: "Despesas de Gabinete — Câmara dos Deputados — Transparência Federal",
     description:
-      "Ranking dos deputados federais com maiores gastos da CEAP (Cota para Exercício da Atividade Parlamentar). Dados de 2023 a 2025.",
+      "Ranking dos deputados federais com maiores gastos da CEAP (Cota para Exercício da Atividade Parlamentar). Dados de 2023 a 2026.",
   };
 }
 
