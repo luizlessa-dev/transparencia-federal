@@ -88,9 +88,15 @@ export async function getDespesasFiltrosDisponiveis(
 
   const partidos = new Set<string>();
   const ufs = new Set<string>();
-  for (const r of (data ?? []) as unknown as Array<{ deputados_brutas: { sigla_partido: string | null; sigla_uf: string | null } }>) {
-    if (r.deputados_brutas?.sigla_partido) partidos.add(r.deputados_brutas.sigla_partido);
-    if (r.deputados_brutas?.sigla_uf) ufs.add(r.deputados_brutas.sigla_uf);
+  // Supabase devolve `deputados_brutas` como array quando usa join via
+  // `select("deputados_brutas!inner(...)")` — mesmo em relações 1:1 que
+  // visualmente parecem retornar objeto. Normalizamos via Array.isArray
+  // pra suportar ambos os formatos (defensivo contra mudanças do supabase-js).
+  type DepRow = { sigla_partido: string | null; sigla_uf: string | null };
+  for (const r of (data ?? []) as unknown as Array<{ deputados_brutas: DepRow | DepRow[] | null }>) {
+    const dep = Array.isArray(r.deputados_brutas) ? r.deputados_brutas[0] : r.deputados_brutas;
+    if (dep?.sigla_partido) partidos.add(dep.sigla_partido);
+    if (dep?.sigla_uf) ufs.add(dep.sigla_uf);
   }
   return {
     partidos: Array.from(partidos).sort(),
@@ -118,29 +124,72 @@ export interface CeapNota {
 /**
  * Lista todas as notas fiscais (CEAP) de um deputado, paginando internamente
  * para passar do limite de 1000 do Supabase. Usado pra agregações no detalhe.
+ *
+ * Fonte: `ceaps_brutas` (atualizada até 2026, ~570k linhas). A tabela legada
+ * `despesas_gabinete_raw` foi abandonada em 2025 — não tem dados de 2026.
  */
 export async function getCeapNotas(
   deputadoId: string,
-  limit = 2500
+  limit = 3000
 ): Promise<CeapNota[]> {
   const sb = getSupabase();
   const PAGE = 1000;
   const out: CeapNota[] = [];
 
+  type CeapsBrutasRow = {
+    id: string;
+    deputado_id_externo: string;
+    ano: number;
+    tipo_despesa: string | null;
+    valor_documento: number | null;
+    valor_liquido: number | null;
+    valor_glosa: number | null;
+    nome_fornecedor: string | null;
+    cnpj_cpf_fornecedor: string | null;
+    url_documento: string | null;
+    cod_documento: string | null;
+    data_documento: string | null;
+  };
+
   for (let offset = 0; offset < limit; offset += PAGE) {
     const to = Math.min(offset + PAGE - 1, limit - 1);
     const { data, error } = await sb
-      .from("despesas_gabinete_raw")
+      .from("ceaps_brutas")
       .select(
-        "id, parlamentar_uid, deputado_id, ano, mes, tipo_despesa, valor, valor_liquido, valor_glosa, fornecedor, cnpj_cpf, url_documento, num_documento, data_documento"
+        "id, deputado_id_externo, ano, tipo_despesa, valor_documento, valor_liquido, valor_glosa, nome_fornecedor, cnpj_cpf_fornecedor, url_documento, cod_documento, data_documento"
       )
-      .eq("deputado_id", deputadoId)
+      .eq("deputado_id_externo", deputadoId)
       .order("data_documento", { ascending: false, nullsFirst: false })
       .order("valor_liquido", { ascending: false })
       .range(offset, to);
     if (error) throw error;
-    const rows = (data ?? []) as CeapNota[];
-    out.push(...rows);
+
+    const rows = (data ?? []) as CeapsBrutasRow[];
+
+    // Mapeia colunas de ceaps_brutas pra interface CeapNota.
+    // Mês extraído da data_documento (ceaps_brutas não tem coluna mes).
+    for (const r of rows) {
+      const mes = r.data_documento
+        ? parseInt(r.data_documento.slice(5, 7), 10) || 0
+        : 0;
+      out.push({
+        id: r.id,
+        parlamentar_uid: null,
+        deputado_id: r.deputado_id_externo,
+        ano: r.ano,
+        mes,
+        tipo_despesa: r.tipo_despesa ?? "",
+        valor: Number(r.valor_documento) || 0,
+        valor_liquido: Number(r.valor_liquido) || 0,
+        valor_glosa: Number(r.valor_glosa) || 0,
+        fornecedor: r.nome_fornecedor,
+        cnpj_cpf: r.cnpj_cpf_fornecedor,
+        url_documento: r.url_documento,
+        num_documento: r.cod_documento,
+        data_documento: r.data_documento,
+      });
+    }
+
     if (rows.length < PAGE) break;
   }
   return out;
