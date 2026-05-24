@@ -79,7 +79,8 @@ export async function listarParlamentares(): Promise<Parlamentar[]> {
 export async function getRanking(
   ano: number,
   page: number,
-  perPage = 50
+  perPage = 50,
+  filters?: { search?: string; partido?: string; uf?: string }
 ): Promise<{ data: RankingEntry[]; total: number }> {
   if (!ANOS_VALIDOS.includes(ano)) return { data: [], total: 0 };
 
@@ -87,14 +88,31 @@ export async function getRanking(
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
 
-  const { data, error, count } = await sb
+  let query = sb
     .from("ranking_parlamentar")
     .select(
       `posicao, valor_total, metricas, ano,
        parlamentares!inner(id, nome, nome_parlamentar, partido, uf, foto_url, casa_legislativa)`,
       { count: "exact" }
     )
-    .eq("ano", ano)
+    .eq("ano", ano);
+
+  // Filtros aplicados na tabela joined (PostgREST)
+  if (filters?.partido) {
+    query = query.eq("parlamentares.partido", filters.partido);
+  }
+  if (filters?.uf) {
+    query = query.eq("parlamentares.uf", filters.uf);
+  }
+  if (filters?.search) {
+    // Busca em ambos nome e nome_parlamentar (parlamentares têm os dois).
+    query = query.or(
+      `nome_parlamentar.ilike.%${filters.search}%,nome.ilike.%${filters.search}%`,
+      { referencedTable: "parlamentares" }
+    );
+  }
+
+  const { data, error, count } = await query
     .order("posicao")
     .range(from, to);
 
@@ -178,13 +196,30 @@ export interface RankingTotais {
   top_empenhado: number;
 }
 
-export async function getRankingTotais(ano: number): Promise<RankingTotais | null> {
+export async function getRankingTotais(
+  ano: number,
+  filters?: { search?: string; partido?: string; uf?: string }
+): Promise<RankingTotais | null> {
   if (!ANOS_VALIDOS.includes(ano)) return null;
   const sb = getSupabase();
-  const { data, error } = await sb
+
+  let query = sb
     .from("ranking_parlamentar")
-    .select("valor_total, metricas")
-    .eq("ano", ano)
+    .select(
+      "valor_total, metricas, parlamentares!inner(partido, uf, nome, nome_parlamentar)"
+    )
+    .eq("ano", ano);
+
+  if (filters?.partido) query = query.eq("parlamentares.partido", filters.partido);
+  if (filters?.uf) query = query.eq("parlamentares.uf", filters.uf);
+  if (filters?.search) {
+    query = query.or(
+      `nome_parlamentar.ilike.%${filters.search}%,nome.ilike.%${filters.search}%`,
+      { referencedTable: "parlamentares" }
+    );
+  }
+
+  const { data, error } = await query
     .order("valor_total", { ascending: false })
     .limit(1000);
   if (error || !data || data.length === 0) return null;
@@ -205,6 +240,35 @@ export async function getRankingTotais(ano: number): Promise<RankingTotais | nul
     parlamentares,
     media: parlamentares > 0 ? totalEmp / parlamentares : 0,
     top_empenhado: Number((data[0] as { valor_total: number }).valor_total) || 0,
+  };
+}
+
+/**
+ * Lista distinct de partidos/UFs no ranking do ano,
+ * via JOIN inner com parlamentares. Usado pra montar dropdowns.
+ */
+export async function getRankingFiltros(
+  ano: number
+): Promise<{ partidos: string[]; ufs: string[] }> {
+  if (!ANOS_VALIDOS.includes(ano)) return { partidos: [], ufs: [] };
+  const sb = getSupabase();
+  const { data } = await sb
+    .from("ranking_parlamentar")
+    .select("parlamentares!inner(partido, uf)")
+    .eq("ano", ano)
+    .limit(1000);
+
+  const partidos = new Set<string>();
+  const ufs = new Set<string>();
+  type DepRow = { partido: string | null; uf: string | null };
+  for (const r of (data ?? []) as unknown as Array<{ parlamentares: DepRow | DepRow[] | null }>) {
+    const dep = Array.isArray(r.parlamentares) ? r.parlamentares[0] : r.parlamentares;
+    if (dep?.partido) partidos.add(dep.partido);
+    if (dep?.uf) ufs.add(dep.uf);
+  }
+  return {
+    partidos: Array.from(partidos).sort(),
+    ufs: Array.from(ufs).sort(),
   };
 }
 

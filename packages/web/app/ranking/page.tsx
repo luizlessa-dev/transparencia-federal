@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { getRanking, getRankingTotais } from "~/services/ranking";
+import { getRanking, getRankingTotais, getRankingFiltros } from "~/services/ranking";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Ranking de Emendas — Transparência Federal",
   description:
-    "Parlamentares ordenados por valor total de emendas empenhadas no orçamento federal. Clique para ver detalhamento por tipo, ano, função e cada emenda individual.",
+    "Parlamentares ordenados por valor total de emendas empenhadas no orçamento federal. Busque por nome, filtre por partido e UF, e clique para ver detalhamento por tipo, ano, função e cada emenda individual.",
 };
 
 const ANOS = [2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015];
@@ -15,6 +15,9 @@ const PER_PAGE = 50;
 interface SearchParams {
   ano?: string;
   page?: string;
+  search?: string;
+  partido?: string;
+  uf?: string;
 }
 
 function fmtBRL(valor: number) {
@@ -54,13 +57,68 @@ export default async function RankingPage({
   const params = await searchParams;
   const ano = ANOS.includes(Number(params.ano)) ? Number(params.ano) : 2025;
   const page = Math.max(1, Number(params.page ?? 1));
+  const search = params.search?.trim() || undefined;
+  const partido = params.partido?.trim().toUpperCase() || undefined;
+  const uf = params.uf?.trim().toUpperCase() || undefined;
+  const temFiltro = !!(search || partido || uf);
 
-  const [{ data, total }, totais] = await Promise.all([
-    getRanking(ano, page, PER_PAGE),
-    getRankingTotais(ano),
+  const [{ data, total }, totais, filtros] = await Promise.all([
+    getRanking(ano, page, PER_PAGE, { search, partido, uf }),
+    getRankingTotais(ano, { search, partido, uf }),
+    getRankingFiltros(ano),
   ]);
   const totalPages = Math.ceil(total / PER_PAGE);
   const topEmp = totais?.top_empenhado ?? data[0]?.valor_total ?? 1;
+
+  function buildUrl(overrides: Record<string, string | undefined>) {
+    const p = new URLSearchParams();
+    p.set("ano", String(ano));
+    if (search) p.set("search", search);
+    if (partido) p.set("partido", partido);
+    if (uf) p.set("uf", uf);
+    p.set("page", "1");
+    for (const [k, v] of Object.entries(overrides)) {
+      if (v === undefined || v === "") p.delete(k);
+      else p.set(k, v);
+    }
+    return `/ranking?${p}`;
+  }
+
+  const selectStyle: React.CSSProperties = {
+    padding: "0.5rem 0.625rem",
+    fontSize: "0.8125rem",
+    fontFamily: "var(--font-sans)",
+    color: "hsl(var(--text-headline))",
+    backgroundColor: "hsl(var(--surface))",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "2px",
+    cursor: "pointer",
+    minWidth: "8rem",
+  };
+
+  const btnPrimary: React.CSSProperties = {
+    padding: "0.5rem 1rem",
+    fontSize: "0.8125rem",
+    fontWeight: 600,
+    color: "hsl(var(--primary-foreground))",
+    backgroundColor: "hsl(var(--primary))",
+    border: "none",
+    borderRadius: "2px",
+    cursor: "pointer",
+    fontFamily: "var(--font-sans)",
+  };
+
+  const btnSecondary: React.CSSProperties = {
+    padding: "0.5rem 0.875rem",
+    fontSize: "0.75rem",
+    color: "hsl(var(--text-body))",
+    backgroundColor: "transparent",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "2px",
+    textDecoration: "none",
+    fontFamily: "var(--font-sans)",
+    display: "inline-block",
+  };
 
   return (
     <>
@@ -104,50 +162,79 @@ export default async function RankingPage({
       </section>
 
       <div className="container" style={{ padding: "1.5rem 1.5rem 4rem", maxWidth: "1080px" }}>
-        {/* ── Filtros de ano ─────────────────────────────── */}
-        <div
+        {/* ── Barra unificada de filtros (form GET — server-side) ─── */}
+        <form
+          action="/ranking"
+          method="GET"
           style={{
-            display: "flex",
-            gap: "0.375rem",
-            marginBottom: "1.25rem",
-            flexWrap: "wrap",
+            display: "grid",
+            gridTemplateColumns: "1fr auto auto auto auto auto",
+            gap: "0.5rem",
             alignItems: "center",
+            padding: "0.5rem",
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "2px",
+            marginBottom: "1.25rem",
           }}
         >
-          <span
-            style={{
-              fontSize: "0.6875rem",
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              color: "hsl(var(--text-caption))",
-              fontFamily: "var(--font-sans)",
-              marginRight: "0.25rem",
-            }}
-          >
-            Ano:
-          </span>
-          {ANOS.map((a) => (
-            <Link
-              key={a}
-              href={`/ranking?ano=${a}`}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0 0.5rem", minWidth: 0 }}>
+            <span style={{ fontSize: "1rem", color: "hsl(var(--text-caption))" }} aria-hidden="true">🔎</span>
+            <input
+              type="search"
+              name="search"
+              defaultValue={search ?? ""}
+              placeholder="Buscar por nome (ex.: Erika Hilton, Lira, Pacheco)"
+              aria-label="Buscar parlamentar por nome"
               style={{
-                padding: "0.3rem 0.75rem",
-                fontSize: "0.8125rem",
-                fontWeight: a === ano ? 700 : 500,
-                textDecoration: "none",
-                borderRadius: "2px",
-                border: `1px solid ${a === ano ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
-                backgroundColor:
-                  a === ano ? "hsl(var(--primary) / 0.08)" : "transparent",
-                color: a === ano ? "hsl(var(--primary))" : "hsl(var(--text-body))",
+                flex: 1,
+                minWidth: 0,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                fontSize: "0.875rem",
+                color: "hsl(var(--text-headline))",
+                padding: "0.5rem 0",
                 fontFamily: "var(--font-sans)",
               }}
-            >
-              {a}
-            </Link>
-          ))}
-        </div>
+            />
+          </div>
+
+          <select name="ano" defaultValue={String(ano)} aria-label="Filtrar por ano" style={selectStyle}>
+            {ANOS.map((a) => (
+              <option key={a} value={a}>{a}</option>
+            ))}
+          </select>
+
+          <select name="partido" defaultValue={partido ?? ""} aria-label="Filtrar por partido" style={selectStyle}>
+            <option value="">Todos partidos</option>
+            {filtros.partidos.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+
+          <select name="uf" defaultValue={uf ?? ""} aria-label="Filtrar por UF" style={selectStyle}>
+            <option value="">Todas UFs</option>
+            {filtros.ufs.map((u) => (
+              <option key={u} value={u}>{u}</option>
+            ))}
+          </select>
+
+          <button type="submit" style={btnPrimary}>Filtrar</button>
+
+          {temFiltro ? (
+            <Link href={`/ranking?ano=${ano}`} style={btnSecondary}>Limpar</Link>
+          ) : (
+            <span />
+          )}
+        </form>
+
+        {temFiltro && (
+          <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", marginBottom: "1rem", fontFamily: "var(--font-sans)" }}>
+            Mostrando <strong style={{ color: "hsl(var(--text-headline))" }}>{fmtNum(total)}</strong>{" "}
+            {total === 1 ? "parlamentar" : "parlamentares"} com filtros aplicados.
+          </p>
+        )}
 
         {/* ── KPIs do ano ────────────────────────────────── */}
         {totais && (
@@ -190,7 +277,9 @@ export default async function RankingPage({
               color: "hsl(var(--text-caption))",
             }}
           >
-            Sem dados de ranking para {ano}.
+            {temFiltro
+              ? `Nenhum parlamentar encontrado com esses filtros em ${ano}.`
+              : `Sem dados de ranking para ${ano}.`}
           </div>
         ) : (
           <div className="bloomberg-card" style={{ padding: 0, overflow: "hidden" }}>
@@ -433,7 +522,7 @@ export default async function RankingPage({
             <div style={{ display: "flex", gap: "0.5rem" }}>
               {page > 1 && (
                 <Link
-                  href={`/ranking?ano=${ano}&page=${page - 1}`}
+                  href={buildUrl({ page: String(page - 1) })}
                   style={{
                     padding: "0.4rem 0.875rem",
                     fontSize: "0.8125rem",
@@ -450,7 +539,7 @@ export default async function RankingPage({
               )}
               {page < totalPages && (
                 <Link
-                  href={`/ranking?ano=${ano}&page=${page + 1}`}
+                  href={buildUrl({ page: String(page + 1) })}
                   style={{
                     padding: "0.4rem 0.875rem",
                     fontSize: "0.8125rem",
