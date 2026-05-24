@@ -97,6 +97,24 @@ export default async function VotacaoDetailPage({ params, searchParams }: Props)
   const total      = todosVotos.length;
   const disciplina = calcularDisciplina(todosVotos, orientacoes);
 
+  // Recomputa placar dos votos individuais — fonte da verdade
+  // (a coluna agregada plen_votacoes.votos_* às vezes está desatualizada).
+  const placar = {
+    sim: 0,
+    nao: 0,
+    abstencao: 0,
+    obstrucao: 0,
+    artigo17: 0,
+  };
+  for (const v of todosVotos) {
+    if (v.tipo_voto === "Sim") placar.sim++;
+    else if (v.tipo_voto === "Não") placar.nao++;
+    else if (v.tipo_voto === "Abstenção") placar.abstencao++;
+    else if (v.tipo_voto === "Obstrução") placar.obstrucao++;
+    else if (v.tipo_voto === "Art. 17") placar.artigo17++;
+  }
+  const temPlacar = total > 0;
+
   function buildUrl(overrides: Record<string, string | undefined>) {
     const p = new URLSearchParams();
     if (sp.partido) p.set("partido", sp.partido);
@@ -133,8 +151,14 @@ export default async function VotacaoDetailPage({ params, searchParams }: Props)
                     </span>
                   )}
                   {votacao.descricao
-                    ? votacao.descricao.length > 90 ? votacao.descricao.slice(0, 90) + "…" : votacao.descricao
-                    : "Votação sem descrição"}
+                    ? votacao.descricao.length > 90
+                      ? votacao.descricao.slice(0, 90) + "…"
+                      : votacao.descricao
+                    : votacao.proposicao_autora
+                    ? <span style={{ fontStyle: "italic", color: "hsl(var(--text-caption))" }}>
+                        (descrição não disponível na API)
+                      </span>
+                    : "Item procedimental"}
                 </h1>
               </div>
               <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", margin: 0, fontFamily: "var(--font-sans)" }}>
@@ -171,37 +195,59 @@ export default async function VotacaoDetailPage({ params, searchParams }: Props)
       <div className="container" style={{ padding: "1.5rem 1.5rem 3rem" }}>
 
         {/* ── Placar KPIs ───────────────────────────────────────────────── */}
-        <div className="bloomberg-kpi-grid" style={{ marginBottom: "1.25rem" }}>
-          {[
-            { label: "Sim",       val: votacao.votos_sim,       color: "hsl(var(--success))"      },
-            { label: "Não",       val: votacao.votos_nao,       color: "hsl(var(--danger))"       },
-            { label: "Abstenção", val: votacao.votos_abstencao, color: "hsl(var(--warn))"         },
-            { label: "Obstrução", val: votacao.votos_obstrucao, color: "hsl(var(--text-caption))" },
-          ].map(({ label, val, color }) => (
-            <div key={label} className="bloomberg-kpi">
-              <span className="bloomberg-kpi-label">{label}</span>
-              <span className="bloomberg-kpi-value" style={{ color: val > 0 ? color : undefined }}>
-                {fmtNum(val)}
-              </span>
-              <span className="bloomberg-kpi-sub">
-                {total > 0 ? `${Math.round((val / total) * 100)}% dos votos` : "—"}
-              </span>
+        {temPlacar ? (
+          <>
+            <div className="bloomberg-kpi-grid" style={{ marginBottom: "1.25rem" }}>
+              {[
+                { label: "Sim",       val: placar.sim,       color: "hsl(var(--success))"      },
+                { label: "Não",       val: placar.nao,       color: "hsl(var(--danger))"       },
+                { label: "Abstenção", val: placar.abstencao, color: "hsl(var(--warn))"         },
+                { label: "Obstrução", val: placar.obstrucao, color: "hsl(var(--text-caption))" },
+              ].map(({ label, val, color }) => (
+                <div key={label} className="bloomberg-kpi">
+                  <span className="bloomberg-kpi-label">{label}</span>
+                  <span className="bloomberg-kpi-value" style={{ color: val > 0 ? color : undefined }}>
+                    {fmtNum(val)}
+                  </span>
+                  <span className="bloomberg-kpi-sub">
+                    {total > 0 ? `${Math.round((val / total) * 100)}% dos votos` : "—"}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Barra visual do placar */}
-        {total > 0 && (
-          <div style={{ display: "flex", height: "10px", borderRadius: "2px", overflow: "hidden", marginBottom: "2rem", border: "1px solid hsl(var(--border))" }}>
-            {[
-              { val: votacao.votos_sim,       color: "hsl(var(--success))"      },
-              { val: votacao.votos_nao,       color: "hsl(var(--danger))"       },
-              { val: votacao.votos_abstencao, color: "hsl(var(--warn))"         },
-              { val: votacao.votos_obstrucao, color: "hsl(var(--text-caption))" },
-              { val: votacao.votos_artigo17,  color: "hsl(var(--border))"       },
-            ].map(({ val, color }, i) =>
-              val > 0 ? <div key={i} style={{ flex: val, backgroundColor: color }} title={`${val}`} /> : null
-            )}
+            {/* Barra visual do placar */}
+            <div style={{ display: "flex", height: "10px", borderRadius: "2px", overflow: "hidden", marginBottom: "2rem", border: "1px solid hsl(var(--border))" }}>
+              {[
+                { val: placar.sim,       color: "hsl(var(--success))"      },
+                { val: placar.nao,       color: "hsl(var(--danger))"       },
+                { val: placar.abstencao, color: "hsl(var(--warn))"         },
+                { val: placar.obstrucao, color: "hsl(var(--text-caption))" },
+                { val: placar.artigo17,  color: "hsl(var(--border))"       },
+              ].map(({ val, color }, i) =>
+                val > 0 ? <div key={i} style={{ flex: val, backgroundColor: color }} title={`${val}`} /> : null
+              )}
+            </div>
+          </>
+        ) : (
+          <div
+            style={{
+              padding: "1.25rem 1.5rem",
+              marginBottom: "2rem",
+              border: "1px dashed hsl(var(--border))",
+              borderRadius: "2px",
+              backgroundColor: "hsl(var(--surface))",
+              fontSize: "0.875rem",
+              color: "hsl(var(--text-body))",
+              lineHeight: 1.55,
+            }}
+          >
+            <strong style={{ color: "hsl(var(--text-headline))" }}>Sem placar nominal.</strong>{" "}
+            {votacao.aprovacao === 1
+              ? "Aprovação simbólica — o regimento permite que decisões consensuais sejam aprovadas sem contagem individual de votos."
+              : votacao.aprovacao === 0
+              ? "Rejeição simbólica — sem contagem individual de votos."
+              : "Item de procedimento (encerramento de discussão, requerimento de adiamento, etc.) — não houve votação nominal."}
           </div>
         )}
 

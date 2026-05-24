@@ -24,10 +24,35 @@ function BadgeResultado({ aprovacao }: { aprovacao: number | null }) {
   return <span className="badge-neutral">PROCEDURAL</span>;
 }
 
-function PlacarMini({ sim, nao, outros }: { sim: number; nao: number; outros: number }) {
+function PlacarMini({
+  sim,
+  nao,
+  outros,
+  aprovacao,
+}: {
+  sim: number;
+  nao: number;
+  outros: number;
+  aprovacao: number | null;
+}) {
   const total = sim + nao + outros;
-  if (total === 0)
-    return <span style={{ color: "hsl(var(--text-caption))", fontSize: "0.75rem" }}>—</span>;
+  if (total === 0) {
+    // Votação com resultado declarado mas sem placar nominal = simbólica.
+    // Sem aprovacao + sem placar = procedural (não houve votação contada).
+    const txt = aprovacao === null ? "—" : "simbólica";
+    return (
+      <span
+        style={{ color: "hsl(var(--text-caption))", fontSize: "0.6875rem", fontStyle: "italic" }}
+        title={
+          aprovacao === null
+            ? "Sem placar nominal registrado"
+            : "Aprovação simbólica — sem contagem individual de votos"
+        }
+      >
+        {txt}
+      </span>
+    );
+  }
   return (
     <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
       <span style={{ color: "hsl(var(--success))" }}>{sim}S</span>
@@ -234,8 +259,18 @@ export default async function VotingPage({ searchParams }: Props) {
                       <td style={{ fontSize: "0.8125rem", lineHeight: 1.45, maxWidth: "28rem" }}>
                         <Link href={href} style={{ ...cellLink, color: "hsl(var(--text-body))" }}>
                           {v.descricao
-                            ? v.descricao.length > 100 ? v.descricao.slice(0, 100) + "…" : v.descricao
-                            : <span style={{ color: "hsl(var(--text-caption))" }}>Sem descrição</span>}
+                            ? v.descricao.length > 100
+                              ? v.descricao.slice(0, 100) + "…"
+                              : v.descricao
+                            : v.proposicao_autora ? (
+                              <span style={{ color: "hsl(var(--text-caption))", fontStyle: "italic" }}>
+                                Votação sobre {v.proposicao_autora}
+                              </span>
+                            ) : (
+                              <span style={{ color: "hsl(var(--text-caption))", fontStyle: "italic" }}>
+                                Item procedimental
+                              </span>
+                            )}
                         </Link>
                       </td>
                       <td>
@@ -249,6 +284,7 @@ export default async function VotingPage({ searchParams }: Props) {
                             sim={v.votos_sim}
                             nao={v.votos_nao}
                             outros={v.votos_abstencao + v.votos_obstrucao + v.votos_artigo17}
+                            aprovacao={v.aprovacao}
                           />
                         </Link>
                       </td>
