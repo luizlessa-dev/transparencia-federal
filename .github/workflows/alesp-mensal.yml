@@ -1,0 +1,134 @@
+name: ALESP — Ingestão Mensal
+
+# O XML da ALESP (`despesas_gabinetes.xml`, ~170 MB) é cumulativo e
+# atualizado diariamente. Roda dia 5 de cada mês pegando o MÊS ANTERIOR
+# (despesas finalizadas) e o MÊS CORRENTE (parciais), garantindo
+# robustez contra publicação tardia de despesas do mês anterior.
+#
+# Exemplo: rodando em 05/jun/2026 → ingere mai/2026 + jun/2026.
+
+on:
+  schedule:
+    # Dia 5 de cada mês às 13:00 UTC (10:00 BRT) — 1h após o ALMG
+    # pra evitar concorrência no mesmo Supabase.
+    - cron: "0 13 5 * *"
+
+  workflow_dispatch:
+    inputs:
+      ano:
+        description: "Ano a ingerir (ex: 2026). Vazio = ano atual."
+        required: false
+        default: ""
+      meses:
+        description: "Meses a ingerir, separados por espaço (ex: '5 6'). Vazio = mês anterior + corrente."
+        required: false
+        default: ""
+      modo:
+        description: "Modo de execução"
+        type: choice
+        required: false
+        default: "normal"
+        options:
+          - normal          # mês anterior + corrente (ou explícitos)
+          - reprocessar     # idempotente; ignora duplicatas
+
+jobs:
+  ingerir:
+    name: Ingerir despesas de gabinete ALESP
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Calcular ano/meses a ingerir
+        id: periodo
+        run: |
+          INPUT_ANO="${{ github.event.inputs.ano }}"
+          INPUT_MESES="${{ github.event.inputs.meses }}"
+
+          if [ -n "$INPUT_ANO" ]; then
+            ANO_ATUAL="$INPUT_ANO"
+            ANO_PREV="$INPUT_ANO"
+          else
+            ANO_ATUAL=$(date +%Y)
+            ANO_PREV=$ANO_ATUAL
+          fi
+
+          if [ -n "$INPUT_MESES" ]; then
+            MESES_ATUAL="$INPUT_MESES"
+            MESES_PREV=""
+            echo "Meses explícitos: $MESES_ATUAL (ano $ANO_ATUAL)"
+          else
+            CURRENT_MES=$(date +%-m)
+            CURRENT_ANO=$(date +%Y)
+            if [ "$CURRENT_MES" -eq 1 ]; then
+              # Janeiro: roda dezembro/ano-1 (separado) + janeiro/ano-atual
+              MESES_PREV="12"
+              ANO_PREV=$((CURRENT_ANO - 1))
+              MESES_ATUAL="1"
+            else
+              # Mês anterior + corrente no mesmo ano
+              PREV_MES=$((CURRENT_MES - 1))
+              MESES_PREV=""
+              MESES_ATUAL="$PREV_MES $CURRENT_MES"
+            fi
+            echo "Período automático: anterior=$ANO_PREV/$MESES_PREV · atual=$ANO_ATUAL/$MESES_ATUAL"
+          fi
+
+          echo "ano_atual=$ANO_ATUAL"     >> "$GITHUB_OUTPUT"
+          echo "meses_atual=$MESES_ATUAL" >> "$GITHUB_OUTPUT"
+          echo "ano_prev=$ANO_PREV"       >> "$GITHUB_OUTPUT"
+          echo "meses_prev=$MESES_PREV"   >> "$GITHUB_OUTPUT"
+          if [ -n "$MESES_PREV" ]; then
+            echo "label=$ANO_PREV/[$MESES_PREV] + $ANO_ATUAL/[$MESES_ATUAL]" >> "$GITHUB_OUTPUT"
+          else
+            echo "label=$ANO_ATUAL/[$MESES_ATUAL]" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Atualizar lista de deputados
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run ingestao-alesp:deputados
+
+      - name: Ingerir mês anterior (se cruzar ano)
+        if: steps.periodo.outputs.meses_prev != ''
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          npm run ingestao-alesp:incremental -- \
+            ${{ steps.periodo.outputs.ano_prev }} \
+            ${{ steps.periodo.outputs.meses_prev }}
+
+      - name: Ingerir despesas — ${{ steps.periodo.outputs.label }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          npm run ingestao-alesp:incremental -- \
+            ${{ steps.periodo.outputs.ano_atual }} \
+            ${{ steps.periodo.outputs.meses_atual }}
+
+      - name: Resumo no log
+        if: always()
+        run: |
+          echo "### ALESP Ingestão — ${{ steps.periodo.outputs.label }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Campo | Valor |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Período | ${{ steps.periodo.outputs.label }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Modo | ${{ github.event.inputs.modo || 'normal (schedule)' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Trigger | ${{ github.event_name }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Fonte: \`despesas_gabinetes.xml\` (download → /tmp → stream saxes)." >> "$GITHUB_STEP_SUMMARY"
+          echo "Idempotente via UNIQUE constraint em (parlamentar_id, ano, mes, num_documento, cnpj_cpf, categoria, valor_bruto)." >> "$GITHUB_STEP_SUMMARY"
