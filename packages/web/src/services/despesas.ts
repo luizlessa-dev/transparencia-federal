@@ -56,6 +56,54 @@ export async function getDespesasRanking(
   return { data: (data ?? []) as unknown as DespesaRankingEntry[], total: count ?? 0 };
 }
 
+export interface CeapNota {
+  id: string;
+  parlamentar_uid: string | null;
+  deputado_id: string;
+  ano: number;
+  mes: number;
+  tipo_despesa: string;
+  valor: number;
+  valor_liquido: number;
+  valor_glosa: number;
+  fornecedor: string | null;
+  cnpj_cpf: string | null;
+  url_documento: string | null;
+  num_documento: string | null;
+  data_documento: string | null;
+}
+
+/**
+ * Lista todas as notas fiscais (CEAP) de um deputado, paginando internamente
+ * para passar do limite de 1000 do Supabase. Usado pra agregações no detalhe.
+ */
+export async function getCeapNotas(
+  deputadoId: string,
+  limit = 2500
+): Promise<CeapNota[]> {
+  const sb = getSupabase();
+  const PAGE = 1000;
+  const out: CeapNota[] = [];
+
+  for (let offset = 0; offset < limit; offset += PAGE) {
+    const to = Math.min(offset + PAGE - 1, limit - 1);
+    const { data, error } = await sb
+      .from("despesas_gabinete_raw")
+      .select(
+        "id, parlamentar_uid, deputado_id, ano, mes, tipo_despesa, valor, valor_liquido, valor_glosa, fornecedor, cnpj_cpf, url_documento, num_documento, data_documento"
+      )
+      .eq("deputado_id", deputadoId)
+      .order("data_documento", { ascending: false, nullsFirst: false })
+      .order("valor_liquido", { ascending: false })
+      .range(offset, to);
+    if (error) throw error;
+    const rows = (data ?? []) as CeapNota[];
+    out.push(...rows);
+    if (rows.length < PAGE) break;
+  }
+  return out;
+}
+
 export async function getDespesaDeputado(
   id: string
 ): Promise<DespesaDeputadoDetalhe | null> {
