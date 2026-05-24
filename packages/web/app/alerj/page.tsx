@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic"; // layout precisa de headers() pra resolver host do subdomínio
 
 export default function AlerjLandingPage() {
   return (

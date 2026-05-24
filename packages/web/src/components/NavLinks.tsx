@@ -2,30 +2,45 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { SiteNavLink } from "~/lib/site-config";
 
-const NAV = [
-  { label: "Parlamentares", href: "/parlamentares" },
-  { label: "Ranking", href: "/ranking" },
-  { label: "Orç. Secreto", href: "/rp9" },
-  { label: "Emendas", href: "/amendments" },
-  { label: "Despesas", href: "/expenses" },
-  { label: "Financiamento", href: "/funding" },
-  { label: "CEAPS Senado", href: "/senate-expenses" },
-  { label: "Votações", href: "/voting" },
-  { label: "Proposições", href: "/proposicoes" },
-  { label: "Risco", href: "/risco" },
-  { label: "Frentes", href: "/frentes" },
-  { label: "Planos", href: "/planos" },
-  { label: "Sobre", href: "/about" },
-];
+interface Props {
+  items: SiteNavLink[];
+}
 
-export function NavLinks() {
+export function NavLinks({ items }: Props) {
   const pathname = usePathname();
 
   return (
-    <nav style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-      {NAV.map((item) => {
-        const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+    <nav style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexWrap: "wrap" }}>
+      {items.map((item) => {
+        // Links externos não destacam por pathname
+        if (item.external) {
+          return (
+            <a
+              key={item.href}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                padding: "0.5rem 0.875rem",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "hsl(var(--text-body))",
+                borderRadius: "2px",
+                textDecoration: "none",
+                backgroundColor: "transparent",
+              }}
+            >
+              {item.label}
+            </a>
+          );
+        }
+
+        const active =
+          pathname === item.href ||
+          (item.href !== "/" && pathname.startsWith(item.href));
+
         return (
           <Link
             key={item.href}

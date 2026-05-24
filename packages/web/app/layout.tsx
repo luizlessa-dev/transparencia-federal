@@ -4,6 +4,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { headers } from "next/headers";
 import { NavLinks } from "~/components/NavLinks";
 import { AuthButton } from "~/components/AuthButton";
+import { getSiteConfigForHost } from "~/lib/site-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -44,33 +45,11 @@ export const metadata = {
   },
 };
 
-const FOOTER_COLS = [
-  {
-    label: "Explorar",
-    links: [
-      { label: "Score de Risco", href: "/risco" },
-      { label: "Frentes Parlamentares", href: "/frentes" },
-      { label: "Ranking Nacional", href: "/ranking" },
-      { label: "Emendas Parlamentares", href: "/amendments" },
-      { label: "Gastos de Gabinete", href: "/expenses" },
-      { label: "Planos", href: "/planos" },
-      { label: "Sobre o Projeto", href: "/about" },
-    ],
-  },
-  {
-    label: "Fontes de Dados",
-    links: [
-      { label: "Portal da Transparência", href: "https://portaldatransparencia.gov.br", external: true },
-      { label: "Câmara dos Deputados", href: "https://dadosabertos.camara.leg.br", external: true },
-      { label: "Senado Federal", href: "https://legis.senado.leg.br/dadosabertos", external: true },
-    ],
-  },
-];
-
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const h    = await headers();
   const host = h.get("host") ?? "";
   const isRadar = host.startsWith("radar.");
+  const site = getSiteConfigForHost(host);
 
   return (
     <html
@@ -119,21 +98,21 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                   flexShrink: 0,
                 }}
               >
-                TF
+                {site.badge}
               </div>
               <div style={{ display: "none" }} className="sm:block">
                 <div style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.15em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)" }}>
-                  Observatório
+                  {site.kicker}
                 </div>
                 <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "hsl(var(--text-headline))", fontFamily: "var(--font-display)", letterSpacing: "-0.01em" }}>
-                  Transparência Federal
+                  {site.shortName}
                 </div>
               </div>
             </Link>
 
             {/* Nav */}
             <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
-              <NavLinks />
+              <NavLinks items={site.nav} />
               <AuthButton />
             </div>
           </div>
@@ -158,19 +137,19 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                     backgroundColor: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))",
                     fontSize: "0.75rem", fontWeight: 700,
                   }}>
-                    TF
+                    {site.badge}
                   </div>
                   <span style={{ fontSize: "0.875rem", fontWeight: 700, fontFamily: "var(--font-display)", color: "hsl(var(--text-headline))" }}>
-                    Transparência Federal
+                    {site.shortName}
                   </span>
                 </div>
-                <p style={{ fontSize: "0.75rem", lineHeight: 1.6, color: "hsl(var(--text-caption))", maxWidth: "13rem" }}>
-                  Dados públicos sobre o Congresso Nacional, organizados para você.
+                <p style={{ fontSize: "0.75rem", lineHeight: 1.6, color: "hsl(var(--text-caption))", maxWidth: "16rem" }}>
+                  {site.tagline}
                 </p>
               </div>
 
               {/* Colunas de links */}
-              {FOOTER_COLS.map((col) => (
+              {site.footer.map((col) => (
                 <div key={col.label}>
                   <p style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.15em", color: "hsl(var(--primary))", marginBottom: "0.75rem" }}>
                     {col.label}
@@ -208,10 +187,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <div style={{ borderTop: "1px solid hsl(var(--border))" }}>
             <div className="container" style={{ padding: "0.75rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <p style={{ fontSize: "0.625rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)" }}>
-                Lei de Acesso à Informação · Lei nº 12.527/2011
+                {site.copyLeft}
               </p>
               <p style={{ fontSize: "0.625rem", color: "hsl(var(--text-caption))" }}>
-                Dados: Portal da Transparência · Câmara dos Deputados
+                {site.copyRight}
               </p>
             </div>
           </div>
