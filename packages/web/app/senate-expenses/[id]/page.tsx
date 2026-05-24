@@ -7,6 +7,7 @@ import {
   ANOS_CEAPS_SENADO,
   type CeapsSenadoNota,
 } from "~/services/ceaps-senado";
+import { NotasSenadoTable } from "./NotasSenadoTable";
 
 export const dynamic = "force-dynamic";
 
@@ -430,67 +431,17 @@ export default async function SenateExpensesSenadorPage({ params, searchParams }
               </div>
             )}
 
-            {/* Tabela detalhada de notas */}
+            {/* Tabela detalhada de notas (expansíveis) */}
             <div className="bloomberg-card" style={{ padding: 0, overflow: "hidden" }}>
               <div style={{ padding: "1rem 1.25rem 0.75rem" }}>
                 <h3 style={{ ...sectionTitle, margin: 0 }}>
                   Notas fiscais{" "}
                   <span style={{ fontWeight: 400, color: "hsl(var(--text-caption))" }}>
-                    ({fmtN(totalNotas)} registros · ordenado por data desc)
+                    ({fmtN(totalNotas)} registros · clique em uma linha pra abrir o detalhe)
                   </span>
                 </h3>
               </div>
-              <div style={{ overflowX: "auto" }}>
-                <table className="bloomberg-table" style={{ width: "100%", minWidth: "960px" }}>
-                  <thead>
-                    <tr>
-                      <th>Data</th>
-                      <th>Fornecedor</th>
-                      <th>CNPJ/CPF</th>
-                      <th>Doc</th>
-                      <th>Categoria</th>
-                      <th>Detalhamento</th>
-                      <th style={{ textAlign: "right" }}>Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {notas.slice(0, 500).map((n) => (
-                      <tr key={n.id}>
-                        <td style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
-                          {fmtData(n.data)}
-                        </td>
-                        <td
-                          style={{ fontSize: "0.8125rem", maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                          title={n.fornecedor ?? ""}
-                        >
-                          {n.fornecedor || "—"}
-                        </td>
-                        <td style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))", whiteSpace: "nowrap" }}>
-                          {fmtCNPJ(n.cnpj_cpf)}
-                        </td>
-                        <td style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))" }}>
-                          {n.documento || "—"}
-                        </td>
-                        <td
-                          style={{ fontSize: "0.75rem", color: "hsl(var(--text-body))", maxWidth: "160px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                          title={n.tipo_despesa ?? ""}
-                        >
-                          {n.tipo_despesa || "—"}
-                        </td>
-                        <td
-                          style={{ fontSize: "0.75rem", color: "hsl(var(--text-body))", maxWidth: "220px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                          title={n.detalhamento ?? ""}
-                        >
-                          {n.detalhamento || "—"}
-                        </td>
-                        <td style={{ textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
-                          {fmtBRL(n.valor_reembolsado)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <NotasSenadoTable notas={notas} limit={500} />
               {totalNotas > 500 && (
                 <p
                   style={{
