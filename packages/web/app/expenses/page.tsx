@@ -67,17 +67,41 @@ export default async function ExpensesPage({ searchParams }: Props) {
     return `/expenses?${params}`;
   }
 
-  const chipStyle = (active: boolean) => ({
-    padding: "0.25rem 0.625rem",
-    fontSize: "0.75rem",
-    fontWeight: active ? 700 : 500,
+  const selectStyle: React.CSSProperties = {
+    padding: "0.5rem 0.625rem",
+    fontSize: "0.8125rem",
     fontFamily: "var(--font-sans)",
-    color: active ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
-    backgroundColor: active ? "hsl(var(--primary))" : "hsl(var(--surface))",
-    border: `1px solid ${active ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
+    color: "hsl(var(--text-headline))",
+    backgroundColor: "hsl(var(--surface))",
+    border: "1px solid hsl(var(--border))",
     borderRadius: "2px",
-    textDecoration: "none" as const,
-  });
+    cursor: "pointer",
+    minWidth: "8rem",
+  };
+
+  const btnPrimary: React.CSSProperties = {
+    padding: "0.5rem 1rem",
+    fontSize: "0.8125rem",
+    fontWeight: 600,
+    color: "hsl(var(--primary-foreground))",
+    backgroundColor: "hsl(var(--primary))",
+    border: "none",
+    borderRadius: "2px",
+    cursor: "pointer",
+    fontFamily: "var(--font-sans)",
+  };
+
+  const btnSecondary: React.CSSProperties = {
+    padding: "0.5rem 0.875rem",
+    fontSize: "0.75rem",
+    color: "hsl(var(--text-body))",
+    backgroundColor: "transparent",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "2px",
+    textDecoration: "none",
+    fontFamily: "var(--font-sans)",
+    display: "inline-block",
+  };
 
   return (
     <>
@@ -99,140 +123,91 @@ export default async function ExpensesPage({ searchParams }: Props) {
 
       <div className="container" style={{ padding: "1.5rem 1.5rem 3rem" }}>
 
-        {/* Busca por nome (form GET — server-side) */}
+        {/* Barra unificada de filtros (form GET — server-side) */}
         <form
           action="/expenses"
           method="GET"
           style={{
-            display: "flex",
-            alignItems: "center",
+            display: "grid",
+            gridTemplateColumns: "1fr auto auto auto auto auto",
             gap: "0.5rem",
-            padding: "0.5rem 0.75rem",
+            alignItems: "center",
+            padding: "0.5rem",
             backgroundColor: "hsl(var(--card))",
             border: "1px solid hsl(var(--border))",
             borderRadius: "2px",
-            marginBottom: "0.75rem",
+            marginBottom: "1.25rem",
           }}
         >
-          <input type="hidden" name="ano" value={String(ano)} />
-          {partido && <input type="hidden" name="partido" value={partido} />}
-          {uf && <input type="hidden" name="uf" value={uf} />}
-          <span style={{ fontSize: "1rem", color: "hsl(var(--text-caption))" }} aria-hidden="true">🔎</span>
-          <input
-            type="search"
-            name="search"
-            defaultValue={search ?? ""}
-            placeholder="Buscar por nome (ex.: Erika Hilton, Bolsonaro, Lira)"
-            aria-label="Buscar deputado por nome"
-            style={{
-              flex: 1,
-              background: "transparent",
-              border: "none",
-              outline: "none",
-              fontSize: "0.9375rem",
-              color: "hsl(var(--text-headline))",
-              padding: "0.5rem 0",
-            }}
-          />
-          <button
-            type="submit"
-            style={{
-              padding: "0.4rem 0.875rem",
-              fontSize: "0.8125rem",
-              fontWeight: 600,
-              color: "hsl(var(--primary-foreground))",
-              backgroundColor: "hsl(var(--primary))",
-              border: "none",
-              borderRadius: "2px",
-              cursor: "pointer",
-            }}
-          >
-            Buscar
-          </button>
-          {temFiltro && (
-            <Link
-              href={`/expenses?ano=${ano}`}
+          {/* Busca por nome */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0 0.5rem", minWidth: 0 }}>
+            <span style={{ fontSize: "1rem", color: "hsl(var(--text-caption))" }} aria-hidden="true">🔎</span>
+            <input
+              type="search"
+              name="search"
+              defaultValue={search ?? ""}
+              placeholder="Buscar por nome (ex.: Erika Hilton, Lira)"
+              aria-label="Buscar deputado por nome"
               style={{
-                padding: "0.4rem 0.75rem",
-                fontSize: "0.75rem",
-                color: "hsl(var(--text-body))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "2px",
-                textDecoration: "none",
+                flex: 1,
+                minWidth: 0,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                fontSize: "0.875rem",
+                color: "hsl(var(--text-headline))",
+                padding: "0.5rem 0",
+                fontFamily: "var(--font-sans)",
               }}
-            >
-              Limpar
-            </Link>
+            />
+          </div>
+
+          {/* Ano */}
+          <select
+            name="ano"
+            defaultValue={String(ano)}
+            aria-label="Filtrar por ano"
+            style={selectStyle}
+          >
+            {ANOS.map((a) => (
+              <option key={a} value={a}>{a}</option>
+            ))}
+          </select>
+
+          {/* Partido */}
+          <select
+            name="partido"
+            defaultValue={partido ?? ""}
+            aria-label="Filtrar por partido"
+            style={selectStyle}
+          >
+            <option value="">Todos partidos</option>
+            {filtros.partidos.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+
+          {/* UF */}
+          <select
+            name="uf"
+            defaultValue={uf ?? ""}
+            aria-label="Filtrar por estado"
+            style={selectStyle}
+          >
+            <option value="">Todas UFs</option>
+            {filtros.ufs.map((u) => (
+              <option key={u} value={u}>{u}</option>
+            ))}
+          </select>
+
+          <button type="submit" style={btnPrimary}>Filtrar</button>
+
+          {temFiltro ? (
+            <Link href={`/expenses?ano=${ano}`} style={btnSecondary}>Limpar</Link>
+          ) : (
+            <span />
           )}
         </form>
-
-        {/* Filtros de ano */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
-          <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", marginRight: "0.25rem" }}>
-            Ano:
-          </span>
-          {ANOS.map((a) => (
-            <Link
-              key={a}
-              href={`/expenses?ano=${a}${search ? `&search=${encodeURIComponent(search)}` : ""}${partido ? `&partido=${partido}` : ""}${uf ? `&uf=${uf}` : ""}`}
-              style={{
-                padding: "0.3rem 0.75rem",
-                fontSize: "0.8125rem",
-                fontWeight: a === ano ? 700 : 500,
-                fontFamily: "var(--font-mono)",
-                color: a === ano ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
-                backgroundColor: a === ano ? "hsl(var(--primary))" : "hsl(var(--surface))",
-                border: `1px solid ${a === ano ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
-                borderRadius: "2px",
-                textDecoration: "none",
-              }}
-            >
-              {a}
-            </Link>
-          ))}
-        </div>
-
-        {/* Chips Partido */}
-        {filtros.partidos.length > 0 && (
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.375rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", paddingTop: "0.3rem", marginRight: "0.25rem" }}>
-              Partido:
-            </span>
-            {filtros.partidos.map((p) => {
-              const active = partido === p;
-              return (
-                <Link
-                  key={p}
-                  href={buildUrl({ partido: active ? undefined : p })}
-                  style={chipStyle(active)}
-                >
-                  {p}
-                </Link>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Chips UF */}
-        {filtros.ufs.length > 0 && (
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.375rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", paddingTop: "0.3rem", marginRight: "0.25rem" }}>
-              UF:
-            </span>
-            {filtros.ufs.map((u) => {
-              const active = uf === u;
-              return (
-                <Link
-                  key={u}
-                  href={buildUrl({ uf: active ? undefined : u })}
-                  style={chipStyle(active)}
-                >
-                  {u}
-                </Link>
-              );
-            })}
-          </div>
-        )}
 
         {/* Contador de resultados quando filtrado */}
         {temFiltro && (

@@ -1,10 +1,21 @@
 import Link from "next/link";
-import { getCeapsSenadorListing, getCeapsSenadorStats, ANOS_CEAPS_SENADO } from "~/services/ceaps-senado";
+import {
+  getCeapsSenadorListing,
+  getCeapsSenadorStats,
+  getCeapsSenadoFiltros,
+  ANOS_CEAPS_SENADO,
+} from "~/services/ceaps-senado";
 
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: Promise<{ ano?: string; page?: string }>;
+  searchParams: Promise<{
+    ano?: string;
+    page?: string;
+    search?: string;
+    partido?: string;
+    uf?: string;
+  }>;
 }
 
 function fmtBRL(v: number) {
@@ -15,15 +26,10 @@ function fmtN(n: number) {
   return new Intl.NumberFormat("pt-BR").format(n);
 }
 
-function buildUrl(ano: number, page: number) {
-  const qs = [`ano=${ano}`, `page=${page}`].join("&");
-  return `/senate-expenses?${qs}`;
-}
-
 export function generateMetadata() {
   return {
-    title: "CEAPS — Despesas dos Senadores — Transparência Federal",
-    description: "Ranking de gastos com a Cota para o Exercício da Atividade Parlamentar dos Senadores (CEAPS). Dados de 2019 a 2025.",
+    title: "CEAP — Despesas dos Senadores — Transparência Federal",
+    description: "Ranking de gastos com a Cota para o Exercício da Atividade Parlamentar dos Senadores. Dados de 2019 a 2026, com busca por nome e filtros de partido e UF.",
   };
 }
 
@@ -32,13 +38,68 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
   const ano = ANOS_CEAPS_SENADO.includes(Number(sp.ano)) ? Number(sp.ano) : 2025;
   const page = Math.max(1, Number(sp.page ?? 1));
   const PER_PAGE = 50;
+  const search = sp.search?.trim() || undefined;
+  const partido = sp.partido?.trim().toUpperCase() || undefined;
+  const uf = sp.uf?.trim().toUpperCase() || undefined;
+  const temFiltro = !!(search || partido || uf);
 
-  const [{ data, total }, stats] = await Promise.all([
-    getCeapsSenadorListing(ano, page, PER_PAGE),
+  const [{ data, total }, stats, filtros] = await Promise.all([
+    getCeapsSenadorListing(ano, page, PER_PAGE, { search, partido, uf }),
     getCeapsSenadorStats(ano),
+    getCeapsSenadoFiltros(),
   ]);
 
   const totalPages = Math.ceil(total / PER_PAGE);
+
+  function buildUrl(overrides: Record<string, string | undefined>) {
+    const params = new URLSearchParams();
+    params.set("ano", String(ano));
+    if (search) params.set("search", search);
+    if (partido) params.set("partido", partido);
+    if (uf) params.set("uf", uf);
+    params.set("page", "1");
+    for (const [k, v] of Object.entries(overrides)) {
+      if (v === undefined || v === "") params.delete(k);
+      else params.set(k, v);
+    }
+    return `/senate-expenses?${params}`;
+  }
+
+  const selectStyle: React.CSSProperties = {
+    padding: "0.5rem 0.625rem",
+    fontSize: "0.8125rem",
+    fontFamily: "var(--font-sans)",
+    color: "hsl(var(--text-headline))",
+    backgroundColor: "hsl(var(--surface))",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "2px",
+    cursor: "pointer",
+    minWidth: "8rem",
+  };
+
+  const btnPrimary: React.CSSProperties = {
+    padding: "0.5rem 1rem",
+    fontSize: "0.8125rem",
+    fontWeight: 600,
+    color: "hsl(var(--primary-foreground))",
+    backgroundColor: "hsl(var(--primary))",
+    border: "none",
+    borderRadius: "2px",
+    cursor: "pointer",
+    fontFamily: "var(--font-sans)",
+  };
+
+  const btnSecondary: React.CSSProperties = {
+    padding: "0.5rem 0.875rem",
+    fontSize: "0.75rem",
+    color: "hsl(var(--text-body))",
+    backgroundColor: "transparent",
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "2px",
+    textDecoration: "none",
+    fontFamily: "var(--font-sans)",
+    display: "inline-block",
+  };
 
   return (
     <>
@@ -88,15 +149,79 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
           </div>
         )}
 
-        {/* Filtro de Ano */}
-        <div style={{ display: "flex", gap: "0.375rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-          {ANOS_CEAPS_SENADO.map((a) => (
-            <Link key={a} href={buildUrl(a, 1)}
-              style={{ padding: "0.3rem 0.625rem", fontSize: "0.75rem", fontFamily: "var(--font-mono)", fontWeight: a === ano ? 600 : 400, color: a === ano ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))", backgroundColor: a === ano ? "hsl(var(--primary))" : "transparent", border: `1px solid ${a === ano ? "hsl(var(--primary))" : "hsl(var(--border))"}`, borderRadius: "2px", textDecoration: "none" }}>
-              {a}
-            </Link>
-          ))}
-        </div>
+        {/* Barra unificada de filtros (form GET — server-side) */}
+        <form
+          action="/senate-expenses"
+          method="GET"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr auto auto auto auto auto",
+            gap: "0.5rem",
+            alignItems: "center",
+            padding: "0.5rem",
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "2px",
+            marginBottom: "1.25rem",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0 0.5rem", minWidth: 0 }}>
+            <span style={{ fontSize: "1rem", color: "hsl(var(--text-caption))" }} aria-hidden="true">🔎</span>
+            <input
+              type="search"
+              name="search"
+              defaultValue={search ?? ""}
+              placeholder="Buscar senador por nome (ex.: Renan, Gleisi, Otto)"
+              aria-label="Buscar senador por nome"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                fontSize: "0.875rem",
+                color: "hsl(var(--text-headline))",
+                padding: "0.5rem 0",
+                fontFamily: "var(--font-sans)",
+              }}
+            />
+          </div>
+
+          <select name="ano" defaultValue={String(ano)} aria-label="Filtrar por ano" style={selectStyle}>
+            {ANOS_CEAPS_SENADO.map((a) => (
+              <option key={a} value={a}>{a}</option>
+            ))}
+          </select>
+
+          <select name="partido" defaultValue={partido ?? ""} aria-label="Filtrar por partido" style={selectStyle}>
+            <option value="">Todos partidos</option>
+            {filtros.partidos.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+
+          <select name="uf" defaultValue={uf ?? ""} aria-label="Filtrar por estado" style={selectStyle}>
+            <option value="">Todas UFs</option>
+            {filtros.ufs.map((u) => (
+              <option key={u} value={u}>{u}</option>
+            ))}
+          </select>
+
+          <button type="submit" style={btnPrimary}>Filtrar</button>
+
+          {temFiltro ? (
+            <Link href={`/senate-expenses?ano=${ano}`} style={btnSecondary}>Limpar</Link>
+          ) : (
+            <span />
+          )}
+        </form>
+
+        {temFiltro && (
+          <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", marginBottom: "1rem", fontFamily: "var(--font-sans)" }}>
+            Mostrando <strong style={{ color: "hsl(var(--text-headline))" }}>{fmtN(total)}</strong>{" "}
+            {total === 1 ? "senador" : "senadores"} com filtros aplicados.
+          </p>
+        )}
 
         {/* Tabela */}
         <div style={{ overflowX: "auto" }}>
@@ -115,7 +240,9 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
               {data.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ textAlign: "center", padding: "3rem", color: "hsl(var(--text-caption))" }}>
-                    Dados de {ano} ainda não disponíveis ou sendo processados.
+                    {temFiltro
+                      ? `Nenhum senador encontrado com esses filtros em ${ano}.`
+                      : `Dados de ${ano} ainda não disponíveis ou sendo processados.`}
                   </td>
                 </tr>
               ) : (
@@ -135,8 +262,39 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
                         <Link href={href} style={link}>{s.posicao ?? ((page - 1) * PER_PAGE + i + 1)}</Link>
                       </td>
                       <td>
-                        <Link href={href} style={{ ...link, fontWeight: 600, color: "hsl(var(--text-headline))", fontSize: "0.875rem" }}>
-                          {s.senador}
+                        <Link href={href} style={{ ...link, color: "inherit" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                            {s.foto_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={s.foto_url}
+                                alt={s.senador}
+                                width={28}
+                                height={28}
+                                loading="lazy"
+                                style={{
+                                  width: "28px",
+                                  height: "28px",
+                                  borderRadius: "50%",
+                                  objectFit: "cover",
+                                  flexShrink: 0,
+                                  border: "1px solid hsl(var(--border))",
+                                }}
+                              />
+                            ) : (
+                              <div style={{ width: "28px", height: "28px", borderRadius: "50%", backgroundColor: "hsl(var(--muted))", flexShrink: 0 }} />
+                            )}
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontWeight: 600, color: "hsl(var(--text-headline))", fontSize: "0.875rem" }}>
+                                {s.senador}
+                              </div>
+                              {(s.sigla_partido || s.sigla_uf) && (
+                                <div style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", marginTop: "0.125rem" }}>
+                                  {[s.sigla_partido, s.sigla_uf].filter(Boolean).join(" · ")}
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </Link>
                       </td>
                       <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: 600, color: "hsl(var(--text-headline))", fontSize: "0.875rem", fontVariantNumeric: "tabular-nums" }}>
@@ -165,7 +323,7 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
         {totalPages > 1 && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginTop: "2rem" }}>
             {page > 1 && (
-              <Link href={buildUrl(ano, page - 1)}
+              <Link href={buildUrl({ page: String(page - 1) })}
                 style={{ padding: "0.4rem 0.875rem", fontSize: "0.8125rem", backgroundColor: "hsl(var(--surface))", border: "1px solid hsl(var(--border))", borderRadius: "2px", textDecoration: "none", color: "hsl(var(--text-body))", fontFamily: "var(--font-mono)" }}>
                 ← Anterior
               </Link>
@@ -174,7 +332,7 @@ export default async function SenateExpensesPage({ searchParams }: Props) {
               {fmtN((page - 1) * PER_PAGE + 1)}–{fmtN(Math.min(page * PER_PAGE, total))} de {fmtN(total)}
             </span>
             {page < totalPages && (
-              <Link href={buildUrl(ano, page + 1)}
+              <Link href={buildUrl({ page: String(page + 1) })}
                 style={{ padding: "0.4rem 0.875rem", fontSize: "0.8125rem", backgroundColor: "hsl(var(--surface))", border: "1px solid hsl(var(--border))", borderRadius: "2px", textDecoration: "none", color: "hsl(var(--text-body))", fontFamily: "var(--font-mono)" }}>
                 Próxima →
               </Link>
