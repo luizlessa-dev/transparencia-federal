@@ -1,11 +1,17 @@
 import Link from "next/link";
-import { getDespesasRanking } from "~/services/despesas";
+import { getDespesasRanking, getDespesasFiltrosDisponiveis } from "~/services/despesas";
 
 
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: Promise<{ ano?: string; page?: string }>;
+  searchParams: Promise<{
+    ano?: string;
+    page?: string;
+    search?: string;
+    partido?: string;
+    uf?: string;
+  }>;
 }
 
 const ANOS = [2026, 2025, 2024, 2023];
@@ -35,9 +41,43 @@ export default async function ExpensesPage({ searchParams }: Props) {
   const ano = ANOS.includes(Number(sp.ano)) ? Number(sp.ano) : 2025;
   const page = Math.max(1, Number(sp.page ?? 1));
   const PER_PAGE = 50;
+  const search = sp.search?.trim() || undefined;
+  const partido = sp.partido?.trim().toUpperCase() || undefined;
+  const uf = sp.uf?.trim().toUpperCase() || undefined;
 
-  const { data, total } = await getDespesasRanking(ano, page, PER_PAGE);
+  const [{ data, total }, filtros] = await Promise.all([
+    getDespesasRanking(ano, page, PER_PAGE, { search, partido, uf }),
+    getDespesasFiltrosDisponiveis(ano),
+  ]);
   const totalPages = Math.ceil(total / PER_PAGE);
+  const temFiltro = !!(search || partido || uf);
+
+  // Constrói URL preservando filtros, sobrescrevendo overrides
+  function buildUrl(overrides: Record<string, string | undefined>) {
+    const params = new URLSearchParams();
+    params.set("ano", String(ano));
+    if (search) params.set("search", search);
+    if (partido) params.set("partido", partido);
+    if (uf) params.set("uf", uf);
+    params.set("page", "1");
+    for (const [k, v] of Object.entries(overrides)) {
+      if (v === undefined || v === "") params.delete(k);
+      else params.set(k, v);
+    }
+    return `/expenses?${params}`;
+  }
+
+  const chipStyle = (active: boolean) => ({
+    padding: "0.25rem 0.625rem",
+    fontSize: "0.75rem",
+    fontWeight: active ? 700 : 500,
+    fontFamily: "var(--font-sans)",
+    color: active ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
+    backgroundColor: active ? "hsl(var(--primary))" : "hsl(var(--surface))",
+    border: `1px solid ${active ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
+    borderRadius: "2px",
+    textDecoration: "none" as const,
+  });
 
   return (
     <>
@@ -59,17 +99,86 @@ export default async function ExpensesPage({ searchParams }: Props) {
 
       <div className="container" style={{ padding: "1.5rem 1.5rem 3rem" }}>
 
+        {/* Busca por nome (form GET — server-side) */}
+        <form
+          action="/expenses"
+          method="GET"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.5rem 0.75rem",
+            backgroundColor: "hsl(var(--card))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "2px",
+            marginBottom: "0.75rem",
+          }}
+        >
+          <input type="hidden" name="ano" value={String(ano)} />
+          {partido && <input type="hidden" name="partido" value={partido} />}
+          {uf && <input type="hidden" name="uf" value={uf} />}
+          <span style={{ fontSize: "1rem", color: "hsl(var(--text-caption))" }} aria-hidden="true">🔎</span>
+          <input
+            type="search"
+            name="search"
+            defaultValue={search ?? ""}
+            placeholder="Buscar por nome (ex.: Erika Hilton, Bolsonaro, Lira)"
+            aria-label="Buscar deputado por nome"
+            style={{
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontSize: "0.9375rem",
+              color: "hsl(var(--text-headline))",
+              padding: "0.5rem 0",
+            }}
+          />
+          <button
+            type="submit"
+            style={{
+              padding: "0.4rem 0.875rem",
+              fontSize: "0.8125rem",
+              fontWeight: 600,
+              color: "hsl(var(--primary-foreground))",
+              backgroundColor: "hsl(var(--primary))",
+              border: "none",
+              borderRadius: "2px",
+              cursor: "pointer",
+            }}
+          >
+            Buscar
+          </button>
+          {temFiltro && (
+            <Link
+              href={`/expenses?ano=${ano}`}
+              style={{
+                padding: "0.4rem 0.75rem",
+                fontSize: "0.75rem",
+                color: "hsl(var(--text-body))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "2px",
+                textDecoration: "none",
+              }}
+            >
+              Limpar
+            </Link>
+          )}
+        </form>
+
         {/* Filtros de ano */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem" }}>
-          <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", marginRight: "0.25rem" }}>Ano:</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
+          <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", marginRight: "0.25rem" }}>
+            Ano:
+          </span>
           {ANOS.map((a) => (
             <Link
               key={a}
-              href={`/expenses?ano=${a}&page=1`}
+              href={`/expenses?ano=${a}${search ? `&search=${encodeURIComponent(search)}` : ""}${partido ? `&partido=${partido}` : ""}${uf ? `&uf=${uf}` : ""}`}
               style={{
-                padding: "0.375rem 0.875rem",
+                padding: "0.3rem 0.75rem",
                 fontSize: "0.8125rem",
-                fontWeight: a === ano ? 600 : 400,
+                fontWeight: a === ano ? 700 : 500,
                 fontFamily: "var(--font-mono)",
                 color: a === ano ? "hsl(var(--primary-foreground))" : "hsl(var(--text-body))",
                 backgroundColor: a === ano ? "hsl(var(--primary))" : "hsl(var(--surface))",
@@ -82,6 +191,66 @@ export default async function ExpensesPage({ searchParams }: Props) {
             </Link>
           ))}
         </div>
+
+        {/* Chips Partido */}
+        {filtros.partidos.length > 0 && (
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.375rem", marginBottom: "0.5rem", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", paddingTop: "0.3rem", marginRight: "0.25rem" }}>
+              Partido:
+            </span>
+            {filtros.partidos.map((p) => {
+              const active = partido === p;
+              return (
+                <Link
+                  key={p}
+                  href={buildUrl({ partido: active ? undefined : p })}
+                  style={chipStyle(active)}
+                >
+                  {p}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Chips UF */}
+        {filtros.ufs.length > 0 && (
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "0.375rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)", paddingTop: "0.3rem", marginRight: "0.25rem" }}>
+              UF:
+            </span>
+            {filtros.ufs.map((u) => {
+              const active = uf === u;
+              return (
+                <Link
+                  key={u}
+                  href={buildUrl({ uf: active ? undefined : u })}
+                  style={chipStyle(active)}
+                >
+                  {u}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Contador de resultados quando filtrado */}
+        {temFiltro && (
+          <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", marginBottom: "1rem", fontFamily: "var(--font-sans)" }}>
+            Mostrando <strong style={{ color: "hsl(var(--text-headline))" }}>{fmtN(total)}</strong>{" "}
+            {total === 1 ? "deputado" : "deputados"} com{" "}
+            {[
+              search && <>nome contém <strong key="s" style={{ color: "hsl(var(--text-headline))" }}>"{search}"</strong></>,
+              partido && <>partido <strong key="p" style={{ color: "hsl(var(--text-headline))" }}>{partido}</strong></>,
+              uf && <>UF <strong key="u" style={{ color: "hsl(var(--text-headline))" }}>{uf}</strong></>,
+            ].filter(Boolean).reduce((acc: React.ReactNode[], curr, idx, arr) => {
+              if (idx === 0) return [curr];
+              if (idx === arr.length - 1) return [...acc, " e ", curr];
+              return [...acc, ", ", curr];
+            }, [])}
+            .
+          </p>
+        )}
 
         {/* Tabela */}
         <div style={{ overflowX: "auto" }}>
@@ -99,7 +268,9 @@ export default async function ExpensesPage({ searchParams }: Props) {
               {data.length === 0 ? (
                 <tr>
                   <td colSpan={5} style={{ textAlign: "center", padding: "3rem", color: "hsl(var(--text-caption))" }}>
-                    Nenhum dado disponível para {ano}. Execute a ingestão CEAP.
+                    {temFiltro
+                      ? `Nenhum deputado encontrado com esses filtros em ${ano}.`
+                      : `Nenhum dado disponível para ${ano}. Execute a ingestão CEAP.`}
                   </td>
                 </tr>
               ) : (
@@ -156,18 +327,18 @@ export default async function ExpensesPage({ searchParams }: Props) {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", marginTop: "2rem" }}>
             {page > 1 && (
               <Link
-                href={`/expenses?ano=${ano}&page=${page - 1}`}
+                href={buildUrl({ page: String(page - 1) })}
                 style={{ padding: "0.4rem 0.875rem", fontSize: "0.8125rem", backgroundColor: "hsl(var(--surface))", border: "1px solid hsl(var(--border))", borderRadius: "2px", textDecoration: "none", color: "hsl(var(--text-body))", fontFamily: "var(--font-mono)" }}
               >
                 ← Anterior
               </Link>
             )}
             <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)", padding: "0 0.5rem" }}>
-              {page} / {totalPages}
+              {page} / {totalPages} · {fmtN(total)} {total === 1 ? "deputado" : "deputados"}
             </span>
             {page < totalPages && (
               <Link
-                href={`/expenses?ano=${ano}&page=${page + 1}`}
+                href={buildUrl({ page: String(page + 1) })}
                 style={{ padding: "0.4rem 0.875rem", fontSize: "0.8125rem", backgroundColor: "hsl(var(--surface))", border: "1px solid hsl(var(--border))", borderRadius: "2px", textDecoration: "none", color: "hsl(var(--text-body))", fontFamily: "var(--font-mono)" }}
               >
                 Próxima →

@@ -33,7 +33,8 @@ const ANOS_VALIDOS = [2023, 2024, 2025, 2026];
 export async function getDespesasRanking(
   ano: number,
   page: number,
-  perPage = 50
+  perPage = 50,
+  filters?: { search?: string; partido?: string; uf?: string }
 ): Promise<{ data: DespesaRankingEntry[]; total: number }> {
   if (!ANOS_VALIDOS.includes(ano)) return { data: [], total: 0 };
 
@@ -41,19 +42,60 @@ export async function getDespesasRanking(
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
 
-  const { data, error, count } = await sb
+  let query = sb
     .from("ceaps_ranking")
     .select(
       `posicao, total_liquido, total_documentos, por_categoria, ano, deputado_id_externo,
        deputados_brutas!inner(nome, sigla_partido, sigla_uf)`,
       { count: "exact" }
     )
-    .eq("ano", ano)
+    .eq("ano", ano);
+
+  // Filtros aplicados na tabela joined (PostgREST sintaxe)
+  if (filters?.partido) {
+    query = query.eq("deputados_brutas.sigla_partido", filters.partido);
+  }
+  if (filters?.uf) {
+    query = query.eq("deputados_brutas.sigla_uf", filters.uf);
+  }
+  if (filters?.search) {
+    query = query.ilike("deputados_brutas.nome", `%${filters.search}%`);
+  }
+
+  const { data, error, count } = await query
     .order("posicao")
     .range(from, to);
 
   if (error) throw error;
   return { data: (data ?? []) as unknown as DespesaRankingEntry[], total: count ?? 0 };
+}
+
+/**
+ * Lista distinct de partidos e UFs presentes no ranking do ano.
+ * Usado pra montar chips de filtro na página /expenses.
+ */
+export async function getDespesasFiltrosDisponiveis(
+  ano: number
+): Promise<{ partidos: string[]; ufs: string[] }> {
+  if (!ANOS_VALIDOS.includes(ano)) return { partidos: [], ufs: [] };
+
+  const sb = getSupabase();
+  const { data } = await sb
+    .from("ceaps_ranking")
+    .select("deputados_brutas!inner(sigla_partido, sigla_uf)")
+    .eq("ano", ano)
+    .limit(1000);
+
+  const partidos = new Set<string>();
+  const ufs = new Set<string>();
+  for (const r of (data ?? []) as unknown as Array<{ deputados_brutas: { sigla_partido: string | null; sigla_uf: string | null } }>) {
+    if (r.deputados_brutas?.sigla_partido) partidos.add(r.deputados_brutas.sigla_partido);
+    if (r.deputados_brutas?.sigla_uf) ufs.add(r.deputados_brutas.sigla_uf);
+  }
+  return {
+    partidos: Array.from(partidos).sort(),
+    ufs: Array.from(ufs).sort(),
+  };
 }
 
 export interface CeapNota {
