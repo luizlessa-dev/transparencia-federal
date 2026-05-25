@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getRanking, getRankingTotais, getRankingFiltros } from "~/services/ranking";
+import { getRanking, getRankingTotais, getRankingFiltros, getEmendasColetivasAno } from "~/services/ranking";
 
 export const dynamic = "force-dynamic";
 
@@ -62,13 +62,22 @@ export default async function RankingPage({
   const uf = params.uf?.trim().toUpperCase() || undefined;
   const temFiltro = !!(search || partido || uf);
 
-  const [{ data, total }, totais, filtros] = await Promise.all([
+  const [{ data, total }, totais, filtros, coletivas] = await Promise.all([
     getRanking(ano, page, PER_PAGE, { search, partido, uf }),
     getRankingTotais(ano, { search, partido, uf }),
     getRankingFiltros(ano),
+    getEmendasColetivasAno(ano).catch(() => null),
   ]);
   const totalPages = Math.ceil(total / PER_PAGE);
   const topEmp = totais?.top_empenhado ?? data[0]?.valor_total ?? 1;
+
+  // Mostra faixa quando coletivas representam volume relevante
+  // (limiar: ≥ R$ 1bi ou ≥ 100 emendas coletivas no ano)
+  const mostrarFaixaColetivas =
+    !temFiltro &&
+    !!coletivas &&
+    (coletivas.total_empenhado >= 1_000_000_000 ||
+      coletivas.bancada_qtd + coletivas.comissao_qtd >= 100);
 
   function buildUrl(overrides: Record<string, string | undefined>) {
     const p = new URLSearchParams();
@@ -234,6 +243,41 @@ export default async function RankingPage({
             Mostrando <strong style={{ color: "hsl(var(--text-headline))" }}>{fmtNum(total)}</strong>{" "}
             {total === 1 ? "parlamentar" : "parlamentares"} com filtros aplicados.
           </p>
+        )}
+
+        {/* Faixa: emendas coletivas (bancada + comissão) que não entram no ranking individual */}
+        {mostrarFaixaColetivas && coletivas && (
+          <div
+            style={{
+              padding: "0.875rem 1.125rem",
+              marginBottom: "1.25rem",
+              border: "1px solid hsl(var(--border))",
+              borderLeft: "3px solid hsl(var(--accent))",
+              borderRadius: "2px",
+              backgroundColor: "hsl(var(--surface))",
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "0.75rem",
+            }}
+          >
+            <span style={{ fontSize: "1rem", flexShrink: 0 }} aria-hidden="true">ℹ️</span>
+            <div style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))", lineHeight: 1.55, fontFamily: "var(--font-sans)" }}>
+              <strong style={{ color: "hsl(var(--text-headline))" }}>
+                Em {ano}, {fmtBRLShort(coletivas.total_empenhado)} em emendas foram coletivas
+              </strong>{" "}
+              ({fmtNum(coletivas.bancada_qtd)} de bancada estadual e {fmtNum(coletivas.comissao_qtd)} de comissão da Câmara).
+              Essas emendas não têm autor individual, então não aparecem neste ranking.
+              {ano === 2023 && (
+                <>
+                  {" "}A proporção foi maior em 2023 porque o STF suspendeu o orçamento secreto (RP9) no fim de 2022,
+                  deslocando volume pra Bancada/Comissão.
+                </>
+              )}{" "}
+              <Link href={`/amendments?ano=${ano}`} style={{ color: "hsl(var(--primary))", fontWeight: 600, textDecoration: "none" }}>
+                Ver todas as emendas de {ano} →
+              </Link>
+            </div>
+          </div>
         )}
 
         {/* ── KPIs do ano ────────────────────────────────── */}

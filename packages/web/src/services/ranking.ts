@@ -244,6 +244,62 @@ export async function getRankingTotais(
 }
 
 /**
+ * Conta emendas coletivas (bancada estadual + comissão) do ano,
+ * que aparecem em emendas_completas mas não em ranking_parlamentar
+ * porque o autor é entidade (BANCADA DE X, COM. Y), não pessoa física.
+ *
+ * Usado pra mostrar nota explicativa no /ranking quando o volume é grande.
+ */
+export interface EmendasColetivas {
+  bancada_qtd: number;
+  bancada_empenhado: number;
+  comissao_qtd: number;
+  comissao_empenhado: number;
+  total_empenhado: number;
+}
+
+export async function getEmendasColetivasAno(
+  ano: number
+): Promise<EmendasColetivas | null> {
+  const sb = getSupabase();
+
+  // Bancada + Comissão (até 2k registros — cabe em 1 query: 2023 tem ~480)
+  const { data, error } = await sb
+    .from("emendas_completas")
+    .select("tipo_emenda, valor_empenhado")
+    .eq("ano", ano)
+    .or("tipo_emenda.ilike.%Bancada%,tipo_emenda.ilike.%Comissão%,tipo_emenda.ilike.%Comissao%")
+    .limit(2000);
+
+  if (error || !data) return null;
+
+  let bancada_qtd = 0, bancada_empenhado = 0;
+  let comissao_qtd = 0, comissao_empenhado = 0;
+  for (const r of data as { tipo_emenda: string | null; valor_empenhado: number | null }[]) {
+    const tipo = (r.tipo_emenda ?? "").toLowerCase();
+    const valor = Number(r.valor_empenhado) || 0;
+    if (tipo.includes("bancada")) {
+      bancada_qtd++;
+      bancada_empenhado += valor;
+    } else if (tipo.includes("comiss")) {
+      comissao_qtd++;
+      comissao_empenhado += valor;
+    }
+  }
+
+  const total_empenhado = bancada_empenhado + comissao_empenhado;
+  if (total_empenhado === 0) return null;
+
+  return {
+    bancada_qtd,
+    bancada_empenhado,
+    comissao_qtd,
+    comissao_empenhado,
+    total_empenhado,
+  };
+}
+
+/**
  * Lista distinct de partidos/UFs no ranking do ano,
  * via JOIN inner com parlamentares. Usado pra montar dropdowns.
  */
