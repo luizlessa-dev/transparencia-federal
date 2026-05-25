@@ -20,7 +20,7 @@ import { createClient } from "@supabase/supabase-js";
 import { ParlamentarMatcher } from "./matcher.js";
 import { carregarParlamentares, upsertEmendaFinanceiro } from "./db.js";
 
-const ANOS_DEFAULT = [2025, 2026];
+const ANOS_DEFAULT = [2023, 2024, 2025, 2026];
 const LOTE = 500;
 
 const url = process.env.SUPABASE_URL ?? "";
