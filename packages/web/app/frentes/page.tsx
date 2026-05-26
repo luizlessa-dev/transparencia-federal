@@ -4,8 +4,9 @@ import { getFrentesLista } from "~/services/frentes";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Frentes Parlamentares — Transparência Federal",
-  description: "Todas as frentes parlamentares da 57ª legislatura e seus membros.",
+  title: "Frentes Parlamentares — The BR Insider",
+  description: "Todas as 319 frentes parlamentares da 57ª legislatura com lista de membros, distribuição por partido e score de risco de cada deputado.",
+  alternates: { canonical: "/frentes" },
 };
 
 export default async function FrentesPage() {

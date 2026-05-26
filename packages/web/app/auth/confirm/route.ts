@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAuthClient } from "~/lib/supabase-auth";
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.transparenciafederal.com";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.thebrinsider.com";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

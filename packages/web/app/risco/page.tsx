@@ -1,13 +1,29 @@
 import Link from "next/link";
-import { getRiscoRanking, getPartidosRisco, getUfsRisco } from "~/services/risco";
+import { getRiscoRanking, getPartidosRisco, getUfsRisco, getRiscoLastUpdate } from "~/services/risco";
 import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
+
+function formatLastUpdate(iso: string | null): string | null {
+  if (!iso) return null;
+  try {
+    return new Date(iso).toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return null;
+  }
+}
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Score de Risco — Transparência Federal",
+  title: "Score de Risco — The BR Insider",
   description:
     "Ranking de deputados federais por score de risco composto: gastos CEAP, ausência, produção legislativa, financiamento e emendas RP9.",
+  alternates: { canonical: "/risco" },
 };
 
 const PER_PAGE = 50;
@@ -90,11 +106,13 @@ export default async function RiscoPage({ searchParams }: Props) {
   const partidoEfetivo = pago ? partido : undefined;
   const ufEfetiva = pago ? uf : undefined;
 
-  const [{ data: allData, total }, partidos, ufs] = await Promise.all([
+  const [{ data: allData, total }, partidos, ufs, lastUpdate] = await Promise.all([
     getRiscoRanking(paginaEfetiva, PER_PAGE, { partido: partidoEfetivo, uf: ufEfetiva }),
     getPartidosRisco(),
     getUfsRisco(),
+    getRiscoLastUpdate(),
   ]);
+  const lastUpdateFmt = formatLastUpdate(lastUpdate);
 
   // Para free: limitar a 10 resultados
   const data = pago ? allData : allData.slice(0, FREE_LIMIT);
@@ -133,22 +151,48 @@ export default async function RiscoPage({ searchParams }: Props) {
             <div style={{ height: "2rem", width: "3px", backgroundColor: "hsl(var(--danger))" }} />
             <h1 style={{ fontSize: "1.75rem", margin: 0 }}>Score de Risco</h1>
           </div>
-          <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", margin: "0 0 0.75rem", fontFamily: "var(--font-sans)" }}>
-            57ª Legislatura · {vazio ? "dados pendentes" : <><strong>{total.toLocaleString("pt-BR")}</strong> deputados</>}
-          </p>
-          {/* Nota metodológica */}
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem 1rem", marginBottom: "0.75rem" }}>
+            <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", margin: 0, fontFamily: "var(--font-sans)" }}>
+              57ª Legislatura · {vazio ? "dados pendentes" : <><strong>{total.toLocaleString("pt-BR")}</strong> deputados</>}
+            </p>
+            {lastUpdateFmt && (
+              <span style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.375rem",
+                fontSize: "0.75rem",
+                color: "hsl(var(--text-caption))",
+                fontFamily: "var(--font-mono)",
+              }}>
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "hsl(var(--success))", display: "inline-block" }} />
+                Atualizado em {lastUpdateFmt}
+              </span>
+            )}
+          </div>
+
+          {/* Disclaimer + link pra metodologia */}
           <div style={{
-            display: "inline-block",
-            padding: "0.5rem 0.875rem",
+            padding: "0.75rem 1rem",
             backgroundColor: "hsl(var(--surface))",
             border: "1px solid hsl(var(--border))",
+            borderLeft: "3px solid hsl(var(--warning))",
             borderRadius: "2px",
-            fontSize: "0.75rem",
-            color: "hsl(var(--text-caption))",
-            fontFamily: "var(--font-sans)",
-            maxWidth: "52rem",
+            fontSize: "0.8125rem",
+            color: "hsl(var(--text-body))",
+            lineHeight: 1.55,
+            maxWidth: "56rem",
           }}>
-            Score composto (0–100) calculado com 5 dimensões: gastos CEAP, ausência em votações, produção legislativa, financiamento de campanha e emendas RP9. Maior score = mais alertas.
+            <strong style={{ color: "hsl(var(--text-headline))" }}>Alerta analítico, não acusação.</strong>{" "}
+            O Score é um indicador composto (0–100) calculado de 5 dimensões públicas: CEAP, ausência,
+            produção legislativa, financiamento e RP9.{" "}
+            <strong>Não constitui</strong> conclusão de ilegalidade, improbidade ou irregularidade —
+            sinaliza padrões que merecem inspeção jornalística cuidadosa.{" "}
+            <Link
+              href="/risco/metodologia"
+              style={{ color: "hsl(var(--primary))", fontWeight: 600, textDecoration: "underline" }}
+            >
+              Ver metodologia completa →
+            </Link>
           </div>
         </div>
       </section>
@@ -367,7 +411,10 @@ export default async function RiscoPage({ searchParams }: Props) {
         )}
 
         <p style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", marginTop: "2rem", fontFamily: "var(--font-mono)" }}>
-          Score = CEAP×0,30 + Ausência×0,20 + Produção×0,15 + Financiamento×0,20 + RP9×0,15 · Dimensões normalizadas 0–100
+          Score = CEAP×0,30 + Ausência×0,20 + Produção×0,15 + Financiamento×0,20 + RP9×0,15 · Dimensões normalizadas 0–100 ·{" "}
+          <Link href="/risco/metodologia" style={{ color: "hsl(var(--primary))", textDecoration: "none" }}>
+            metodologia completa →
+          </Link>
         </p>
       </div>
     </>

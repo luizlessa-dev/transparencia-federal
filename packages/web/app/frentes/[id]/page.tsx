@@ -10,11 +10,12 @@ interface Props {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const { frente } = await getFrente(parseInt(id, 10));
-  if (!frente) return { title: "Frente não encontrada — Transparência Federal" };
+  const { frente, membros } = await getFrente(parseInt(id, 10));
+  if (!frente) return { title: "Frente não encontrada — The BR Insider" };
   return {
-    title: `${frente.titulo} — Transparência Federal`,
-    description: `Membros da frente parlamentar: ${frente.titulo}`,
+    title: `${frente.titulo} — The BR Insider`,
+    description: `Confira os ${membros?.length ?? 0} membros da ${frente.titulo} na 57ª Legislatura. Distribuição por partido, estado e score de risco de cada deputado.`,
+    alternates: { canonical: `/frentes/${id}` },
   };
 }
 

@@ -45,7 +45,7 @@ function buildUrl(base: Record<string, string | undefined>, override: Record<str
 
 export function generateMetadata() {
   return {
-    title: "Empresas e Pessoas Sancionadas — Transparência Federal",
+    title: "Empresas e Pessoas Sancionadas — The BR Insider",
     description:
       "Consulte o cadastro CEIS e CNEP: empresas e pessoas físicas impedidas ou punidas de contratar com o governo federal.",
   };

@@ -19,7 +19,16 @@ const AUTH_REQUIRED = [
   "/ativar",
 ];
 
+// Exceções: sub-rotas que casariam com AUTH_REQUIRED mas devem ficar públicas
+// (páginas institucionais, metodologia, etc.).
+const AUTH_BYPASS = [
+  "/risco/metodologia",
+];
+
 function needsAuth(pathname: string): boolean {
+  if (AUTH_BYPASS.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return false;
+  }
   return AUTH_REQUIRED.some((prefix) => {
     // /risco/ e /frentes/ → só protege sub-rotas (não o próprio listing)
     if (prefix.endsWith("/")) {
@@ -31,19 +40,28 @@ function needsAuth(pathname: string): boolean {
 
 // ── Host-based routing pra nós estaduais ────────────────────────────────
 // Cada subdomínio mapeia pra um segmento da App Router. Federal
-// (www.transparenciafederal.com) é o default — não entra aqui, não reescreve.
+// (www.thebrinsider.com) é o default — não entra aqui, não reescreve.
+// Os hosts transparenciafederal.{com,org} permanecem aqui durante a
+// migração de DNS — assim que o redirect 301 estiver no provedor, podem sair.
 const HOST_SEGMENT: Record<string, string> = {
+  // novos domínios (thebrinsider.com)
+  "almg.thebrinsider.com": "/almg",
+  "alesp.thebrinsider.com": "/alesp",
+  "alerj.thebrinsider.com": "/alerj",
+  "radar.thebrinsider.com": "/radar",
+  // legado (manter durante migração de DNS)
   "almg.transparenciafederal.org": "/almg",
   "almg.transparenciafederal.com": "/almg",
-  "almg.localhost:3000": "/almg",
   "alesp.transparenciafederal.org": "/alesp",
   "alesp.transparenciafederal.com": "/alesp",
-  "alesp.localhost:3000": "/alesp",
   "alerj.transparenciafederal.org": "/alerj",
   "alerj.transparenciafederal.com": "/alerj",
-  "alerj.localhost:3000": "/alerj",
   "radar.transparenciafederal.com": "/radar",
   "radar.transparenciafederal.org": "/radar",
+  // dev local
+  "almg.localhost:3000": "/almg",
+  "alesp.localhost:3000": "/alesp",
+  "alerj.localhost:3000": "/alerj",
   "radar.localhost:3000": "/radar",
 };
 

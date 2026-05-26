@@ -1,3 +1,10 @@
+export const metadata = {
+  title: "Para Cidadãos — Fiscalize Seu Deputado com Dados Reais | The BR Insider",
+  description:
+    "Acesse dados de emendas parlamentares, gastos de gabinete e votações para fiscalizar seus representantes no Congresso Nacional. Grátis e de fácil acesso.",
+  alternates: { canonical: "/citizens" },
+};
+
 export default function CitizensPage() {
   return (
     <section className="section">
@@ -10,7 +17,7 @@ export default function CitizensPage() {
       <p>
         Como cidadão, você tem o direito de saber como seus representantes usam dinheiro público.
         Emendas parlamentares e despesas de gabinete são financiadas com recursos dos impostos que
-        você paga. Transparência Federal te ajuda a:
+        você paga. The BR Insider te ajuda a:
       </p>
       <ul>
         <li>Encontrar informações sobre seu deputado e senador</li>

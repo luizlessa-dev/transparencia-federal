@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export function generateMetadata() {
   return {
-    title: "Orçamento Secreto (RP9) — Transparência Federal",
+    title: "Orçamento Secreto (RP9) — The BR Insider",
     description:
       "Emendas do Relator-Geral do Orçamento (RP9) — o mecanismo declarado inconstitucional pelo STF em 2021. Dados de 2019 a 2022.",
   };

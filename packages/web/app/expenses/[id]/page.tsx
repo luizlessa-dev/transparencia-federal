@@ -63,9 +63,9 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub?: string
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const dep = await getDespesaDeputado(id);
-  if (!dep) return { title: "Deputado não encontrado — Transparência Federal" };
+  if (!dep) return { title: "Deputado não encontrado — The BR Insider" };
   return {
-    title: `${dep.nome} — Despesas CEAP — Transparência Federal`,
+    title: `${dep.nome} — Despesas CEAP — The BR Insider`,
     description: `Notas fiscais, fornecedores e categorias da Cota para Exercício da Atividade Parlamentar (CEAP) de ${dep.nome} (${dep.sigla_partido}/${dep.sigla_uf}).`,
   };
 }

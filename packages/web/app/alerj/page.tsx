@@ -1,7 +1,7 @@
 /**
  * ALERJ — página de bloqueio.
  *
- * Rota: alerj.transparenciafederal.org/ → /alerj
+ * Rota: alerj.thebrinsider.com/ → /alerj
  *
  * A ALERJ não publica dados abertos formais de gastos de gabinete com
  * granularidade de fornecedor/CNPJ — só lista de assessores nomeados (PDF) e
@@ -12,18 +12,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Transparência Federal — Rio de Janeiro (ALERJ)",
+  title: "The BR Insider — Rio de Janeiro (ALERJ)",
   description:
-    "A ALERJ não publica dados abertos de despesas dos deputados com CNPJ do fornecedor. Mapeamento do bloqueio e pedido formal de LAI em curso. Nó editorial da plataforma Transparência Federal.",
+    "A ALERJ não publica dados abertos de despesas dos deputados com CNPJ do fornecedor. Mapeamento do bloqueio e pedido formal de LAI em curso. Nó editorial da plataforma The BR Insider.",
   alternates: {
-    canonical: "https://alerj.transparenciafederal.org/",
+    canonical: "https://alerj.thebrinsider.com/",
   },
   openGraph: {
-    title: "Transparência Federal — ALERJ bloqueia",
+    title: "The BR Insider — ALERJ bloqueia",
     description:
       "A única assembleia entre SP, MG e RJ sem dados abertos de despesas com fornecedor. LAI em curso.",
-    url: "https://alerj.transparenciafederal.org/",
-    siteName: "Transparência Federal",
+    url: "https://alerj.thebrinsider.com/",
+    siteName: "The BR Insider",
     type: "website",
     locale: "pt_BR",
   },
@@ -110,10 +110,10 @@ export default function AlerjLandingPage() {
           >
             Nó editorial da plataforma{" "}
             <a
-              href="https://www.transparenciafederal.com"
+              href="https://www.thebrinsider.com"
               style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}
             >
-              Transparência Federal
+              The BR Insider
             </a>
             . Esta página documenta o que falta e o pedido formal de LAI em curso.
           </p>

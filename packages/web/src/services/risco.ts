@@ -92,3 +92,16 @@ export async function getUfsRisco(): Promise<string[]> {
   const ufs = [...new Set((data ?? []).map((r: { sigla_uf: string }) => r.sigla_uf).filter(Boolean))];
   return ufs as string[];
 }
+
+/** Última atualização do score — usa o maior `atualizado_em` da tabela. */
+export async function getRiscoLastUpdate(): Promise<string | null> {
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("cam_parlamentar_risco")
+    .select("atualizado_em")
+    .order("atualizado_em", { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) return null;
+  return data?.atualizado_em ?? null;
+}

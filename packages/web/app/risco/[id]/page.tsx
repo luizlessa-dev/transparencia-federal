@@ -9,6 +9,18 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+export async function generateMetadata({ params }: Props) {
+  const { id } = await params;
+  const dep = await getParlamentarRisco(parseInt(id, 10));
+  if (!dep) return { title: "Deputado não encontrado — The BR Insider" };
+  return {
+    title: `${dep.nome} (${dep.sigla_partido}-${dep.sigla_uf}) — Score de Risco | The BR Insider`,
+    description: `Score de risco ${dep.score_total.toFixed(0)}/100 para ${dep.nome}. CEAP, ausências, produção legislativa e financiamento eleitoral na 57ª Legislatura.`,
+    alternates: { canonical: `/risco/${id}` },
+    robots: { index: false },
+  };
+}
+
 function fmtBRL(v: number | null): string {
   if (v == null) return "—";
   return new Intl.NumberFormat("pt-BR", {

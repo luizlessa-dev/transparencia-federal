@@ -6,7 +6,7 @@
  *
  * O middleware já faz rewrite de `/` → `/<segmento>/` para subdomínios,
  * então os hrefs aqui são relativos (`/`, `/ranking`, etc.) e funcionam
- * tanto no subdomínio quanto via deep link `transparenciafederal.com/<segmento>/...`.
+ * tanto no subdomínio quanto via deep link `thebrinsider.com/<segmento>/...`.
  */
 
 export interface SiteNavLink {
@@ -45,10 +45,12 @@ export interface SiteConfig {
 // ── Federal (default) ─────────────────────────────────────────────────────
 
 export const FEDERAL_CONFIG: SiteConfig = {
-  badge: "TF",
-  shortName: "Transparência Federal",
-  kicker: "Observatório Parlamentar",
-  tagline: "Dados públicos sobre o Congresso Nacional, organizados para você.",
+  // "BR" é renderizado pelo componente <Logo />; o campo segue no schema porque
+  // ALMG/ALESP/ALERJ continuam usando selos de UF.
+  badge: "BR",
+  shortName: "The BR Insider",
+  kicker: "Inteligência sobre o poder público",
+  tagline: "Dados, análises e radar do Congresso Nacional — sob curadoria jornalística independente.",
   nav: [
     { label: "Parlamentares", href: "/parlamentares" },
     { label: "Ranking", href: "/ranking" },
@@ -90,8 +92,18 @@ export const FEDERAL_CONFIG: SiteConfig = {
         { label: "Emendas Parlamentares", href: "/amendments" },
         { label: "CEAP Câmara", href: "/expenses" },
         { label: "CEAP Senado", href: "/senate-expenses" },
-        { label: "Planos", href: "/planos" },
+      ],
+    },
+    {
+      label: "Institucional",
+      links: [
+        { label: "Manifesto editorial", href: "/manifesto" },
         { label: "Sobre o Projeto", href: "/about" },
+        { label: "Metodologia do Score", href: "/risco/metodologia" },
+        { label: "Planos", href: "/planos" },
+        { label: "Política de Correção", href: "/correcoes" },
+        { label: "Termos de Uso", href: "/termos" },
+        { label: "Política de Privacidade", href: "/privacidade" },
       ],
     },
     {
@@ -103,8 +115,8 @@ export const FEDERAL_CONFIG: SiteConfig = {
       ],
     },
   ],
-  copyLeft: "Lei de Acesso à Informação · Lei nº 12.527/2011",
-  copyRight: "Dados: Portal da Transparência · Câmara dos Deputados",
+  copyLeft: "Projeto independente · Sem vínculo com o Governo Federal",
+  copyRight: "Lessa Labs Tecnologia Ltda. · CNPJ 65.659.055/0001-53 · contato@thebrinsider.com",
 };
 
 // ── ALMG · Minas Gerais ───────────────────────────────────────────────────
@@ -112,12 +124,12 @@ export const FEDERAL_CONFIG: SiteConfig = {
 export const ALMG_CONFIG: SiteConfig = {
   badge: "MG",
   shortName: "ALMG — Minas Gerais",
-  kicker: "Transparência Federal · Estados",
+  kicker: "The BR Insider · Estados",
   tagline: "Verba indenizatória dos 77 deputados estaduais de Minas Gerais, nota a nota.",
   nav: [
     { label: "Início", href: "/" },
     { label: "Ranking", href: "/ranking" },
-    { label: "Federal ↗", href: "https://www.transparenciafederal.com", external: true },
+    { label: "Federal ↗", href: "https://www.thebrinsider.com", external: true },
   ],
   footer: [
     {
@@ -135,8 +147,8 @@ export const ALMG_CONFIG: SiteConfig = {
       ],
     },
   ],
-  copyLeft: "Lei de Acesso à Informação · Lei nº 12.527/2011",
-  copyRight: "Dados: ALMG — Portal de Transparência",
+  copyLeft: "Projeto independente · Sem vínculo com a ALMG",
+  copyRight: "Lessa Labs Tecnologia Ltda. · CNPJ 65.659.055/0001-53 · contato@thebrinsider.com",
 };
 
 // ── ALESP · São Paulo ─────────────────────────────────────────────────────
@@ -144,12 +156,12 @@ export const ALMG_CONFIG: SiteConfig = {
 export const ALESP_CONFIG: SiteConfig = {
   badge: "SP",
   shortName: "ALESP — São Paulo",
-  kicker: "Transparência Federal · Estados",
+  kicker: "The BR Insider · Estados",
   tagline: "611 mil despesas de gabinete da ALESP, 11 anos de histórico, cruzáveis por CNPJ.",
   nav: [
     { label: "Início", href: "/" },
     { label: "Ranking", href: "/ranking" },
-    { label: "Federal ↗", href: "https://www.transparenciafederal.com", external: true },
+    { label: "Federal ↗", href: "https://www.thebrinsider.com", external: true },
   ],
   footer: [
     {
@@ -167,8 +179,8 @@ export const ALESP_CONFIG: SiteConfig = {
       ],
     },
   ],
-  copyLeft: "Lei de Acesso à Informação · Lei nº 12.527/2011",
-  copyRight: "Dados: ALESP — Portal de Transparência",
+  copyLeft: "Projeto independente · Sem vínculo com a ALESP",
+  copyRight: "Lessa Labs Tecnologia Ltda. · CNPJ 65.659.055/0001-53 · contato@thebrinsider.com",
 };
 
 // ── ALERJ · Rio de Janeiro ────────────────────────────────────────────────
@@ -176,12 +188,12 @@ export const ALESP_CONFIG: SiteConfig = {
 export const ALERJ_CONFIG: SiteConfig = {
   badge: "RJ",
   shortName: "ALERJ — Rio de Janeiro",
-  kicker: "Transparência Federal · Estados",
+  kicker: "The BR Insider · Estados",
   tagline: "A única assembleia do Sudeste sem dados abertos de despesas. LAI em curso.",
   nav: [
     { label: "Início", href: "/" },
     { label: "Pedido LAI", href: "/lai" },
-    { label: "Federal ↗", href: "https://www.transparenciafederal.com", external: true },
+    { label: "Federal ↗", href: "https://www.thebrinsider.com", external: true },
   ],
   footer: [
     {
@@ -199,8 +211,8 @@ export const ALERJ_CONFIG: SiteConfig = {
       ],
     },
   ],
-  copyLeft: "Lei de Acesso à Informação · Lei nº 12.527/2011",
-  copyRight: "Acompanhamento de LAI pública",
+  copyLeft: "Projeto independente · Sem vínculo com a ALERJ",
+  copyRight: "Lessa Labs Tecnologia Ltda. · CNPJ 65.659.055/0001-53 · contato@thebrinsider.com",
 };
 
 // ── Router de host → config ───────────────────────────────────────────────

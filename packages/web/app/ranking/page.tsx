@@ -4,7 +4,7 @@ import { getRanking, getRankingTotais, getRankingFiltros, getEmendasColetivasAno
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Ranking de Emendas — Transparência Federal",
+  title: "Ranking de Emendas — The BR Insider",
   description:
     "Parlamentares ordenados por valor total de emendas empenhadas no orçamento federal. Busque por nome, filtre por partido e UF, e clique para ver detalhamento por tipo, ano, função e cada emenda individual.",
 };

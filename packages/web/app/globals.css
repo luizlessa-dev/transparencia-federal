@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
-/* ─── DESIGN TOKENS — GRAFITE INVESTIGATIVO ───────────────────── */
+/* ─── DESIGN TOKENS — THE BR INSIDER ──────────────────────────── */
+/* Paleta da identidade aprovada (mai/2026):                       */
+/*  Azul-marinho institucional · Laranja-ferrugem · Verde-musgo ·  */
+/*  Azul-aço · Off-white (#F2EFE5) · Grafite (#1A1A1A)             */
 :root {
   /* Superfícies */
   --background:         0  0% 100%;
@@ -13,9 +16,18 @@
   --primary:            0  0% 10%;
   --primary-foreground: 0  0% 100%;
 
-  /* Vermelho vivo como accent pontual — #C41E3A */
-  --accent:           350 73% 44%;
-  --accent-foreground:  0  0% 100%;
+  /* The BR Insider — paleta institucional (4 acentos da faixa) */
+  --brand-navy:       210 57% 28%;   /* #1F4870  azul-marinho — primário institucional */
+  --brand-navy-fg:     45 27% 92%;   /* off-white sobre marinho */
+  --brand-rust:        17 51% 53%;   /* #C76E45  laranja-ferrugem — CTA quente */
+  --brand-green:      145 33% 34%;   /* #3B7553  verde-musgo */
+  --brand-steel:      204 47% 48%;   /* #4188B5  azul-aço */
+  --brand-cream:       45 27% 92%;   /* #F2EFE5  off-white da marca */
+  --brand-graphite:     0  0% 10%;   /* #1A1A1A  grafite da marca */
+
+  /* Accent pontual — laranja-ferrugem da marca */
+  --accent:            17 51% 53%;
+  --accent-foreground: 45 27% 92%;
 
   /* Secundária / surface */
   --secondary:         60  5% 96%;
@@ -51,15 +63,16 @@
 }
 
 /* ─── DARK MODE ────────────────────────────────────────────────── */
+/* The BR Insider: fundo grafite (#1A1A1A), texto off-white (#F2EFE5) */
 .dark {
-  --background:         0  0%  7%;
-  --foreground:        60 10% 93%;
-  --card:               0  0% 11%;
-  --card-foreground:   60 10% 93%;
-  --primary:           60 10% 92%;
-  --primary-foreground: 0  0%  8%;
-  --accent:           350 73% 58%;
-  --accent-foreground: 0  0% 100%;
+  --background:         0  0% 10%;   /* #1A1A1A — grafite da marca */
+  --foreground:        45 27% 92%;   /* #F2EFE5 — off-white da marca */
+  --card:               0  0% 13%;
+  --card-foreground:   45 27% 92%;
+  --primary:           45 27% 92%;   /* off-white como destaque sobre dark */
+  --primary-foreground: 0  0% 10%;   /* grafite sobre o off-white */
+  --accent:            17 60% 60%;   /* laranja-ferrugem clareado pra dark */
+  --accent-foreground: 45 27% 92%;
   --secondary:          0  0% 16%;
   --secondary-foreground: 60 6% 68%;
   --muted:              0  0% 14%;

@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const metadata = {
-  title: "Criar conta — Transparência Federal",
+  title: "Criar conta — The BR Insider",
 };
 
 export default async function CadastroPage({ searchParams }: Props) {

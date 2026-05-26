@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Planos — Transparência Federal",
+  title: "Planos — The BR Insider",
   description: "Acesso completo aos dados do Congresso Nacional. Planos para indivíduos e redações.",
+  alternates: { canonical: "/planos" },
 };
 
 const FEATURES_FREE = [
@@ -181,7 +182,7 @@ export default function PlanosPage() {
             </div>
 
             <a
-              href="mailto:lc.lessa@gmail.com?subject=Acesso%20Individual%20%E2%80%94%20Transparência%20Federal"
+              href="mailto:contato@thebrinsider.com?subject=Acesso%20Individual%20%E2%80%94%20Transparência%20Federal"
               style={{
                 display: "block",
                 textAlign: "center",
@@ -234,7 +235,7 @@ export default function PlanosPage() {
             </div>
 
             <a
-              href="mailto:lc.lessa@gmail.com?subject=Acesso%20Institucional%20%E2%80%94%20Transparência%20Federal"
+              href="mailto:contato@thebrinsider.com?subject=Acesso%20Institucional%20%E2%80%94%20Transparência%20Federal"
               style={{
                 display: "block",
                 textAlign: "center",
@@ -262,7 +263,7 @@ export default function PlanosPage() {
           </Link>
           {" · "}
           Dúvidas?{" "}
-          <a href="mailto:lc.lessa@gmail.com" style={{ color: "hsl(var(--primary))", textDecoration: "none" }}>
+          <a href="mailto:contato@thebrinsider.com" style={{ color: "hsl(var(--primary))", textDecoration: "none" }}>
             Fale conosco
           </a>
         </p>

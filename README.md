@@ -1,6 +1,8 @@
-# Transparência Federal v3
+# The BR Insider — `transparencia-federal` (codename v3)
 
-Plataforma de inteligência institucional e dados públicos sobre o Congresso Nacional (emendas parlamentares, execução financeira, ranking analítico).
+> Projeto de jornalismo de dados publicado em [thebrinsider.com](https://www.thebrinsider.com). O nome do repo permanece `transparencia-federal` como codename — o produto foi rebatizado em mai/2026.
+
+Plataforma de inteligência institucional e dados públicos sobre o Congresso Nacional (emendas parlamentares, execução financeira, ranking analítico, Score de Risco G5).
 
 ## Documentação
 

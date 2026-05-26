@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const metadata = {
-  title: "Entrar — Transparência Federal",
+  title: "Entrar — The BR Insider",
 };
 
 export default async function LoginPage({ searchParams }: Props) {

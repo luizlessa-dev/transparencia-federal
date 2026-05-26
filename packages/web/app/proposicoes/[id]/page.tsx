@@ -51,13 +51,13 @@ function tipoLongo(sigla: string): string {
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const propId = parseInt(id, 10);
-  if (isNaN(propId)) return { title: "Proposição não encontrada — Transparência Federal" };
+  if (isNaN(propId)) return { title: "Proposição não encontrada — The BR Insider" };
   const prop = await getProposicao(propId);
-  if (!prop) return { title: "Proposição não encontrada — Transparência Federal" };
+  if (!prop) return { title: "Proposição não encontrada — The BR Insider" };
   const label = prop.numero && prop.ano ? `${prop.sigla_tipo} ${prop.numero}/${prop.ano}` : prop.sigla_tipo;
   const autor = prop.autor ? ` — ${prop.autor.nome}` : "";
   return {
-    title: `${label}${autor} — Transparência Federal`,
+    title: `${label}${autor} — The BR Insider`,
     description: prop.ementa
       ? prop.ementa.length > 160
         ? prop.ementa.slice(0, 157) + "…"

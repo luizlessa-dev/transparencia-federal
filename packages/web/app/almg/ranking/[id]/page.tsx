@@ -1,6 +1,6 @@
 /**
  * Detalhe de verba indenizatória por deputado — ALMG.
- * Rota: almg.transparenciafederal.org/ranking/<id_almg>
+ * Rota: almg.thebrinsider.com/ranking/<id_almg>
  */
 import type { Metadata } from "next";
 import Link from "next/link";

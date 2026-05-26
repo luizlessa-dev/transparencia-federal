@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Conheça o Projeto — Transparência Federal",
+  title: "Conheça o Projeto — The BR Insider",
   description:
     "Dados públicos sobre emendas parlamentares, despesas de gabinete, votações e financiamento eleitoral do Congresso Nacional — organizados para jornalistas, pesquisadores e redações.",
   alternates: { canonical: "/demo" },
@@ -200,14 +200,14 @@ export default function DemoPage() {
             <Link href="/planos" style={{ padding: "0.625rem 1.25rem", border: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))", color: "hsl(var(--text-body))", borderRadius: "2px", fontSize: "0.875rem", fontWeight: 600, textDecoration: "none" }}>
               Comparar planos
             </Link>
-            <a href="mailto:lc.lessa@gmail.com?subject=Acesso%20Institucional%20%E2%80%94%20Transparência%20Federal" style={{ padding: "0.625rem 1.25rem", border: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))", color: "hsl(var(--text-body))", borderRadius: "2px", fontSize: "0.875rem", fontWeight: 600, textDecoration: "none" }}>
+            <a href="mailto:contato@thebrinsider.com?subject=Acesso%20Institucional%20%E2%80%94%20Transparência%20Federal" style={{ padding: "0.625rem 1.25rem", border: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))", color: "hsl(var(--text-body))", borderRadius: "2px", fontSize: "0.875rem", fontWeight: 600, textDecoration: "none" }}>
               Falar sobre acesso institucional
             </a>
           </div>
         </div>
 
         <p style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)", textAlign: "center" }}>
-          transparenciafederal.com · Dados de fontes públicas e oficiais · Atualizado em maio/2026
+          thebrinsider.com · Dados de fontes públicas e oficiais · Atualizado em maio/2026
         </p>
 
       </div>

@@ -4,7 +4,7 @@ import { ParlamentaresGrid } from "./ParlamentaresGrid";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Parlamentares — Transparência Federal",
+  title: "Parlamentares — The BR Insider",
   description:
     "Encontre todos os deputados federais e senadores ativos. Busque por nome, partido, UF ou casa legislativa e abra o perfil completo de cada parlamentar.",
   alternates: { canonical: "/parlamentares" },

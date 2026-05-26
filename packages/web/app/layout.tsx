@@ -4,6 +4,8 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { headers } from "next/headers";
 import { NavLinks } from "~/components/NavLinks";
 import { AuthButton } from "~/components/AuthButton";
+import { IndependenceNotice } from "~/components/IndependenceNotice";
+import { LogoMonograma } from "~/components/Logo";
 import { getSiteConfigForHost } from "~/lib/site-config";
 import "./globals.css";
 
@@ -20,18 +22,18 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://www.transparenciafederal.com"),
-  title: "Transparência Federal — Emendas, Despesas e Dados do Congresso",
+  metadataBase: new URL("https://www.thebrinsider.com"),
+  title: "The BR Insider — Emendas, Despesas e Dados do Congresso",
   description:
-    "Explore dados públicos sobre emendas parlamentares, despesas de gabinete e votações da Câmara. Transparência para cidadãos, jornalistas, pesquisadores e ONGs.",
+    "Projeto independente de jornalismo de dados sobre emendas parlamentares, despesas de gabinete e votações do Congresso Nacional. Sem vínculo com o Governo Federal.",
   verification: {
-    google: "a9D0U5aH8PUR2VKklJN0_SdPADucRPDegU1Ir-qID0A",
+    google: "9PnvZuMDW6G5ahYDK6jWo0QPVREmdbwCgHgHfqw2XpU",
   },
   openGraph: {
-    title: "Transparência Federal",
-    description: "Dados públicos do Congresso Nacional em um único lugar",
-    url: "https://www.transparenciafederal.com",
-    siteName: "Transparência Federal",
+    title: "The BR Insider",
+    description: "Dados públicos do Congresso Nacional, sob curadoria jornalística independente.",
+    url: "https://www.thebrinsider.com",
+    siteName: "The BR Insider",
     type: "website",
     locale: "pt_BR",
     // images: gerado dinamicamente por app/opengraph-image.tsx (federal)
@@ -39,8 +41,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Transparência Federal",
-    description: "Dados públicos do Congresso Nacional em um único lugar",
+    title: "The BR Insider",
+    description: "Dados públicos do Congresso Nacional, sob curadoria jornalística independente.",
     // images: o Next.js usa automaticamente o opengraph-image como twitter:image
   },
 };
@@ -67,6 +69,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {/* Barra de acento no topo */}
         <div className="accent-line" />
 
+        {/* Aviso de independência — oculto no subdomínio radar */}
+        {!isRadar && <IndependenceNotice variant="strip" />}
+
         {/* Header — oculto no subdomínio radar (tem próprio header) */}
         <header
           style={{
@@ -82,24 +87,30 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
             {/* Logo */}
             <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.75rem", textDecoration: "none" }}>
-              <div
-                style={{
-                  height: "2.25rem",
-                  width: "2.25rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "2px",
-                  backgroundColor: "hsl(var(--primary))",
-                  color: "hsl(var(--primary-foreground))",
-                  fontWeight: 700,
-                  fontSize: "0.8125rem",
-                  letterSpacing: "0.05em",
-                  flexShrink: 0,
-                }}
-              >
-                {site.badge}
-              </div>
+              {site.badge === "BR" ? (
+                <div style={{ color: "hsl(var(--text-headline))", flexShrink: 0, display: "flex" }}>
+                  <LogoMonograma size={40} />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    height: "2.25rem",
+                    width: "2.25rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "2px",
+                    backgroundColor: "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
+                    fontWeight: 700,
+                    fontSize: "0.8125rem",
+                    letterSpacing: "0.05em",
+                    flexShrink: 0,
+                  }}
+                >
+                  {site.badge}
+                </div>
+              )}
               <div style={{ display: "none" }} className="sm:block">
                 <div style={{ fontSize: "0.625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.15em", color: "hsl(var(--text-caption))", fontFamily: "var(--font-sans)" }}>
                   {site.kicker}
@@ -131,14 +142,20 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {/* Logo + tagline */}
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "0.75rem" }}>
-                  <div style={{
-                    height: "2rem", width: "2rem", borderRadius: "2px",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    backgroundColor: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))",
-                    fontSize: "0.75rem", fontWeight: 700,
-                  }}>
-                    {site.badge}
-                  </div>
+                  {site.badge === "BR" ? (
+                    <div style={{ color: "hsl(var(--text-headline))", flexShrink: 0, display: "flex" }}>
+                      <LogoMonograma size={36} />
+                    </div>
+                  ) : (
+                    <div style={{
+                      height: "2rem", width: "2rem", borderRadius: "2px",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      backgroundColor: "hsl(var(--primary))", color: "hsl(var(--primary-foreground))",
+                      fontSize: "0.75rem", fontWeight: 700,
+                    }}>
+                      {site.badge}
+                    </div>
+                  )}
                   <span style={{ fontSize: "0.875rem", fontWeight: 700, fontFamily: "var(--font-display)", color: "hsl(var(--text-headline))" }}>
                     {site.shortName}
                   </span>

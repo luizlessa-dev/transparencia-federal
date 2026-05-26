@@ -66,7 +66,7 @@ function buildUrl(base: Record<string, string | undefined>, override: Record<str
 
 export function generateMetadata() {
   return {
-    title: "Emendas Parlamentares — Transparência Federal",
+    title: "Emendas Parlamentares — The BR Insider",
     description: "Explore todas as emendas parlamentares de 2015 a 2026: individuais, de bancada, de comissão e do relator-geral (RP9).",
   };
 }

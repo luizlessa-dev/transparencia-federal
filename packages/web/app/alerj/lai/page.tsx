@@ -1,7 +1,7 @@
 /**
  * ALERJ — pedido de LAI: texto completo + status + cronologia.
  *
- * Rota: alerj.transparenciafederal.org/lai → /alerj/lai
+ * Rota: alerj.thebrinsider.com/lai → /alerj/lai
  *
  * Este arquivo é editado manualmente conforme o pedido avança. Pontos de
  * atualização:
@@ -13,10 +13,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Pedido formal de LAI — ALERJ | Transparência Federal",
+  title: "Pedido formal de LAI — ALERJ | The BR Insider",
   description:
     "Texto integral do pedido de Lei de Acesso à Informação requerendo os dados do DOCIGP em formato aberto. Status, cronologia e próximos passos.",
-  alternates: { canonical: "https://alerj.transparenciafederal.org/lai" },
+  alternates: { canonical: "https://alerj.thebrinsider.com/lai" },
 };
 
 export const dynamic = "force-dynamic"; // recalcula contador a cada visita
@@ -297,14 +297,14 @@ Caso a Casa entenda existir alguma restrição parcial sobre algum dos campos so
   (i) a entrega dos campos não restritos no formato solicitado, e
   (ii) fundamentação expressa, por escrito, da restrição aplicada a cada campo eventualmente sonegado, com indicação do dispositivo legal e do prazo de classificação, nos termos do art. 11, § 4º, da LAI.
 
-Esclareço, por fim, que esta informação será utilizada para fins jornalísticos e de fiscalização pública, integrando a plataforma Transparência Federal (https://www.transparenciafederal.com), e que cópia integral deste pedido e da resposta será publicada em https://alerj.transparenciafederal.org/lai, no exercício do direito à informação e do interesse público.
+Esclareço, por fim, que esta informação será utilizada para fins jornalísticos e de fiscalização pública, integrando a plataforma The BR Insider (https://www.thebrinsider.com), e que cópia integral deste pedido e da resposta será publicada em https://alerj.thebrinsider.com/lai, no exercício do direito à informação e do interesse público.
 
 Atenciosamente,
 
 Luiz Lessa
 Jornalista
 luiz@gastronomizae.com
-Plataforma Transparência Federal — www.transparenciafederal.com`}
+Plataforma The BR Insider — www.thebrinsider.com`}
           </div>
         </div>
 

@@ -260,7 +260,7 @@ export function AskBox() {
       // Tenta a Web Share API primeiro (mobile principalmente)
       if (typeof navigator.share === "function") {
         await navigator.share({
-          title: "Transparência Federal",
+          title: "The BR Insider",
           text: resp.pergunta,
           url,
         });

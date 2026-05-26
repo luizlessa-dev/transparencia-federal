@@ -1,3 +1,10 @@
+export const metadata = {
+  title: "Para ONGs e Sociedade Civil — Dados para Advocacy e Monitoramento | The BR Insider",
+  description:
+    "Use dados abertos do Congresso para relatórios de impacto, campanhas de advocacy e monitoramento de emendas parlamentares. Acesso gratuito sob licença CC-BY-4.0.",
+  alternates: { canonical: "/ngos" },
+};
+
 export default function NGOsPage() {
   return (
     <section className="section">
@@ -6,9 +13,9 @@ export default function NGOsPage() {
         Ferramentas e dados para advocacy, monitoramento e campanhas de impacto
       </p>
 
-      <h2>Como Usar Transparência Federal</h2>
+      <h2>Como Usar The BR Insider</h2>
       <p>
-        Organizações da sociedade civil podem usar Transparência Federal em:
+        Organizações da sociedade civil podem usar The BR Insider em:
       </p>
       <ul>
         <li>
@@ -48,7 +55,7 @@ export default function NGOsPage() {
 
       <h2>Dados Abertos para ONGs</h2>
       <p>
-        Transparência Federal oferece acesso gratuito a todos os dados sob licença CC-BY-4.0.
+        The BR Insider oferece acesso gratuito a todos os dados sob licença CC-BY-4.0.
         Você pode:
       </p>
       <ul>
@@ -60,7 +67,7 @@ export default function NGOsPage() {
       </ul>
 
       <p>
-        O único requisito é dar crédito: cite "Transparência Federal" e o link para este site.
+        O único requisito é dar crédito: cite "The BR Insider" e o link para este site.
       </p>
 
       <h2>APIs e Integrações</h2>
@@ -92,33 +99,14 @@ export default function NGOsPage() {
       </ul>
 
       <p>
-        Envie para: <a href="mailto:ngo@transparenciafederal.org">ngo@transparenciafederal.org</a>
+        Para iniciar uma conversa sobre integração de dados, entre em contato pelo{" "}
+        <a href="/about">formulário de contato</a>.
       </p>
-
-      <h2>Exemplos de Relatórios</h2>
-      <p>
-        Confira relatórios de outras ONGs que usam dados públicos:
-      </p>
-      <ul>
-        <li>
-          <a href="#" target="_blank">Análise de Gastos em Educação 2024</a> — Instituto X
-        </li>
-        <li>
-          <a href="#" target="_blank">Mapeamento de Investimentos Ambientais</a> — ONG Y
-        </li>
-        <li>
-          <a href="#" target="_blank">Orçamento para Saúde: uma análise temporal</a> — Fundação Z
-        </li>
-      </ul>
 
       <h2>Comunidade</h2>
       <p>
-        Faça parte de uma comunidade de ONGs usando dados abertos para impacto social.
-        Compartilhe suas análises, aprenda com outras organizações e colabore em projetos.
-      </p>
-
-      <p>
-        <a href="https://github.com" target="_blank">Acesse o GitHub →</a>
+        Faça parte de uma comunidade de organizações usando dados abertos para impacto social.
+        Compartilhe suas análises e colabore em projetos de transparência pública.
       </p>
     </section>
   );

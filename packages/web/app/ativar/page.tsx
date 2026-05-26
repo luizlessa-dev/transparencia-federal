@@ -9,7 +9,7 @@ interface Props {
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Ativar plano — Transparência Federal",
+  title: "Ativar plano — The BR Insider",
 };
 
 export default async function AtivarPage({ searchParams }: Props) {
@@ -85,7 +85,7 @@ export default async function AtivarPage({ searchParams }: Props) {
                 type="text"
                 required
                 autoComplete="off"
-                placeholder="Ex: TF-2026-XXXX"
+                placeholder="Ex: BR-2026-XXXX"
                 style={{
                   width: "100%",
                   padding: "0.75rem 0.875rem",
@@ -127,7 +127,7 @@ export default async function AtivarPage({ searchParams }: Props) {
         <p style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>
           Não tem um código?{" "}
           <a
-            href="mailto:lc.lessa@gmail.com?subject=Acesso%20Transparência%20Federal"
+            href="mailto:contato@thebrinsider.com?subject=Acesso%20Transparência%20Federal"
             style={{ color: "hsl(var(--primary))", textDecoration: "none" }}
           >
             Entre em contato

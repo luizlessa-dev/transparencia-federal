@@ -1,6 +1,6 @@
 /**
  * Ranking de despesas de gabinete — deputados ALESP.
- * Rota: alesp.transparenciafederal.org/ranking → /alesp/ranking
+ * Rota: alesp.thebrinsider.com/ranking → /alesp/ranking
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -9,15 +9,15 @@ import { getSupabase } from "~/lib/supabase-server";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Ranking de Gastos — ALESP | Transparência Federal",
+  title: "Ranking de Gastos — ALESP | The BR Insider",
   description:
     "Deputados estaduais de São Paulo ordenados por despesas de gabinete reembolsadas. 11 anos de histórico — 2015 a hoje.",
-  alternates: { canonical: "https://alesp.transparenciafederal.org/ranking" },
+  alternates: { canonical: "https://alesp.thebrinsider.com/ranking" },
   openGraph: {
     title: "Ranking ALESP — Despesas de Gabinete",
     description: "94 deputados, 600k+ despesas, 11 anos de histórico.",
-    url: "https://alesp.transparenciafederal.org/ranking",
-    siteName: "Transparência Federal",
+    url: "https://alesp.thebrinsider.com/ranking",
+    siteName: "The BR Insider",
     type: "website",
     locale: "pt_BR",
   },

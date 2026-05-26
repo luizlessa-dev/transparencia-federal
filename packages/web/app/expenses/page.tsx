@@ -30,7 +30,7 @@ function fmtN(n: number) {
 
 export function generateMetadata() {
   return {
-    title: "Despesas de Gabinete — Câmara dos Deputados — Transparência Federal",
+    title: "Despesas de Gabinete — Câmara dos Deputados — The BR Insider",
     description:
       "Ranking dos deputados federais com maiores gastos da CEAP (Cota para Exercício da Atividade Parlamentar). Dados de 2023 a 2026.",
   };

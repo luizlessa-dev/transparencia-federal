@@ -3,9 +3,16 @@ Allow: /
 Allow: /risco
 Allow: /frentes
 Allow: /planos
-Allow: /sobre
 Allow: /about
+Allow: /citizens
+Allow: /journalists
+Allow: /researchers
+Allow: /ngos
 
+Disallow: /login
+Disallow: /cadastro
+Disallow: /auth/
+Disallow: /dossie/
 Disallow: /conta
 Disallow: /ativar
 Disallow: /ranking
@@ -19,6 +26,5 @@ Disallow: /voting
 Disallow: /sancionados
 Disallow: /rp9
 Disallow: /risco/
-Disallow: /frentes/
 
-Sitemap: https://www.transparenciafederal.com/sitemap.xml
+Sitemap: https://www.thebrinsider.com/sitemap.xml

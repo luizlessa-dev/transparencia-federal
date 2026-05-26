@@ -170,12 +170,12 @@ O sistema usa `@supabase/ssr` v0.10.3 com cookies de sessão. Toda lógica de au
 **Criar código de acesso:**
 ```sql
 INSERT INTO codigos_acesso (codigo, plano, validade_dias)
-VALUES ('TF-2026-XXXX', 'individual', 365);
+VALUES ('BR-2026-XXXX', 'individual', 365);
 ```
 
 **Supabase Dashboard — URL Configuration obrigatória:**
-- Site URL: `https://www.transparenciafederal.com`
-- Redirect URLs: `https://www.transparenciafederal.com/**`
+- Site URL: `https://www.thebrinsider.com`
+- Redirect URLs: `https://www.thebrinsider.com/**`
 
 ### Jobs de ingestão — padrões
 

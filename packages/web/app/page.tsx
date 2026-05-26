@@ -5,7 +5,7 @@ import { AskBox } from "~/components/AskBox";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Transparência Federal — Emendas, Despesas e Dados do Congresso",
+  title: "The BR Insider — Emendas, Despesas e Dados do Congresso",
   description:
     "Explore dados públicos sobre emendas parlamentares, despesas de gabinete e votações da Câmara. Transparência para cidadãos, jornalistas, pesquisadores e ONGs.",
   alternates: { canonical: "/" },
@@ -326,7 +326,7 @@ export default async function HomePage() {
             <h2 style={{ fontSize: "1.375rem", margin: 0 }}>Sobre o Projeto</h2>
           </div>
           <p style={{ fontSize: "0.9375rem", color: "hsl(var(--text-body))", lineHeight: 1.7, marginBottom: "1rem", maxWidth: "48rem" }}>
-            <strong style={{ color: "hsl(var(--text-headline))" }}>Transparência Federal</strong> reúne e organiza dados públicos
+            <strong style={{ color: "hsl(var(--text-headline))" }}>The BR Insider</strong> reúne e organiza dados públicos
             sobre emendas ao orçamento e despesas do Congresso Nacional, a partir de fontes oficiais:
             Portal da Transparência, API da Câmara dos Deputados e dados do Senado Federal.
           </p>

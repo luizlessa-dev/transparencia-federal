@@ -61,10 +61,10 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub?: string
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const resultado = await getParlamentar(id);
-  if (!resultado) return { title: "Parlamentar não encontrado — Transparência Federal" };
+  if (!resultado) return { title: "Parlamentar não encontrado — The BR Insider" };
   const { parlamentar: p } = resultado;
   return {
-    title: `${p.nome_parlamentar || p.nome} — Transparência Federal`,
+    title: `${p.nome_parlamentar || p.nome} — The BR Insider`,
     description: `Emendas, ranking e detalhamento de ${p.nome_parlamentar || p.nome} (${p.partido}/${p.uf})`,
   };
 }

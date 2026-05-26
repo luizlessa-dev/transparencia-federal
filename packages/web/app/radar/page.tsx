@@ -23,7 +23,7 @@ export default async function RadarHomePage() {
           <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.25rem" }}>
             <div style={{ height: "2px", width: "2rem", backgroundColor: "hsl(350 73% 44%)" }} />
             <span style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.2em", color: "hsl(350 73% 44%)", fontFamily: "var(--font-sans)" }}>
-              Produto jornalístico · Transparência Federal
+              Produto jornalístico · The BR Insider
             </span>
           </div>
 

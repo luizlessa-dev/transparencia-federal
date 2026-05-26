@@ -3,15 +3,15 @@ import Link from "next/link";
 import { headers } from "next/headers";
 
 export const metadata = {
-  metadataBase: new URL("https://radar.transparenciafederal.org"),
+  metadataBase: new URL("https://radar.thebrinsider.com"),
   title: { default: "Radar FAB — Voos de Autoridades", template: "%s · Radar FAB" },
   description:
     "Monitoramento serial dos voos de autoridades em aeronaves da Força Aérea Brasileira. Dados abertos, análise automática mensal, base histórica desde 2020.",
   openGraph: {
     title: "Radar FAB",
     description: "Voos de autoridades em aeronaves da FAB — base aberta desde 2020",
-    url: "https://radar.transparenciafederal.org",
-    siteName: "Radar FAB · Transparência Federal",
+    url: "https://radar.thebrinsider.com",
+    siteName: "Radar FAB · The BR Insider",
     type: "website",
     locale: "pt_BR",
   },
@@ -111,7 +111,7 @@ export default async function RadarLayout({ children }: { children: ReactNode })
                 fontFamily: "var(--font-sans)",
               }}
             >
-              ← Transparência Federal
+              ← The BR Insider
             </Link>
           </div>
         </div>
@@ -133,8 +133,8 @@ export default async function RadarLayout({ children }: { children: ReactNode })
               </span>
               <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))" }}>
                 · um produto do{" "}
-                <Link href="https://www.transparenciafederal.com" style={{ color: "hsl(var(--text-caption))" }}>
-                  Transparência Federal
+                <Link href="https://www.thebrinsider.com" style={{ color: "hsl(var(--text-caption))" }}>
+                  The BR Insider
                 </Link>
               </span>
             </div>

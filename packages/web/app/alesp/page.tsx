@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Transparência Federal — São Paulo (ALESP)",
+  title: "The BR Insider — São Paulo (ALESP)",
   description:
-    "611 mil despesas de gabinete dos deputados estaduais de São Paulo desde 2015. 94 deputados em exercício + 285 ex-deputados catalogados. Cruzamento com dados federais. Nó estadual do observatório Transparência Federal.",
+    "611 mil despesas de gabinete dos deputados estaduais de São Paulo desde 2015. 94 deputados em exercício + 285 ex-deputados catalogados. Cruzamento com dados federais. Nó estadual do observatório The BR Insider.",
   alternates: {
-    canonical: "https://alesp.transparenciafederal.org/",
+    canonical: "https://alesp.thebrinsider.com/",
   },
   openGraph: {
-    title: "Transparência Federal — ALESP",
+    title: "The BR Insider — ALESP",
     description:
       "611 mil despesas com CNPJ de fornecedor — 11 anos de histórico atravessando 3 legislaturas paulistas.",
-    url: "https://alesp.transparenciafederal.org/",
-    siteName: "Transparência Federal",
+    url: "https://alesp.thebrinsider.com/",
+    siteName: "The BR Insider",
     type: "website",
     locale: "pt_BR",
   },
@@ -92,10 +92,10 @@ export default function AlespLandingPage() {
           >
             Segundo nó estadual da plataforma{" "}
             <a
-              href="https://www.transparenciafederal.com"
+              href="https://www.thebrinsider.com"
               style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}
             >
-              Transparência Federal
+              The BR Insider
             </a>
             . Lançamento previsto: julho de 2026.
           </p>

@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const senadorNorm = decodeURIComponent(id);
   return {
-    title: `${senadorNorm} — CEAPS Senado — Transparência Federal`,
+    title: `${senadorNorm} — CEAPS Senado — The BR Insider`,
     description: `Notas fiscais, fornecedores e categorias da Cota para Exercício da Atividade Parlamentar dos Senadores (CEAPS) de ${senadorNorm}.`,
   };
 }

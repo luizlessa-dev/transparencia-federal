@@ -5,11 +5,16 @@ export const alt = "ALMG — Despesas de gabinete dos deputados estaduais de Min
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const BG = "#121212";
-const FG = "#F3F3ED";
-const FG_DIM = "#BDBDB6";
-const CAPTION = "#80807A";
-const BORDER = "#2A2A28";
+// Paleta The BR Insider (sync com globals.css)
+const BG          = "#1A1A1A";
+const FG          = "#F2EFE5";
+const FG_DIM      = "#B8B4A6";
+const CAPTION     = "#7A776E";
+const BORDER      = "#2E2C26";
+const BRAND_NAVY  = "#1F4870";
+const BRAND_RUST  = "#C76E45";
+const BRAND_GREEN = "#3B7553";
+const BRAND_STEEL = "#4188B5";
 
 export default async function OGImage() {
   return new ImageResponse(
@@ -54,7 +59,7 @@ export default async function OGImage() {
                 fontWeight: 600,
               }}
             >
-              Transparência Federal · Estados
+              The BR Insider · Estados
             </span>
             <span style={{ fontSize: 24, color: FG, fontWeight: 700, marginTop: 4 }}>
               ALMG — Minas Gerais
@@ -65,7 +70,7 @@ export default async function OGImage() {
         {/* Middle: título + tagline */}
         <div style={{ display: "flex", flex: 1, alignItems: "center", marginTop: 36 }}>
           <div style={{ display: "flex", gap: 32, alignItems: "stretch", width: "100%" }}>
-            <div style={{ width: 4, background: FG, flexShrink: 0, alignSelf: "stretch" }} />
+            <div style={{ width: 3, background: BRAND_RUST, flexShrink: 0, alignSelf: "stretch" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               <h1
                 style={{
@@ -98,21 +103,27 @@ export default async function OGImage() {
           </div>
         </div>
 
+        {/* Faixa institucional The BR Insider */}
+        <div style={{ display: "flex", height: 5, marginTop: 28 }}>
+          <div style={{ flex: 1, background: BRAND_RUST }} />
+          <div style={{ flex: 1, background: BRAND_GREEN }} />
+          <div style={{ flex: 1, background: BRAND_STEEL }} />
+          <div style={{ flex: 1, background: BRAND_NAVY }} />
+        </div>
+
         {/* Footer */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginTop: 36,
-            paddingTop: 24,
-            borderTop: `1px solid ${BORDER}`,
-            fontSize: 18,
+            marginTop: 18,
+            fontSize: 17,
             color: CAPTION,
           }}
         >
           <span style={{ fontFamily: "monospace", fontWeight: 600, color: FG }}>
-            almg.transparenciafederal.org
+            almg.thebrinsider.com
           </span>
           <span style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <span style={{ width: 8, height: 8, background: FG }} />

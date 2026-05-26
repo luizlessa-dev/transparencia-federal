@@ -26,7 +26,7 @@ function fmtN(n: number) {
 export async function generateMetadata({ params }: Props) {
   const { ano } = await params;
   return {
-    title: `RP9 ${ano} — Emendas do Relator-Geral — Transparência Federal`,
+    title: `RP9 ${ano} — Emendas do Relator-Geral — The BR Insider`,
     description: `Emendas do Relator-Geral (orçamento secreto) em ${ano}. Dados oficiais do Portal da Transparência.`,
   };
 }

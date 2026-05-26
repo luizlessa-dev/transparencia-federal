@@ -28,7 +28,7 @@ function fmtN(n: number) {
 
 export function generateMetadata() {
   return {
-    title: "CEAP — Despesas dos Senadores — Transparência Federal",
+    title: "CEAP — Despesas dos Senadores — The BR Insider",
     description: "Ranking de gastos com a Cota para o Exercício da Atividade Parlamentar dos Senadores. Dados de 2019 a 2026, com busca por nome e filtros de partido e UF.",
   };
 }

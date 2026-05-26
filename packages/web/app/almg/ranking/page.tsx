@@ -1,6 +1,6 @@
 /**
  * Ranking de verba indenizatória — deputados ALMG.
- * Rota: almg.transparenciafederal.org/ranking → /almg/ranking
+ * Rota: almg.thebrinsider.com/ranking → /almg/ranking
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -9,15 +9,15 @@ import { getSupabase } from "~/lib/supabase-server";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Ranking de Gastos — ALMG | Transparência Federal",
+  title: "Ranking de Gastos — ALMG | The BR Insider",
   description:
     "Deputados estaduais de Minas Gerais ordenados por verba indenizatória reembolsada. Dados nota a nota, fev/2025–abr/2026.",
-  alternates: { canonical: "https://almg.transparenciafederal.org/ranking" },
+  alternates: { canonical: "https://almg.thebrinsider.com/ranking" },
   openGraph: {
     title: "Ranking ALMG — Verba Indenizatória",
     description: "77 deputados, 31 mil notas fiscais, 15 meses.",
-    url: "https://almg.transparenciafederal.org/ranking",
-    siteName: "Transparência Federal",
+    url: "https://almg.thebrinsider.com/ranking",
+    siteName: "The BR Insider",
     type: "website",
     locale: "pt_BR",
   },

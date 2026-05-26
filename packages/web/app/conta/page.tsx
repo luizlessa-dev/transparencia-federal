@@ -6,7 +6,7 @@ import { getSupabase } from "~/lib/supabase-server";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Minha Conta — Transparência Federal",
+  title: "Minha Conta — The BR Insider",
 };
 
 interface Props {
@@ -77,7 +77,7 @@ export default async function ContaPage({ searchParams }: Props) {
               fontWeight: 600,
             }}
           >
-            ✓ E-mail confirmado. Bem-vindo ao Transparência Federal!
+            ✓ E-mail confirmado. Bem-vindo ao The BR Insider!
           </div>
         )}
 

@@ -2,18 +2,18 @@ import type { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Transparência Federal — Minas Gerais (ALMG)",
+  title: "The BR Insider — Minas Gerais (ALMG)",
   description:
-    "Verba indenizatória, votações e tramitações dos 77 deputados da Assembleia Legislativa de Minas Gerais. Nó estadual do observatório Transparência Federal.",
+    "Verba indenizatória, votações e tramitações dos 77 deputados da Assembleia Legislativa de Minas Gerais. Nó estadual do observatório The BR Insider.",
   alternates: {
-    canonical: "https://almg.transparenciafederal.org/",
+    canonical: "https://almg.thebrinsider.com/",
   },
   openGraph: {
-    title: "Transparência Federal — ALMG",
+    title: "The BR Insider — ALMG",
     description:
       "Nota a nota, fornecedor a fornecedor: gastos dos 77 deputados estaduais de Minas Gerais.",
-    url: "https://almg.transparenciafederal.org/",
-    siteName: "Transparência Federal",
+    url: "https://almg.thebrinsider.com/",
+    siteName: "The BR Insider",
     type: "website",
     locale: "pt_BR",
   },
@@ -91,10 +91,10 @@ export default function AlmgLandingPage() {
           >
             Primeiro nó estadual da plataforma{" "}
             <a
-              href="https://www.transparenciafederal.com"
+              href="https://www.thebrinsider.com"
               style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}
             >
-              Transparência Federal
+              The BR Insider
             </a>
             . Lançamento previsto: julho de 2026.
           </p>

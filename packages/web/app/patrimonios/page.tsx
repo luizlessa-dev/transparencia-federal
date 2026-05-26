@@ -49,7 +49,7 @@ function cargoLabel(cd: number) {
 
 export function generateMetadata() {
   return {
-    title: "Patrimônio Declarado — Transparência Federal",
+    title: "Patrimônio Declarado — The BR Insider",
     description:
       "Ranking de patrimônio declarado por candidatos a deputado federal e senador nas eleições de 2022 e 2018. Dados da declaração de bens do TSE.",
   };

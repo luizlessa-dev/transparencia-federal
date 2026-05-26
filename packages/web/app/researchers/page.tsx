@@ -1,123 +1,141 @@
+export const metadata = {
+  title: "Para Pesquisadores — Datasets do Congresso Nacional | The BR Insider",
+  description:
+    "Datasets públicos sobre emendas parlamentares (2015–2026), despesas CEAP (2019–2026), votações e financiamento eleitoral TSE. Fontes primárias verificadas, licença CC-BY-4.0.",
+  alternates: { canonical: "/researchers" },
+};
+
 export default function ResearchersPage() {
   return (
     <section className="section">
       <h1 className="page-title">Para Pesquisadores</h1>
       <p className="lead">
-        Datasets, APIs e documentação para análises científicas de dados públicos
+        Dados públicos do Congresso cruzados, verificados e com cobertura histórica desde 2015
       </p>
 
-      <h2>Acesso aos Dados</h2>
+      <h2>Datasets Disponíveis</h2>
       <p>
-        Todos os dados do Transparência Federal estão disponíveis sob licença aberta (CC-BY-4.0)
-        para fins de pesquisa, educação e não-comerciais.
+        Os dados exibidos no The BR Insider são coletados de fontes oficiais abertas e
+        processados para facilitar análises. As coberturas atuais são:
       </p>
-
-      <h2>Opções de Acesso</h2>
       <ul>
         <li>
-          <strong>API REST:</strong> Acesso programático em tempo real com respostas em JSON.
-          Ideal para análises automáticas e pipelines de dados.
+          <strong>Emendas Parlamentares:</strong> 2015–2026 — Portal da Transparência (API e CSV
+          bulk). Campos: parlamentar, valor empenhado, valor pago, beneficiário, modalidade,
+          função orçamentária
         </li>
         <li>
-          <strong>Exports em CSV:</strong> Todos os datasets disponíveis em formato tabular.
-          Compatível com R, Python, STATA e Excel.
+          <strong>Despesas CEAP — Câmara:</strong> 2019–2026 — CSV bulk anual (histórico) e API
+          por deputado (57ª legislatura). Campos: deputado, tipo de despesa, fornecedor,
+          CNPJ/CPF, valor líquido, data
         </li>
         <li>
-          <strong>Banco de Dados SQL:</strong> Acesso via PostgreSQL. Consulte nossa documentação
-          para credenciais de pesquisadores.
+          <strong>Despesas CEAP — Senado:</strong> 2019–2026 — CSV anual do Senado Federal
+        </li>
+        <li>
+          <strong>Votações Plenárias:</strong> fev/2023–atual — API da Câmara. Campos: votação,
+          deputado, voto, orientação de bancada, data
+        </li>
+        <li>
+          <strong>Proposições Legislativas:</strong> 2019–2026 — proposições de autoria por
+          deputado federal
+        </li>
+        <li>
+          <strong>Financiamento Eleitoral TSE:</strong> 2018 e 2022 — receitas de campanha de
+          deputados federais e senadores com origem dos recursos
+        </li>
+        <li>
+          <strong>Bens Declarados ao TSE:</strong> 2018 e 2022 — patrimônio declarado por
+          candidatos eleitos
+        </li>
+        <li>
+          <strong>Score de Risco G5:</strong> índice composto por cinco dimensões — CEAP (30%),
+          presença (20%), produção legislativa (15%), financiamento (20%) e emendas RP9 (15%)
+        </li>
+        <li>
+          <strong>Frentes Parlamentares e Comissões:</strong> 319 frentes e 30 comissões
+          permanentes da 57ª Legislatura com membros e scores individuais
         </li>
       </ul>
 
-      <h2>Documentação de API</h2>
+      <h2>Fontes Primárias</h2>
       <p>
-        <strong>Base URL:</strong> <code>https://api.transparenciafederal.org/v1</code>
+        Todos os dados podem ser acessados diretamente nas fontes oficiais para verificação
+        independente ou coleta própria:
       </p>
-
-      <h3>Endpoints Principais</h3>
-      <pre style={{
-        background: "#f5f5f5",
-        padding: "1rem",
-        borderRadius: "6px",
-        overflow: "auto",
-        fontSize: "0.875rem"
-      }}>
-{`# Listar emendas com filtros
-GET /amendments?year=2024&state=SP&limit=100&offset=0
-
-# Detalhes de um deputado
-GET /deputies/[id]
-GET /deputies/[id]/amendments
-GET /deputies/[id]/expenses
-GET /deputies/[id]/votes
-
-# Estatísticas agregadas
-GET /stats/summary
-GET /stats/amendments?group_by=state
-GET /stats/expenses?group_by=deputy
-
-# Exportar dataset completo
-GET /exports/amendments.csv
-GET /exports/expenses.csv`}
-      </pre>
-
-      <h2>Datasets Disponíveis</h2>
       <ul>
         <li>
-          <strong>Deputados:</strong> ~513 registros com dados básicos, contato e legislatura
+          <a href="https://portaldatransparencia.gov.br/download-de-dados/emendas-parlamentares" target="_blank" rel="noopener noreferrer">
+            Portal da Transparência — Emendas (CSV bulk)
+          </a>
         </li>
         <li>
-          <strong>Emendas:</strong> ~11.7K registros (2023-2024) com detalhes de aprovação e execução
+          <a href="https://dadosabertos.camara.leg.br/swagger/api.html" target="_blank" rel="noopener noreferrer">
+            API da Câmara dos Deputados (dadosabertos.camara.leg.br)
+          </a>
         </li>
         <li>
-          <strong>Despesas CEAPS:</strong> ~558K registros (2023-2025) com categoria, fornecedor e valor
+          <a href="https://www.camara.leg.br/cotas" target="_blank" rel="noopener noreferrer">
+            CEAP Câmara — CSVs anuais (camara.leg.br/cotas)
+          </a>
         </li>
         <li>
-          <strong>Votações:</strong> Histórico de votações de cada deputado em projetos-chave
+          <a href="https://legis.senado.leg.br/dadosabertos" target="_blank" rel="noopener noreferrer">
+            Dados Abertos do Senado Federal
+          </a>
+        </li>
+        <li>
+          <a href="https://dadosabertos.tse.jus.br" target="_blank" rel="noopener noreferrer">
+            Dados Abertos do TSE — financiamento e bens
+          </a>
         </li>
       </ul>
 
       <h2>Citação Recomendada</h2>
       <pre style={{
-        background: "#f5f5f5",
+        background: "hsl(var(--muted))",
         padding: "1rem",
         borderRadius: "6px",
         overflow: "auto",
-        fontSize: "0.875rem"
+        fontSize: "0.875rem",
+        lineHeight: "1.6",
       }}>
-{`Transparência Federal. (2024). Brazilian Congressional
-Amendments and Spending Database.
-https://transparenciafederal.org
+{`The BR Insider. (2026). Base de dados de emendas
+parlamentares, despesas CEAP e votações do Congresso Nacional.
+https://www.thebrinsider.com
 
 Dados coletados de:
-- Portal da Transparência (gov.br/transparencia)
-- Câmara dos Deputados API (dadosabertos.camara.leg.br)`}
+- Portal da Transparência (portaldatransparencia.gov.br)
+- Câmara dos Deputados (dadosabertos.camara.leg.br)
+- Senado Federal (legis.senado.leg.br/dadosabertos)
+- TSE (dadosabertos.tse.jus.br)`}
       </pre>
 
       <h2>Condições de Uso</h2>
+      <p>
+        Os dados exibidos são públicos e originalmente licenciados pelas fontes oficiais. O
+        The BR Insider os reproduz sob os mesmos termos:
+      </p>
       <ul>
         <li>✓ Uso acadêmico e educacional</li>
         <li>✓ Análises de políticas públicas</li>
         <li>✓ Pesquisa científica</li>
         <li>✓ Jornalismo de investigação</li>
-        <li>✗ Fins comerciais sem autorização</li>
-        <li>✗ Revenda de dados</li>
+        <li>✓ Citação com atribuição à fonte original e ao The BR Insider</li>
+        <li>✗ Revenda de dados ou uso comercial sem autorização</li>
       </ul>
 
-      <h2>Registro de Pesquisadores</h2>
+      <h2>Acesso Completo</h2>
       <p>
-        Para acesso prioritário, APIs sem throttling e suporte técnico dedicado, registre seu projeto.
-        Envie email com:
+        O plano gratuito exibe o top 10 do Score de Risco e a listagem de frentes. Para acesso
+        completo aos perfis individuais, votações detalhadas e filtros avançados, consulte os{" "}
+        <a href="/planos">planos disponíveis</a>.
       </p>
-      <ul>
-        <li>Nome e instituição</li>
-        <li>Descrição breve da pesquisa</li>
-        <li>Datasets que pretende usar</li>
-      </ul>
 
-      <h2>Contato Técnico</h2>
+      <h2>Contato</h2>
       <p>
-        Dúvidas sobre a API ou dados? Abra uma issue no{" "}
-        <a href="https://github.com" target="_blank">repositório GitHub</a>.
+        Dúvidas sobre metodologia, cobertura dos dados ou inconsistências? Entre em contato
+        pela página <a href="/about">Sobre o Projeto</a>.
       </p>
     </section>
   );

@@ -52,7 +52,7 @@ function cargoLabel(cd: number) {
 
 export function generateMetadata() {
   return {
-    title: "Financiamento Eleitoral — Transparência Federal",
+    title: "Financiamento Eleitoral — The BR Insider",
     description: "Explore a arrecadação de campanha de deputados federais e senadores nas eleições de 2022 e 2018. FEFC, doações individuais e fundos partidários.",
   };
 }

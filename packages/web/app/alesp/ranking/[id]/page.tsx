@@ -1,6 +1,6 @@
 /**
  * Detalhe de despesas de gabinete por deputado — ALESP.
- * Rota: alesp.transparenciafederal.org/ranking/<matricula>
+ * Rota: alesp.thebrinsider.com/ranking/<matricula>
  *
  * Diferenças vs ALMG:
  *   - matricula (TEXT) em vez de id_almg (INT)
