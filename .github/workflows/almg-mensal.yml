@@ -79,12 +79,14 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ALMG_PROXY_URL: ${{ secrets.ALMG_PROXY_URL }}
         run: npm run ingestao-almg:deputados
 
       - name: Ingerir verba — ${{ steps.periodo.outputs.label }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ALMG_PROXY_URL: ${{ secrets.ALMG_PROXY_URL }}
         run: |
           npm run ingestao-almg -- ${{ steps.periodo.outputs.mes }} ${{ steps.periodo.outputs.ano }}
 

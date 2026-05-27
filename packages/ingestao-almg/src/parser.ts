@@ -22,8 +22,11 @@
  */
 import { JSDOM } from "jsdom";
 
-const BASE =
-  "https://www.almg.gov.br/transparencia/prestacao-de-contas/deputados/verba-indenizatoria/detalhe.html";
+// Em produção (GHA), ALMG_PROXY_URL aponta para o Cloudflare Worker proxy.
+// Sem a variável, usa a URL direta (funciona localmente).
+const BASE = process.env.ALMG_PROXY_URL
+  ? `${process.env.ALMG_PROXY_URL}/verba-detalhe`
+  : "https://www.almg.gov.br/transparencia/prestacao-de-contas/deputados/verba-indenizatoria/detalhe.html";
 
 export type GastoVerba = {
   deputadoIdAlmg: number;
