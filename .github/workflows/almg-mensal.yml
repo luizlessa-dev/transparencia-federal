@@ -5,12 +5,14 @@ name: ALMG — Ingestão Mensal
 # que o mês anterior já está publicado antes de sair da janela.
 #
 # Exemplo: rodando em 05/jun/2026 → ingere mai/2026.
+#
+# ATENÇÃO — sem schedule automático:
+# O portal da ALMG bloqueia IPs de datacenter (Azure/Cloudflare).
+# A ingestão só funciona via IP residencial BR (Mac local do editor).
+# Use o launchd local (ver scripts/almg-cron.sh + LaunchAgents/com.thebrinsider.almg-mensal.plist)
+# ou dispare manualmente via workflow_dispatch depois de rodar localmente.
 
 on:
-  schedule:
-    # Dia 5 de cada mês às 12:00 UTC (09:00 BRT)
-    - cron: "0 12 5 * *"
-
   workflow_dispatch:
     inputs:
       mes:

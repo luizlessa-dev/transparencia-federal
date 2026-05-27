@@ -1,6 +1,0 @@
-name            = "almg-proxy"
-main            = "src/index.ts"
-compatibility_date = "2024-09-23"
-
-# Workers free tier: 100k requests/dia, mais que suficiente
-# (~77 requests/mês no incremental, ~7400 no histórico completo)

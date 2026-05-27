@@ -6,12 +6,7 @@
  */
 import { JSDOM } from "jsdom";
 
-// Em produção (GHA), ALMG_PROXY_URL aponta para o Cloudflare Worker proxy
-// que contorna o bloqueio de IPs Azure. Sem a variável, usa a URL direta
-// (funciona do Mac local onde o IP não é bloqueado).
-const URL = process.env.ALMG_PROXY_URL
-  ? `${process.env.ALMG_PROXY_URL}/api-deputados`
-  : "https://dadosabertos.almg.gov.br/api/v2/deputados/em_exercicio";
+const URL = "https://dadosabertos.almg.gov.br/api/v2/deputados/em_exercicio";
 
 export type DeputadoAlmg = {
   id_almg: number;
