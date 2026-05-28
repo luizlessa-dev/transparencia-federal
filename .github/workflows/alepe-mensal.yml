@@ -1,0 +1,95 @@
+name: ALEPE — Ingestão Mensal
+
+# A API da ALEPE é pública, sem bloqueio de IP.
+# Roda no dia 5 de cada mês às 14:00 UTC (11:00 BRT).
+# Ingere o mês anterior + corrente (dados parciais do mês em curso).
+
+on:
+  schedule:
+    # Dia 5 de cada mês às 14:00 UTC — após ALMG (09h BRT) e ALESP (13h UTC)
+    - cron: "0 14 5 * *"
+
+  workflow_dispatch:
+    inputs:
+      ano:
+        description: "Ano a ingerir (ex: 2026). Vazio = ano atual."
+        required: false
+        default: ""
+      meses:
+        description: "Meses a ingerir, separados por espaço (ex: '4 5'). Vazio = mês anterior + corrente."
+        required: false
+        default: ""
+
+jobs:
+  ingerir:
+    name: Ingerir verba indenizatória ALEPE
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Calcular ano/meses a ingerir
+        id: periodo
+        run: |
+          INPUT_ANO="${{ github.event.inputs.ano }}"
+          INPUT_MESES="${{ github.event.inputs.meses }}"
+
+          if [ -n "$INPUT_ANO" ]; then
+            ANO="$INPUT_ANO"
+          else
+            ANO=$(date +%Y)
+          fi
+
+          if [ -n "$INPUT_MESES" ]; then
+            MESES="$INPUT_MESES"
+            echo "Período explícito: $ANO meses=[$MESES]"
+          else
+            CURRENT_MES=$(date +%-m)
+            if [ "$CURRENT_MES" -eq 1 ]; then
+              MESES="1"
+            else
+              PREV_MES=$((CURRENT_MES - 1))
+              MESES="$PREV_MES $CURRENT_MES"
+            fi
+            echo "Período automático: $ANO/[$MESES]"
+          fi
+
+          echo "ano=$ANO"   >> "$GITHUB_OUTPUT"
+          echo "meses=$MESES" >> "$GITHUB_OUTPUT"
+          echo "label=$ANO/[$(echo $MESES | tr ' ' ',')]" >> "$GITHUB_OUTPUT"
+
+      - name: Atualizar lista de deputados
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run ingestao-alepe:deputados
+
+      - name: Ingerir despesas — ${{ steps.periodo.outputs.label }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          npm run ingestao-alepe -- \
+            ${{ steps.periodo.outputs.ano }} \
+            ${{ steps.periodo.outputs.meses }}
+
+      - name: Resumo no log
+        if: always()
+        run: |
+          echo "### ALEPE Ingestão — ${{ steps.periodo.outputs.label }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Campo | Valor |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Período | ${{ steps.periodo.outputs.label }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Trigger | ${{ github.event_name }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Fonte: API PHP ALEPE (4 endpoints). Idempotente via UNIQUE constraint." >> "$GITHUB_STEP_SUMMARY"

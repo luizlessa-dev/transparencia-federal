@@ -215,6 +215,38 @@ export const ALERJ_CONFIG: SiteConfig = {
   copyRight: "Lessa Labs Tecnologia Ltda. · CNPJ 65.659.055/0001-53 · contato@thebrinsider.com",
 };
 
+// ── ALEPE · Pernambuco ────────────────────────────────────────────────────
+
+export const ALEPE_CONFIG: SiteConfig = {
+  badge: "PE",
+  shortName: "ALEPE — Pernambuco",
+  kicker: "The BR Insider · Estados",
+  tagline: "Verba indenizatória dos deputados estaduais de Pernambuco — nota a nota, CNPJ a CNPJ, desde 2015.",
+  nav: [
+    { label: "Início", href: "/" },
+    { label: "Ranking", href: "/ranking" },
+    { label: "Federal ↗", href: "https://www.thebrinsider.com", external: true },
+  ],
+  footer: [
+    {
+      label: "Explorar",
+      links: [
+        { label: "Ranking de Gastos", href: "/ranking" },
+        { label: "Início", href: "/" },
+      ],
+    },
+    {
+      label: "Fontes de Dados",
+      links: [
+        { label: "Portal de Transparência ALEPE", href: "https://www.alepe.pe.gov.br/servicos/transparencia/", external: true },
+        { label: "ALEPE — Site oficial", href: "https://www.alepe.pe.gov.br/", external: true },
+      ],
+    },
+  ],
+  copyLeft: "Projeto independente · Sem vínculo com a ALEPE",
+  copyRight: "Lessa Labs Tecnologia Ltda. · CNPJ 65.659.055/0001-53 · contato@thebrinsider.com",
+};
+
 // ── Router de host → config ───────────────────────────────────────────────
 
 export function getSiteConfigForHost(host: string | null | undefined): SiteConfig {
@@ -223,5 +255,6 @@ export function getSiteConfigForHost(host: string | null | undefined): SiteConfi
   if (h.startsWith("almg.")) return ALMG_CONFIG;
   if (h.startsWith("alesp.")) return ALESP_CONFIG;
   if (h.startsWith("alerj.")) return ALERJ_CONFIG;
+  if (h.startsWith("alepe.")) return ALEPE_CONFIG;
   return FEDERAL_CONFIG;
 }
