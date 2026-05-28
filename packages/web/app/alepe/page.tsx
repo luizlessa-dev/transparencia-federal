@@ -51,7 +51,7 @@ export default function AlepeLandingPage() {
                 fontFamily: "var(--font-sans)",
               }}
             >
-              Nó estadual · Em construção
+              Nó estadual · ALEPE
             </span>
           </div>
 
@@ -99,7 +99,13 @@ export default function AlepeLandingPage() {
             >
               The BR Insider
             </a>
-            . Lançamento previsto: julho de 2026.
+            .{" "}
+            <a
+              href="/ranking"
+              style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}
+            >
+              Ver ranking de gastos →
+            </a>
           </p>
         </div>
       </section>
@@ -122,7 +128,7 @@ export default function AlepeLandingPage() {
           <div className="bloomberg-kpi-grid">
             <Kpi label="Deputados" value="163" sub="49 ativos + 114 históricos" />
             <Kpi label="Histórico" value="11 anos" sub="jan/2015 → mês corrente" />
-            <Kpi label="Granularidade" value="Nota fiscal" sub="CNPJ + data + valor" />
+            <Kpi label="Notas fiscais" value="27.875" sub="R$ 157,6 mi em verbas" />
             <Kpi label="Categorias" value="15 rubricas" sub="Jurídico, publicidade, telecom e mais" />
           </div>
         </div>
@@ -245,10 +251,10 @@ export default function AlepeLandingPage() {
             <RoadmapItem status="done" label="Pacote ingestao-alepe implementado (job-deputados + job-despesas)" />
             <RoadmapItem status="done" label="Migration SQL — ALEPE seed em casas" />
             <RoadmapItem status="done" label="Site config + subdomínio alepe.thebrinsider.com" />
-            <RoadmapItem status="wip"  label="Carga histórica 2015–2026 (163 deputados, ~11h de ingesta)" />
-            <RoadmapItem status="wip"  label="Workflow GHA para cron mensal (dia 5 de cada mês)" />
-            <RoadmapItem status="next" label="Ranking público de gastos por deputado" />
-            <RoadmapItem status="next" label="Detalhe por deputado: notas, fornecedores, evolução mensal" />
+            <RoadmapItem status="done" label="Carga histórica 2015–2026 (163 deputados, 27.875 notas, R$ 157,6 mi)" />
+            <RoadmapItem status="done" label="Workflow GHA para cron mensal (dia 5 de cada mês)" />
+            <RoadmapItem status="done" label="Ranking público de gastos por deputado" />
+            <RoadmapItem status="done" label="Detalhe por deputado: notas, fornecedores, evolução mensal" />
             <RoadmapItem status="next" label="Cruzamento ALEPE × Câmara × ALESP — fornecedores em comum" />
           </ul>
         </div>
