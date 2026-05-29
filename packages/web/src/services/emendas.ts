@@ -38,6 +38,14 @@ export interface EmendasPage {
 
 const ANOS_VALIDOS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
 
+// O Portal da Transparência grava autor_nome em CAIXA ALTA e SEM ACENTO
+// ("AECIO NEVES"), mas parlamentares.nome_parlamentar tem acento ("Aécio Neves").
+// ilike é case-insensitive mas não accent-insensitive, então o vínculo por nome
+// falha para qualquer parlamentar com acento. Removemos o acento do termo de busca.
+function semAcento(s: string): string {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
 export async function getEmendasRp9(ano: number, page: number, perPage = 50): Promise<EmendasPage> {
   if (!ANOS_VALIDOS.includes(ano)) return { data: [], total: 0 };
 
@@ -128,7 +136,7 @@ export async function getEmendasParlamentar(
   const { data, error, count } = await sb
     .from("emendas_completas")
     .select("*", { count: "exact" })
-    .ilike("autor_nome", autorNome)
+    .ilike("autor_nome", semAcento(autorNome))
     .eq("ano", ano)
     .order("valor_empenhado", { ascending: false })
     .range(from, to);
@@ -156,7 +164,7 @@ export async function getTopEmendasParlamentar(
   const { data, error } = await sb
     .from("emendas_completas")
     .select("*")
-    .ilike("autor_nome", `%${autorNome}%`)
+    .ilike("autor_nome", `%${semAcento(autorNome)}%`)
     .order("valor_empenhado", { ascending: false })
     .limit(limit);
   if (error) throw error;
@@ -181,7 +189,7 @@ export async function getEmendasParlamentarFull(
     const { data, error } = await sb
       .from("emendas_completas")
       .select("*")
-      .ilike("autor_nome", `%${autorNome}%`)
+      .ilike("autor_nome", `%${semAcento(autorNome)}%`)
       .order("ano", { ascending: false })
       .order("valor_empenhado", { ascending: false })
       .range(offset, to);
