@@ -82,6 +82,21 @@ jobs:
             ${{ steps.periodo.outputs.ano }} \
             ${{ steps.periodo.outputs.meses }}
 
+      - name: Atualizar cruzamento ALEPE × Câmara × ALESP
+        if: success()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            "${SUPABASE_URL}/rest/v1/rpc/refresh_fornecedores_intersetados" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+          echo "Refresh fornecedores_intersetados → HTTP $STATUS"
+          [ "$STATUS" = "204" ] || [ "$STATUS" = "200" ] || { echo "Refresh falhou (HTTP $STATUS)"; exit 1; }
+
       - name: Resumo no log
         if: always()
         run: |

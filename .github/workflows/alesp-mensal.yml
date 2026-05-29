@@ -119,6 +119,23 @@ jobs:
             ${{ steps.periodo.outputs.ano_atual }} \
             ${{ steps.periodo.outputs.meses_atual }}
 
+      - name: Atualizar cruzamentos ALESP × ALEPE e ALESP × ALMG
+        if: success()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          for FN in refresh_fornecedores_intersetados refresh_almg_fornecedores_intersetados; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+              "${SUPABASE_URL}/rest/v1/rpc/${FN}" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Content-Type: application/json" \
+              -d '{}')
+            echo "Refresh ${FN} → HTTP $STATUS"
+            [ "$STATUS" = "204" ] || [ "$STATUS" = "200" ] || { echo "Refresh ${FN} falhou (HTTP $STATUS)"; exit 1; }
+          done
+
       - name: Resumo no log
         if: always()
         run: |
