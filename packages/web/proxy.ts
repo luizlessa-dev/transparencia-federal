@@ -49,6 +49,7 @@ const HOST_SEGMENT: Record<string, string> = {
   "alesp.thebrinsider.com": "/alesp",
   "alerj.thebrinsider.com": "/alerj",
   "alepe.thebrinsider.com": "/alepe",
+  "cldf.thebrinsider.com": "/cldf",
   "radar.thebrinsider.com": "/radar",
   // legado (manter durante migração de DNS)
   "almg.transparenciafederal.org": "/almg",
@@ -64,6 +65,7 @@ const HOST_SEGMENT: Record<string, string> = {
   "alesp.localhost:3000": "/alesp",
   "alerj.localhost:3000": "/alerj",
   "alepe.localhost:3000": "/alepe",
+  "cldf.localhost:3000": "/cldf",
   "radar.localhost:3000": "/radar",
 };
 
