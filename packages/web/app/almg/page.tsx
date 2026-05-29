@@ -96,8 +96,16 @@ export default function AlmgLandingPage() {
             >
               The BR Insider
             </a>
-            . Lançamento previsto: julho de 2026.
+            .
           </p>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "0.75rem" }}>
+            <a href="/ranking" style={{ fontSize: "0.875rem", color: "hsl(var(--primary))", textDecoration: "underline" }}>
+              Ranking de gastos →
+            </a>
+            <a href="/cruzamento" style={{ fontSize: "0.875rem", color: "hsl(var(--primary))", textDecoration: "underline" }}>
+              Cruzamento ALMG × Câmara × ALESP →
+            </a>
+          </div>
         </div>
       </section>
 
@@ -235,7 +243,7 @@ export default function AlmgLandingPage() {
             <RoadmapItem status="done" label={<><a href="/ranking" style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}>Ranking público de gastos</a> por deputado</>} />
             <RoadmapItem status="done" label={<><a href="/ranking/1099" style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}>Detalhe por deputado</a>: notas, fornecedores recorrentes, evolução mensal</>} />
             <RoadmapItem status="done" label="Cron mensal automático (GitHub Actions) — dia 5 de cada mês" />
-            <RoadmapItem status="next" label="Cruzamento federal: mesmos CNPJs entre verba ALMG e fornecedores de emendas/CEAP" />
+            <RoadmapItem status="done" label={<><a href="/cruzamento" style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}>Cruzamento ALMG × Câmara × ALESP</a> — 2.362 CNPJs em comum</>} />
             <RoadmapItem status="next" label="Votações nominais (Diário do Legislativo MG — em avaliação técnica)" />
           </ul>
         </div>
