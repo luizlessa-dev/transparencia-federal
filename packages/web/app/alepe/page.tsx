@@ -83,30 +83,28 @@ export default function AlepeLandingPage() {
             — 11 anos de histórico.
           </p>
 
-          <p
-            style={{
-              fontSize: "0.875rem",
-              lineHeight: 1.6,
-              color: "hsl(var(--text-caption))",
-              maxWidth: "640px",
-              margin: 0,
-            }}
-          >
-            Terceiro nó estadual da plataforma{" "}
-            <a
-              href="https://www.thebrinsider.com"
-              style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}
-            >
-              The BR Insider
-            </a>
-            .{" "}
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "0.25rem" }}>
             <a
               href="/ranking"
-              style={{ color: "hsl(var(--primary))", textDecoration: "underline" }}
+              style={{
+                fontSize: "0.875rem",
+                color: "hsl(var(--primary))",
+                textDecoration: "underline",
+              }}
             >
-              Ver ranking de gastos →
+              Ranking de gastos →
             </a>
-          </p>
+            <a
+              href="/cruzamento"
+              style={{
+                fontSize: "0.875rem",
+                color: "hsl(var(--primary))",
+                textDecoration: "underline",
+              }}
+            >
+              Cruzamento ALEPE × Câmara × ALESP →
+            </a>
+          </div>
         </div>
       </section>
 
@@ -255,7 +253,7 @@ export default function AlepeLandingPage() {
             <RoadmapItem status="done" label="Workflow GHA para cron mensal (dia 5 de cada mês)" />
             <RoadmapItem status="done" label="Ranking público de gastos por deputado" />
             <RoadmapItem status="done" label="Detalhe por deputado: notas, fornecedores, evolução mensal" />
-            <RoadmapItem status="next" label="Cruzamento ALEPE × Câmara × ALESP — fornecedores em comum" />
+            <RoadmapItem status="done" label="Cruzamento ALEPE × Câmara × ALESP — 121 CNPJs, R$ 90,7 mi cruzados" />
           </ul>
         </div>
       </div>
