@@ -42,3 +42,6 @@ lerna-debug.log*
 .turbo/
 node_modules
 .vercel
+
+# Working files com dados pessoais (LGPD) — nunca commitar
+docs/funcionario-doador-leads.csv
