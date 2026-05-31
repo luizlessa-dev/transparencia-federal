@@ -2,13 +2,14 @@
 
 Ingestão da **folha de pessoal dos gabinetes parlamentares federais** → `folha_gabinete`.
 
-Estado: **Câmara** sem salário (Fase 1). **Senado** com salário (Fase 2, ✅ no ar).
+Estado: **Câmara** com salário ESTIMADO por nível de cargo (Fase 2a). **Senado**
+com salário exato (Fase 2). Ambos ✅ no ar.
 
 ## Fontes
 
 | Casa | Fonte | Filtro | Liga ao parlamentar por | Salário |
 |------|-------|--------|-------------------------|---------|
-| Câmara | `dadosabertos.camara.leg.br/arquivos/funcionarios/csv/funcionarios.csv` (UTF-8, BOM) | `grupo = "Secretário Parlamentar"` | `uriLotacao` → id do deputado (regex) | — (Fase 2 pendente) |
+| Câmara | `dadosabertos.camara.leg.br/arquivos/funcionarios/csv/funcionarios.csv` (UTF-8, BOM) | `grupo = "Secretário Parlamentar"` | `uriLotacao` → id do deputado (regex) | ~ estimado por nível SP (tabela 2023) |
 | Senado | API admin `adm.senado.gov.br/adm-dadosabertos` (UTF-8) | `SITUAÇÃO=ATIVO` + lotação de senador | `parlamentar_nome` extraído de `NOME LOTAÇÃO` | ✅ `REMUNERAÇÃO BÁSICA` |
 
 As fontes são snapshots diários sem histórico. Nós historiamos via **snapshot
@@ -56,13 +57,20 @@ nominal) ficam fora.
 - **Salário do Senado é do mês de referência** (mês anterior ao snapshot), não do
   mês exato do snapshot. Estável o suficiente mês a mês.
 
-## Câmara — Fase 2 (pendente)
+## Câmara — Fase 2a (salário ESTIMADO por nível): como funciona
 
-NÃO há CSV de remuneração individual — só o sistema de consulta
-(`www2.camara.leg.br/transpnet/consulta`, fonte SIGESP). Dois caminhos:
+NÃO há CSV de remuneração individual da Câmara. Estimamos pelo nível do cargo
+(`tabela-remuneracao-camara.ts`, base 2023, Ato da Mesa 268/2023):
 
-- **2a (fácil, estimado):** mapear o `cargo` já capturado (níveis SP — SP01C…SP22S)
-  → faixa da tabela pública do secretariado
-  (`www2.camara.leg.br/transparencia/recursos-humanos/remuneracao/tabelas-de-remuneracao`,
-  faixa R$ 1.764,93–9.359,94). Estimativa por nível.
-- **2b (exato, caro):** scraping do `transpnet/consulta` por nome/mês. Frágil.
+- cargo `SP{nível}{sufixo}` → `valor_remuneracao` BRUTO. `S`=sem GRG (vencimento),
+  `C`=com GRG (2× vencimento), `U`=especial (~2%, usa vencimento, `grg` nulo).
+- Sempre marcado `dados.salario_estimado=true`, `dados.tabela_ref="2023"`,
+  `dados.nivel_sp`, `dados.grg`.
+
+Faixa: R$ 1.222,44 (SP01S) a R$ 18.719,88 (SP25C). **Validação:** a soma por
+gabinete encosta em ~R$ 132k/mês, logo abaixo do teto da Verba de Gabinete
+(R$ 133.170,54). Ainda assim é estimativa — não publicar como valor nominal
+exato de um indivíduo sem checar no `transpnet/consulta`.
+
+**Fase 2b (exato, pendente):** scraping do `transpnet/consulta` por nome/mês,
+só se precisar do valor nominal individual. Frágil.

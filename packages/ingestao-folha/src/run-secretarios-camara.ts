@@ -30,6 +30,7 @@ import {
   parseDataBR,
   snapshotMesISO,
 } from "./csv.js";
+import { salarioPorCargoSP, TABELA_REF } from "./tabela-remuneracao-camara.js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
@@ -82,6 +83,7 @@ async function main() {
   let upserts = 0;
   let semDeputado = 0;
   let duplicadas = 0;
+  let comSalario = 0;
   let batch: object[] = [];
   // `ponto` pode repetir no arquivo (histórico de lotação). Dedup no snapshot:
   // a chave do upsert é (casa, chave_natural, snapshot_date) e o Postgres recusa
@@ -106,13 +108,17 @@ async function main() {
     const depId = uri.match(/\/deputados\/(\d+)/)?.[1] ?? null;
     if (!depId) semDeputado++;
 
+    const cargo = c[iCargo]?.trim() || null;
+    const sal = salarioPorCargoSP(cargo);
+    if (sal.valor != null) comSalario++;
+
     batch.push({
       casa: "camara",
       snapshot_date: snapshot,
       chave_natural: ponto,
       secretario_nome: c[iNome]?.trim() || null,
       secretario_id_externo: ponto,
-      cargo: c[iCargo]?.trim() || null,
+      cargo,
       funcao: c[iFuncao]?.trim() || null,
       vinculo: null,
       parlamentar_id_externo: depId,
@@ -121,7 +127,14 @@ async function main() {
       gabinete_raw: lotacao || null,
       data_nomeacao: parseDataBR(c[iDataNom]),
       data_admissao: null,
-      dados: { uriLotacao: uri || null },
+      valor_remuneracao: sal.valor,
+      dados: {
+        uriLotacao: uri || null,
+        salario_estimado: sal.valor != null ? true : undefined,
+        tabela_ref: sal.valor != null ? TABELA_REF : undefined,
+        nivel_sp: sal.nivel,
+        grg: sal.grg ?? undefined,
+      },
       updated_at: nowISO,
     });
     lidas++;
@@ -134,8 +147,9 @@ async function main() {
   }
   if (batch.length > 0) upserts += await upsertBatch(batch);
 
+  const cob = lidas > 0 ? ((comSalario / lidas) * 100).toFixed(1) : "0";
   console.log(
-    `  ✓ secretários=${lidas} upserts=${upserts} sem_deputado_vinculado=${semDeputado} duplicadas_ignoradas=${duplicadas}`,
+    `  ✓ secretários=${lidas} upserts=${upserts} sem_deputado=${semDeputado} duplicadas=${duplicadas} com_salario_estimado=${comSalario} (${cob}%)`,
   );
   console.log(`▶ Concluído.`);
 }
