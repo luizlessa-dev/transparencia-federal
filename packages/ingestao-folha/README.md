@@ -2,18 +2,14 @@
 
 Ingestão da **folha de pessoal dos gabinetes parlamentares federais** → `folha_gabinete`.
 
-## Fase 1 (atual): grafo "quem trabalha pra qual gabinete" — SEM salário
-
-`valor_remuneracao` fica `NULL`. O valor jornalístico aqui está em cruzar
-**secretário × doadores TSE × sobrenome do parlamentar** (nepotismo cruzado,
-funcionário-doador) — não depende do salário.
+Estado: **Câmara** sem salário (Fase 1). **Senado** com salário (Fase 2, ✅ no ar).
 
 ## Fontes
 
-| Casa | Arquivo | Filtro | Liga ao parlamentar por |
-|------|---------|--------|-------------------------|
-| Câmara | `dadosabertos.camara.leg.br/arquivos/funcionarios/csv/funcionarios.csv` (UTF-8, BOM) | `grupo = "Secretário Parlamentar"` | `uriLotacao` → id do deputado (regex) |
-| Senado | `senado.leg.br/transparencia/lai/secrh/servidores_comissionados.csv` (latin-1) | `SETOR2` começa com `GABSEN` | `parlamentar_nome` extraído de `SETOR_EXERCÍCIO` |
+| Casa | Fonte | Filtro | Liga ao parlamentar por | Salário |
+|------|-------|--------|-------------------------|---------|
+| Câmara | `dadosabertos.camara.leg.br/arquivos/funcionarios/csv/funcionarios.csv` (UTF-8, BOM) | `grupo = "Secretário Parlamentar"` | `uriLotacao` → id do deputado (regex) | — (Fase 2 pendente) |
+| Senado | API admin `adm.senado.gov.br/adm-dadosabertos` (UTF-8) | `SITUAÇÃO=ATIVO` + lotação de senador | `parlamentar_nome` extraído de `NOME LOTAÇÃO` | ✅ `REMUNERAÇÃO BÁSICA` |
 
 As fontes são snapshots diários sem histórico. Nós historiamos via **snapshot
 mensal** (`snapshot_date` = 1º dia do mês). Re-rodar o mesmo mês é idempotente
@@ -22,55 +18,51 @@ mensal** (`snapshot_date` = 1º dia do mês). Re-rodar o mesmo mês é idempoten
 ## Uso
 
 ```bash
-# Câmara (~10,5 mil secretários)
-npm run ingestao-folha:camara          # raiz
-npm run secretarios-camara:ts -w @transparencia/ingestao-folha
+# Câmara (~10,5 mil secretários, sem salário)
+npm run ingestao-folha:camara
 
-# Senado (~comissionados GABSEN)
+# Senado (~3,2 mil comissionados de gabinete, COM salário do mês anterior)
 npm run ingestao-folha:senado
 
-# forçar uma data de snapshot específica:
-npm run secretarios-camara:ts -w @transparencia/ingestao-folha -- 2026-05-01
+# overrides:
+npm run secretarios-camara:ts -w @transparencia/ingestao-folha -- 2026-05-01           # snapshot
+npm run comissionados-senado:ts -w @transparencia/ingestao-folha -- 2026-05-01 2026-04  # snapshot + mês remuneração
 ```
 
 Cron mensal: `scripts/folha-cron.sh` via launchd `com.thebrinsider.folha-mensal`.
 
+## Senado — Fase 2 (salário): como funciona
+
+Dois endpoints da API admin, **unidos por NOME normalizado**:
+
+- `GET /api/v1/servidores/servidores/comissionados/csv` → quem é, situação, lotação.
+- `GET /api/v1/servidores/remuneracoes/{ano}/{mes}/csv` → salário (`TIPO FOLHA=Normal`).
+
+> ⚠️ **O campo `SEQUENCIAL` NÃO é ID de pessoa** — é sequencial por arquivo e
+> difere entre os dois endpoints (a mesma pessoa tem SEQUENCIAL distinto em cada).
+> Por isso o join é por **nome**, não por SEQUENCIAL. Cobertura ~96%.
+
+Tratamentos: nomes repetidos na folha (~2,5%) viram `dados.salario_ambiguo=true`
+e ficam sem valor; `REMUNERAÇÃO BÁSICA` ≤ 0 (estorno) é descartado. `dados`
+guarda líquida, vantagens e `remuneracao_mes_ref`. Lideranças/blocos (sem senador
+nominal) ficam fora.
+
 ## Limitações conhecidas
 
-- **Senado sem ID/matrícula**: o vínculo ao senador é por nome (`parlamentar_nome`).
-  Resolver para um `senador_id` é trabalho do analytics (risco de homônimo).
+- **Senado liga ao senador por nome** (`parlamentar_nome`), não por ID. Resolver
+  para um `senador_id` é trabalho do analytics (risco de homônimo).
 - **Câmara `parlamentar_id_externo` é referência soft** (sem FK): alguns lotados
-  podem apontar para órgão/liderança em vez de deputado → fica `NULL`.
-- **Senado GABLID** (lideranças) fica fora desta fase — não liga a um senador único.
+  apontam para órgão/liderança em vez de deputado → fica `NULL`.
+- **Salário do Senado é do mês de referência** (mês anterior ao snapshot), não do
+  mês exato do snapshot. Estável o suficiente mês a mês.
 
-## Fase 2 (planejada — endpoints já mapeados)
-
-Acoplar `valor_remuneracao`. As fontes foram caçadas e validadas em mai/2026:
-
-### Senado — LIMPO e EXATO ✅ (recomendado começar por aqui)
-
-API admin de dados abertos (`adm.senado.gov.br/adm-dadosabertos`, **UTF-8**),
-join por `SEQUENCIAL` (matrícula), não por nome:
-
-- `GET /api/v1/servidores/remuneracoes/{ano}/{mes}/csv`
-  → `SEQUENCIAL; NOME; MES; ANO; TIPO FOLHA; REMUNERAÇÃO BÁSICA; ...; REMUNERAÇÃO LÍQUIDA; ...`
-  (filtrar `TIPO FOLHA = Normal`; ignorar Suplementar pra não duplicar)
-- `GET /api/v1/servidores/servidores/comissionados/csv`
-  → `SEQUENCIAL; NOME; VINCULO; SITUAÇÃO; CARGO; FUNÇÃO; SIGLA LOTAÇÃO; NOME LOTAÇÃO; ...`
-  (`NOME LOTAÇÃO` = "Gabinete/Escritório de Apoio do Senador X"; filtrar `SITUAÇÃO = ATIVO`)
-
-Plano: re-fazer a ingestão do Senado por essa API (melhor que o secrh público,
-que não tem ID), gravando `secretario_id_externo = SEQUENCIAL`, e um job de
-remuneração mensal que dá `UPDATE valor_remuneracao` por `SEQUENCIAL`.
-
-### Câmara — sem bulk exato; usar faixa por nível (estimado)
+## Câmara — Fase 2 (pendente)
 
 NÃO há CSV de remuneração individual — só o sistema de consulta
 (`www2.camara.leg.br/transpnet/consulta`, fonte SIGESP). Dois caminhos:
 
 - **2a (fácil, estimado):** mapear o `cargo` já capturado (níveis SP — SP01C…SP22S)
-  → faixa salarial da tabela pública de remuneração do secretariado
-  (`www2.camara.leg.br/transparencia/recursos-humanos/remuneracao/tabelas-de-remuneracao`).
-  Faixa R$ 1.764,93–9.359,94. Preenche `valor_remuneracao` como estimativa por nível.
-- **2b (exato, caro):** scraping do `transpnet/consulta` por nome/mês. Frágil; só se
-  precisar do valor nominal exato.
+  → faixa da tabela pública do secretariado
+  (`www2.camara.leg.br/transparencia/recursos-humanos/remuneracao/tabelas-de-remuneracao`,
+  faixa R$ 1.764,93–9.359,94). Estimativa por nível.
+- **2b (exato, caro):** scraping do `transpnet/consulta` por nome/mês. Frágil.

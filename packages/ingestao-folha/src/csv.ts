@@ -72,3 +72,43 @@ export function snapshotMesISO(d = new Date()): string {
   const mes = String(d.getMonth() + 1).padStart(2, "0");
   return `${ano}-${mes}-01`;
 }
+
+/** Normaliza nome p/ comparação: sem acento, maiúsculo, só letras e espaço. */
+export function normNome(s: string | null | undefined): string {
+  return (s ?? "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toUpperCase()
+    .replace(/[^A-Z ]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Número no formato brasileiro "32.467,20" → 32467.2. Vazio → null. */
+export function parseValorBR(v: string | undefined | null): number | null {
+  if (v == null) return null;
+  const t = String(v).trim();
+  if (!t) return null;
+  const n = parseFloat(t.replace(/\./g, "").replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * Extrai o nome do senador de uma lotação do Senado (API admin).
+ *   "Gabinete do Senador Jorge Viana"            → "Jorge Viana"
+ *   "Escritório de Apoio nº 1 do Senador X"      → "X"
+ *   "Escritório de Ap. 1 da Sen. Profa. Dorinha" → "Dorinha"
+ * Retorna null para lotações institucionais (Liderança, Bloco, Secretaria...).
+ */
+export function nomeSenadorDeLotacao(lotacao: string | null | undefined): string | null {
+  const s = (lotacao ?? "").trim();
+  if (!s) return null;
+  if (/lideran[çc]a|\bbloco\b|secretaria|presid[êe]ncia/i.test(s)) return null;
+  const m = s.match(/\bSen(?:ador|adora)?\.?\s+(.+)$/i);
+  if (!m) return null;
+  return (
+    m[1]
+      .replace(/^(Profa?\.?|Dra?\.?|Pr\.?)\s+/i, "")
+      .trim() || null
+  );
+}
