@@ -15,7 +15,8 @@
     "risco:ts": "tsx src/run-risco.ts",
     "cpf-enrich:ts": "tsx src/run-cpf-enrich.ts",
     "doadores-sancionados:ts": "tsx src/run-doadores-sancionados.ts",
-    "folha-cruzamento:ts": "tsx src/run-folha-cruzamento.ts"
+    "folha-cruzamento:ts": "tsx src/run-folha-cruzamento.ts",
+    "folha-custo:ts": "tsx src/run-folha-custo.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
