@@ -1,0 +1,22 @@
+{
+  "name": "@transparencia/ingestao-mg-executivo",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "discover:ts": "tsx src/run-discover.ts",
+    "remuneracao:ts": "tsx src/run-remuneracao.ts",
+    "mensal:ts": "tsx src/run-mensal.ts",
+    "contratos:ts": "tsx src/run-contratos.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.0.0"
+  }
+}
