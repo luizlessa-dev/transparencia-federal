@@ -84,6 +84,7 @@ export const FEDERAL_CONFIG: SiteConfig = {
         { label: "Pagamentos a sancionadas (MG)", href: "/mg/pagamentos-sancionados" },
         { label: "Compras COVID (MG)", href: "/mg/covid" },
         { label: "Terceirizados (MG)", href: "/mg/terceirizados" },
+        { label: "Acordo Vale/Brumadinho (MG)", href: "/mg/reparacao" },
       ],
     },
     {
