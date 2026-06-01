@@ -85,6 +85,7 @@ export const FEDERAL_CONFIG: SiteConfig = {
         { label: "Compras COVID (MG)", href: "/mg/covid" },
         { label: "Terceirizados (MG)", href: "/mg/terceirizados" },
         { label: "Acordo Vale/Brumadinho (MG)", href: "/mg/reparacao" },
+        { label: "Despesa com pessoal · LRF (MG)", href: "/mg/lrf" },
       ],
     },
     {

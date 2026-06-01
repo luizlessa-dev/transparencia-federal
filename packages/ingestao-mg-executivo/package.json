@@ -16,7 +16,8 @@
     "covid:ts": "tsx src/run-covid.ts",
     "terceirizados:ts": "tsx src/run-terceirizados.ts",
     "reparacao:ts": "tsx src/run-reparacao.ts",
-    "doacoes:ts": "tsx src/run-doacoes.ts"
+    "doacoes:ts": "tsx src/run-doacoes.ts",
+    "lrf:ts": "tsx src/run-lrf.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

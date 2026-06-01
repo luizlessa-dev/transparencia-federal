@@ -1,0 +1,115 @@
+{
+  "version": "5",
+  "redirects": {
+    "https://esm.sh/@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2.106.1"
+  },
+  "remote": {
+    "https://esm.sh/@supabase/supabase-js@2.106.1": "1b378cc89620ed0bf3e646b946b593e75d8e8ac0e43a4e07db6b71516ca757ec"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:typescript@5"
+      ]
+    },
+    "members": {
+      "packages/analytics": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@supabase/supabase-js@^2.45.0",
+            "npm:dotenv@^16.4.5",
+            "npm:tsx@^4.19.0",
+            "npm:typescript@5"
+          ]
+        }
+      },
+      "packages/api": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@hono/node-server@^2.0.2",
+            "npm:@supabase/supabase-js@^2.105.4",
+            "npm:dotenv@^17.4.2",
+            "npm:hono@^4.12.19",
+            "npm:tsx@^4.22.1",
+            "npm:typescript@5"
+          ]
+        }
+      },
+      "packages/enriquecimento": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@supabase/supabase-js@^2.45.0",
+            "npm:dotenv@^16.4.5",
+            "npm:tsx@^4.19.0",
+            "npm:typescript@5"
+          ]
+        }
+      },
+      "packages/ingestao-alesp": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@supabase/supabase-js@^2.45.0",
+            "npm:@types/jsdom@^21.1.7",
+            "npm:@types/node@22",
+            "npm:dotenv@^16.4.5",
+            "npm:jsdom@25",
+            "npm:saxes@6",
+            "npm:tsx@^4.19.0",
+            "npm:typescript@5"
+          ]
+        }
+      },
+      "packages/ingestao-almg": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@supabase/supabase-js@^2.45.0",
+            "npm:@types/jsdom@^21.1.7",
+            "npm:dotenv@^16.4.5",
+            "npm:jsdom@25",
+            "npm:tsx@^4.19.0",
+            "npm:typescript@5"
+          ]
+        }
+      },
+      "packages/ingestao-camara": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@supabase/supabase-js@^2.45.0",
+            "npm:dotenv@^16.4.5",
+            "npm:tsx@^4.19.0",
+            "npm:typescript@5"
+          ]
+        }
+      },
+      "packages/ingestao-portal": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@supabase/supabase-js@^2.45.0",
+            "npm:dotenv@^16.4.5",
+            "npm:tsx@^4.19.0",
+            "npm:typescript@5"
+          ]
+        }
+      },
+      "packages/web": {
+        "packageJson": {
+          "dependencies": [
+            "npm:@supabase/ssr@~0.10.3",
+            "npm:@supabase/supabase-js@^2.99.1",
+            "npm:@tailwindcss/postcss@^4.2.1",
+            "npm:@types/node@^25.5.0",
+            "npm:@types/react-dom@^19.2.3",
+            "npm:@types/react@^19.2.14",
+            "npm:autoprefixer@^10.4.27",
+            "npm:next@^16.1.6",
+            "npm:postcss@^8.5.8",
+            "npm:react-dom@^19.2.4",
+            "npm:react@^19.2.4",
+            "npm:tailwindcss@^4.2.1",
+            "npm:typescript@5"
+          ]
+        }
+      }
+    }
+  }
+}

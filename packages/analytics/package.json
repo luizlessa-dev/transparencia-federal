@@ -16,7 +16,8 @@
     "cpf-enrich:ts": "tsx src/run-cpf-enrich.ts",
     "doadores-sancionados:ts": "tsx src/run-doadores-sancionados.ts",
     "folha-cruzamento:ts": "tsx src/run-folha-cruzamento.ts",
-    "folha-custo:ts": "tsx src/run-folha-custo.ts"
+    "folha-custo:ts": "tsx src/run-folha-custo.ts",
+    "migrate-judiciario:ts": "tsx src/run-migrate-judiciario.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

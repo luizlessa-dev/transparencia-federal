@@ -12,7 +12,8 @@
     "votacoes:ts": "tsx src/run-votacoes.ts",
     "proposicoes:ts": "tsx src/run-proposicoes.ts",
     "frentes-comissoes:ts": "tsx src/run-frentes-comissoes.ts",
-    "mandatos:ts": "tsx src/run-mandatos.ts"
+    "mandatos:ts": "tsx src/run-mandatos.ts",
+    "ceaps-historico:ts": "tsx src/run-ceaps-historico.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
