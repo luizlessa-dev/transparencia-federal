@@ -39,6 +39,7 @@
     "ingestao-mg:empenho": "npm run empenho:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:covid": "npm run covid:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:terceirizados": "npm run terceirizados:ts -w @transparencia/ingestao-mg-executivo",
+    "ingestao-mg:reparacao": "npm run reparacao:ts -w @transparencia/ingestao-mg-executivo",
     "enriquecimento": "npm run enriquecimento:ts -w @transparencia/enriquecimento",
     "analytics": "npm run analytics:ts -w @transparencia/analytics",
     "publicar": "npm run publicar:ts -w @transparencia/analytics",
