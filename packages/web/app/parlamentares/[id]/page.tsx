@@ -5,7 +5,9 @@ import { getEmendasParlamentarFull, type EmendaCompleta } from "~/services/emend
 import { ConfiancaBadge } from "~/components/ConfiancaBadge";
 import { FonteNota } from "~/components/FonteNota";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
+import { DatasetSection } from "~/components/DatasetSection";
 import { getUser } from "~/lib/supabase-auth";
+import { getParlamentarRisco } from "~/services/risco";
 
 export const dynamic = "force-dynamic";
 
@@ -100,6 +102,13 @@ export default async function ParlamentarPage({ params }: Props) {
   const user = await getUser();
   const liberado = user != null;
   const emendasTabela = liberado ? emendas : emendas.slice(0, 5);
+
+  // Indicadores agregados (score G5) — Câmara apenas. Funde a riqueza do dossiê
+  // no perfil canônico via id_camara. Senadores ainda não têm risco.
+  const risco =
+    p.casa_legislativa === "camara" && p.id_camara
+      ? await getParlamentarRisco(p.id_camara).catch(() => null)
+      : null;
 
   // ── Agregações ────────────────────────────────────────────────────
   const totalEmpenhado = emendas.reduce((s, e) => s + (Number(e.valor_empenhado) || 0), 0);
@@ -296,6 +305,25 @@ export default async function ParlamentarPage({ params }: Props) {
             sub="todos os anos"
           />
         </div>
+
+        {risco && (
+          <DatasetSection
+            titulo="Indicadores do mandato"
+            fonte="Câmara dos Deputados · TSE"
+            verDetalheHref={`/risco/${p.id_camara}`}
+            verDetalheLabel="Ver score de risco G5 →"
+            style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
+          >
+            <div className="bloomberg-kpi-grid">
+              <Kpi label="Patrimônio (2022)" value={fmtBRL(Number(risco.patrimonio_2022) || 0)} />
+              <Kpi label="CEAP (2024)" value={fmtBRL(Number(risco.ceap_total_2024) || 0)} />
+              <Kpi label="Presença" value={`${Math.round(Number(risco.presenca_pct) || 0)}%`} sub="votações nominais" />
+              <Kpi label="Financiamento (2022)" value={fmtBRL(Number(risco.financiamento_total) || 0)} />
+              <Kpi label="Frentes" value={fmtNum(Number(risco.total_frentes) || 0)} />
+              <Kpi label="Comissões" value={fmtNum(Number(risco.total_comissoes) || 0)} />
+            </div>
+          </DatasetSection>
+        )}
 
         {qtdEmendas === 0 ? (
           <div

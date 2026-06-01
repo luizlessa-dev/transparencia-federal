@@ -31,6 +31,8 @@ export interface Parlamentar {
   foto_url: string | null;
   casa_legislativa: string;
   ativo: boolean;
+  id_camara?: number | null;
+  id_senado?: number | null;
 }
 
 export interface HistoricoEntry {
@@ -130,7 +132,7 @@ export async function getParlamentar(id: string): Promise<{
     await Promise.all([
       sb
         .from("parlamentares")
-        .select("id, nome, nome_parlamentar, partido, uf, foto_url, casa_legislativa, ativo")
+        .select("id, nome, nome_parlamentar, partido, uf, foto_url, casa_legislativa, ativo, id_camara, id_senado")
         .eq("id", id)
         .single(),
       sb
