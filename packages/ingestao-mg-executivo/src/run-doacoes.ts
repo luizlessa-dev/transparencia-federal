@@ -53,9 +53,9 @@ for (const l of linhas) {
     vigencia: at(l, C.vigencia) || null,
     recurso_tj_mp: at(l, C.recurso) || null,
   });
-  if (buffer.length >= 500) { inseridos += await flushUpsert(client, "mg_doacoes", "doador,objeto,orgao_recebedor,ano,mes", buffer, erros); buffer = []; }
+  if (buffer.length >= 500) { inseridos += await flushUpsert(client, "mg_doacoes", "dedupe_key", buffer, erros); buffer = []; }
 }
-inseridos += await flushUpsert(client, "mg_doacoes", "doador,objeto,orgao_recebedor,ano,mes", buffer, erros);
+inseridos += await flushUpsert(client, "mg_doacoes", "dedupe_key", buffer, erros);
 const r = finalizar(linhas.length, inseridos, erros, header);
 console.log(`  status ${r.status} | linhas ${r.total} | gravados ${r.inseridos}`);
 for (const e of r.erros.slice(0, 5)) console.log(`  erro: ${e}`);
