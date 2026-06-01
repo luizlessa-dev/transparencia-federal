@@ -9,7 +9,12 @@
     "discover:ts": "tsx src/run-discover.ts",
     "remuneracao:ts": "tsx src/run-remuneracao.ts",
     "mensal:ts": "tsx src/run-mensal.ts",
-    "contratos:ts": "tsx src/run-contratos.ts"
+    "contratos:ts": "tsx src/run-contratos.ts",
+    "obras:ts": "tsx src/run-obras.ts",
+    "convenios:ts": "tsx src/run-convenios.ts",
+    "empenho:ts": "tsx src/run-empenho.ts",
+    "covid:ts": "tsx src/run-covid.ts",
+    "terceirizados:ts": "tsx src/run-terceirizados.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

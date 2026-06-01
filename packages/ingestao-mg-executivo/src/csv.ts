@@ -98,9 +98,14 @@ export function parseCentavos(v: string | number | undefined | null): number | n
   return neg ? -n : n;
 }
 
-/** CNPJ/CPF só com dígitos ("51.343.243/0001-63" → "51343243000163"). Vazio → "". */
+/**
+ * CNPJ/CPF só com dígitos, padronizando CNPJ a 14 ("51.343.243/0001-63" →
+ * "51343243000163"; "9645889000139" → "09645889000139", zero à esquerda que a
+ * fonte do DER dropa). CPF (11) e vazio passam sem padding.
+ */
 export function normCNPJ(s: string | null | undefined): string {
-  return (s ?? "").replace(/\D/g, "");
+  const d = (s ?? "").replace(/\D/g, "");
+  return d.length === 12 || d.length === 13 ? d.padStart(14, "0") : d;
 }
 
 /** Normaliza nome de pessoa p/ comparação: sem acento, maiúsculo, só letras e espaço. */
