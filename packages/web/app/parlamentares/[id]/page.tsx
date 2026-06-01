@@ -6,8 +6,9 @@ import { ConfiancaBadge } from "~/components/ConfiancaBadge";
 import { FonteNota } from "~/components/FonteNota";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 import { DatasetSection } from "~/components/DatasetSection";
-import { getUser } from "~/lib/supabase-auth";
+import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
 import { getParlamentarRisco } from "~/services/risco";
+import { getFolhaGabinete, getFolhaLeads } from "~/services/folha";
 import { getCeapsSenadorHistorico } from "~/services/ceaps-senado";
 import { getFrentesDeDeputado } from "~/services/frentes";
 import { getTopDoadoresPorCpf } from "~/services/tse";
@@ -125,6 +126,14 @@ export default async function ParlamentarPage({ params }: Props) {
   // Paridade com o dossiê (Câmara): frentes + top doadores de campanha.
   const frentes = p.id_camara && risco ? await getFrentesDeDeputado(p.id_camara).catch(() => []) : [];
   const doadores = risco?.cpf ? await getTopDoadoresPorCpf(risco.cpf).catch(() => null) : null;
+
+  // Folha de gabinete (Câmara: estimado por id; Senado: exato por nome) + leads.
+  const folha = await getFolhaGabinete({
+    idCamara: p.id_camara,
+    senadorNome: p.casa_legislativa === "senado" ? nomeExibido : null,
+  }).catch(() => null);
+  const leadsFolha = p.id_camara ? await getFolhaLeads(p.id_camara).catch(() => null) : null;
+  const pago = user ? await hasPaidAccess(user.id).catch(() => false) : false;
 
   // ── Agregações ────────────────────────────────────────────────────
   const totalEmpenhado = emendas.reduce((s, e) => s + (Number(e.valor_empenhado) || 0), 0);
@@ -415,6 +424,80 @@ export default async function ParlamentarPage({ params }: Props) {
               <Kpi label="Total reembolsado" value={fmtBRL(ceapsTotal)} sub={`${ceapsSenado.length} ano(s)`} />
               <Kpi label="Notas fiscais" value={fmtNum(ceapsDocs)} />
             </div>
+          </DatasetSection>
+        )}
+
+        {folha && (
+          <DatasetSection
+            titulo="Gabinete (folha de pessoal)"
+            confianca={folha.tipoSalario}
+            fonte={
+              folha.tipoSalario === "estimado"
+                ? "Câmara dos Deputados (salário estimado por nível de cargo)"
+                : "Senado Federal"
+            }
+            style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
+          >
+            <div className="bloomberg-kpi-grid">
+              <Kpi label="Funcionários" value={fmtNum(folha.total)} />
+              <Kpi
+                label={folha.tipoSalario === "estimado" ? "Custo mensal (estimado)" : "Custo mensal"}
+                value={fmtBRL(folha.somaSalarios)}
+              />
+              <Kpi label="Maior salário" value={fmtBRL(folha.maiorSalario)} />
+            </div>
+          </DatasetSection>
+        )}
+
+        {leadsFolha && (
+          <DatasetSection
+            titulo="Investigação: funcionários-doadores e nepotismo"
+            confianca="revisar"
+            fonte="Câmara + TSE (cruzamento por nome)"
+            style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
+          >
+            {pago ? (
+              <>
+                {leadsFolha.doadores.length > 0 && (
+                  <>
+                    <p style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", margin: "0 0 0.5rem" }}>
+                      {leadsFolha.doadores.length} funcionário(s) que doaram à campanha do parlamentar:
+                    </p>
+                    <table className="bloomberg-table" style={{ width: "100%" }}>
+                      <thead>
+                        <tr>
+                          <th style={{ textAlign: "left" }}>Funcionário</th>
+                          <th style={{ textAlign: "right" }}>Doação</th>
+                          <th style={{ textAlign: "right" }}>Ano</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {leadsFolha.doadores.slice(0, 20).map((d, i) => (
+                          <tr key={i}>
+                            <td>{d.secretario_nome}</td>
+                            <td style={{ textAlign: "right" }}>{fmtBRL(Number(d.valor_doado) || 0)}</td>
+                            <td style={{ textAlign: "right" }}>{d.ano_eleicao}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </>
+                )}
+                {leadsFolha.nepotismo.length > 0 && (
+                  <p style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", margin: "0.75rem 0 0", lineHeight: 1.5 }}>
+                    {leadsFolha.nepotismo.length} sinal(is) de sobrenome compartilhado com parlamentar de outro
+                    gabinete (possível nepotismo cruzado, verificar parentesco).
+                  </p>
+                )}
+              </>
+            ) : (
+              <ParedeDeAcesso
+                tipo="pago"
+                titulo="Cruzamentos de investigação (plano pago)"
+                descricao={`Este gabinete tem ${leadsFolha.doadores.length} funcionário(s)-doador(es) e ${leadsFolha.nepotismo.length} sinal(is) de nepotismo cruzado. Assine para ver os nomes, valores e o cruzamento.`}
+                next={`/parlamentares/${id}`}
+              />
+            )}
           </DatasetSection>
         )}
 

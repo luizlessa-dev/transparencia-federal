@@ -9,13 +9,20 @@ export function ParedeDeAcesso({
   titulo = "Conteúdo completo para usuários cadastrados",
   descricao = "Crie uma conta gratuita ou entre para ver todos os dados desta seção.",
   next,
+  tipo = "login",
 }: {
   titulo?: string;
   descricao?: string;
   /** Caminho de retorno após login/cadastro. */
   next?: string;
+  /** "login" = cadastro grátis; "pago" = upgrade de plano. */
+  tipo?: "login" | "pago";
 }) {
   const q = next ? `?next=${encodeURIComponent(next)}` : "";
+  const primario =
+    tipo === "pago"
+      ? { href: `/planos${q}`, label: "Ver planos" }
+      : { href: `/cadastro${q}`, label: "Criar conta grátis" };
   return (
     <div
       className="bloomberg-card"
@@ -52,7 +59,7 @@ export function ParedeDeAcesso({
       </p>
       <div style={{ display: "flex", gap: "0.625rem", justifyContent: "center", flexWrap: "wrap" }}>
         <Link
-          href={`/cadastro${q}`}
+          href={primario.href}
           style={{
             fontSize: "0.8125rem",
             fontWeight: 600,
@@ -63,7 +70,7 @@ export function ParedeDeAcesso({
             textDecoration: "none",
           }}
         >
-          Criar conta grátis
+          {primario.label}
         </Link>
         <Link
           href={`/login${q}`}
