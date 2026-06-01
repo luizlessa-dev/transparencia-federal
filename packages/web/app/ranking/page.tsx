@@ -358,7 +358,7 @@ export default async function RankingPage({
                       : rankGlobal <= 5
                       ? "hsl(var(--primary))"
                       : "hsl(var(--text-caption))";
-                  const href = `/ranking/${p.id}`;
+                  const href = `/parlamentares/${p.id}`;
                   const link = {
                     display: "block",
                     width: "100%",

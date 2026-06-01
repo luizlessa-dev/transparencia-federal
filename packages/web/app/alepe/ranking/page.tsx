@@ -402,7 +402,7 @@ export default async function AlepeRankingPage({
                           </div>
                           <div>
                             <Link
-                              href={`/ranking/${dep.id_alepe}`}
+                              href={`/parlamentares/${dep.id_alepe}`}
                               style={{
                                 fontSize: "0.875rem",
                                 fontWeight: 600,

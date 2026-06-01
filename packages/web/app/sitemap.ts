@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { listarParlamentares } from "~/services/ranking";
 
 const BASE = "https://www.thebrinsider.com";
 
@@ -89,6 +90,24 @@ const STATIC_PAGES: MetadataRoute.Sitemap = [
   },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return STATIC_PAGES;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Índice de parlamentares + um perfil por parlamentar ativo (Câmara + Senado).
+  // É o ativo de SEO principal: cada político tem URL própria indexável.
+  const indice: MetadataRoute.Sitemap = [
+    { url: `${BASE}/parlamentares`, changeFrequency: "daily", priority: 0.9 },
+  ];
+
+  let perfis: MetadataRoute.Sitemap = [];
+  try {
+    const parlamentares = await listarParlamentares();
+    perfis = parlamentares.map((p) => ({
+      url: `${BASE}/parlamentares/${p.id}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+  } catch {
+    perfis = []; // se a consulta falhar, mantém o sitemap estático válido
+  }
+
+  return [...STATIC_PAGES, ...indice, ...perfis];
 }

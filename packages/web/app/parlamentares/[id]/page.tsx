@@ -66,6 +66,7 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${p.nome_parlamentar || p.nome} — The BR Insider`,
     description: `Emendas, ranking e detalhamento de ${p.nome_parlamentar || p.nome} (${p.partido}/${p.uf})`,
+    alternates: { canonical: `/parlamentares/${id}` },
   };
 }
 

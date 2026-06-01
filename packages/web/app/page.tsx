@@ -161,7 +161,7 @@ export default async function HomePage() {
                 return (
                   <Link
                     key={p.id}
-                    href={`/ranking/${p.id}`}
+                    href={`/parlamentares/${p.id}`}
                     style={{
                       display: "block",
                       padding: "1rem 1.25rem",

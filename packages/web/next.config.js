@@ -16,6 +16,12 @@ const nextConfig = {
   // radar.transparenciafederal.org → 301 pra radar.transparenciafederal.com
   async redirects() {
     return [
+      // Rota canônica de perfil: /ranking/:id (legado) → /parlamentares/:id
+      {
+        source: "/ranking/:id",
+        destination: "/parlamentares/:id",
+        permanent: true,
+      },
       {
         source: "/:path*",
         has: [{ type: "host", value: "transparenciafederal.org" }],

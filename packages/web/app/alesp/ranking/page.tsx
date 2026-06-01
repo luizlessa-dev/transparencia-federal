@@ -391,7 +391,7 @@ export default async function AlespRankingPage({
                           </div>
                           <div>
                             <Link
-                              href={`/ranking/${encodeURIComponent(dep.matricula)}`}
+                              href={`/parlamentares/${encodeURIComponent(dep.matricula)}`}
                               style={{
                                 fontSize: "0.875rem",
                                 fontWeight: 600,

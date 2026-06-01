@@ -227,7 +227,7 @@ export function ParlamentaresGrid({ parlamentares }: Props) {
             return (
               <Link
                 key={p.id}
-                href={`/ranking/${p.id}`}
+                href={`/parlamentares/${p.id}`}
                 style={{
                   display: "flex",
                   flexDirection: "column",

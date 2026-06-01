@@ -313,7 +313,7 @@ export default async function AlmgRankingPage({
                         </div>
                         <div>
                           <Link
-                            href={`/ranking/${dep.id_almg}`}
+                            href={`/parlamentares/${dep.id_almg}`}
                             style={{
                               fontSize: "0.875rem",
                               fontWeight: 600,
