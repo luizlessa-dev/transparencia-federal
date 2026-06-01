@@ -22,7 +22,7 @@ const condenadaDe = (d: string | null) => !!d && !/arquiv/i.test(d) && !/absolv/
 
 export default async function MgPainelPage() {
   const sb = getSupabase();
-  const [supersal, contratos, obrasParadas, convenios, pagamentos, covidSob, terceir, reparacao, lrf, diarias, restos, licit] = await Promise.all([
+  const [supersal, contratos, obrasParadas, convenios, pagamentos, covidSob, terceir, reparacao, lrf, diarias, restos, licit, emendasFed] = await Promise.all([
     sb.from("mg_supersalarios").select("*", { count: "exact", head: true }),
     sb.from("mg_contratos_sancionados").select("valor_total,condenada"),
     sb.from("mg_obras_paradas").select("*", { count: "exact", head: true }),
@@ -35,6 +35,7 @@ export default async function MgPainelPage() {
     sb.from("mg_diarias_orgao").select("vr_pago").eq("ano", 2025),
     sb.from("mg_restos_orgao").select("vr_inscrito").eq("ano", 2025),
     sb.from("mg_licitacao_sobrepreco_por_ano").select("total"),
+    sb.from("mg_emendas_federais").select("valor_indicado"),
   ]);
 
   const contratosCond = ((contratos.data ?? []) as { valor_total: number | null; condenada: boolean | null }[]).filter((r) => r.condenada);
@@ -48,6 +49,7 @@ export default async function MgPainelPage() {
   const somaDiarias = ((diarias.data ?? []) as { vr_pago: number | null }[]).reduce((s, r) => s + (Number(r.vr_pago) || 0), 0);
   const somaRestos = ((restos.data ?? []) as { vr_inscrito: number | null }[]).reduce((s, r) => s + (Number(r.vr_inscrito) || 0), 0);
   const somaSobrepreco = ((licit.data ?? []) as { total: number | null }[]).reduce((s, r) => s + (Number(r.total) || 0), 0);
+  const somaEmendasFed = ((emendasFed.data ?? []) as { valor_indicado: number | null }[]).reduce((s, r) => s + (Number(r.valor_indicado) || 0), 0);
 
   const cards = [
     { href: "/mg/supersalarios", titulo: "Supersalários", num: fmtNum(supersal.count ?? 0), sub: "servidores acima do teto", tom: "danger" },
@@ -62,6 +64,7 @@ export default async function MgPainelPage() {
     { href: "/mg/restos", titulo: "Restos a pagar", num: fmtCompact(somaRestos), sub: "inscritos em 2025 (conta represada)", tom: "warn" },
     { href: "/mg/diarias", titulo: "Diárias por órgão", num: fmtCompact(somaDiarias), sub: "pagas em diárias em 2025", tom: "" },
     { href: "/mg/licitacoes", titulo: "Sobrepreço em licitações", num: fmtCompact(somaSobrepreco), sub: "homologado acima da referência (2022–26)", tom: "warn" },
+    { href: "/mg/emendas-federais", titulo: "Emendas federais", num: fmtCompact(somaEmendasFed), sub: "indicados a MG — quem e para onde", tom: "" },
   ];
 
   return (

@@ -89,6 +89,7 @@ export const FEDERAL_CONFIG: SiteConfig = {
         { label: "Restos a pagar por órgão (MG)", href: "/mg/restos" },
         { label: "Diárias por órgão (MG)", href: "/mg/diarias" },
         { label: "Sobrepreço em licitações (MG)", href: "/mg/licitacoes" },
+        { label: "Emendas federais (MG)", href: "/mg/emendas-federais" },
       ],
     },
     {
