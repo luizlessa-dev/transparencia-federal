@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description:
     "Compras de pandemia do governo de MG homologadas acima do preço de referência, por dispensa de licitação, e fornecedores sancionados.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/covid" },
+  openGraph: { title: "Compras emergenciais da COVID-19 em Minas Gerais | The BR Insider", description: "Compras de pandemia do governo de MG homologadas acima do preço de referência, por dispensa de licitação, e fornecedores sancionados.", url: "https://www.thebrinsider.com/mg/covid", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Compras emergenciais da COVID-19 em Minas Gerais | The BR Insider", description: "Compras de pandemia do governo de MG homologadas acima do preço de referência, por dispensa de licitação, e fornecedores sancionados." },
 };
 
 const FREE_LIMIT = 20;

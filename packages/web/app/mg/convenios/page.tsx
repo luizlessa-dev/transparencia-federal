@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description:
     "Repasses do Executivo de MG a entidades por convênio: maiores valores, parcela de emenda parlamentar e cruzamento com empresas sancionadas.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/convenios" },
+  openGraph: { title: "Convênios e repasses do Governo de Minas Gerais | The BR Insider", description: "Repasses do Executivo de MG a entidades por convênio: maiores valores, parcela de emenda parlamentar e cruzamento com empresas sancionadas.", url: "https://www.thebrinsider.com/mg/convenios", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Convênios e repasses do Governo de Minas Gerais | The BR Insider", description: "Repasses do Executivo de MG a entidades por convênio: maiores valores, parcela de emenda parlamentar e cruzamento com empresas sancionadas." },
 };
 
 const FREE_LIMIT = 20;

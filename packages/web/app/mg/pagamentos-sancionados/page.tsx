@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description:
     "Empenhos pagos pelo Estado de Minas Gerais a fornecedores condenados pela Lei Anticorrupção entre 2022 e 2026. Não só contrato assinado: dinheiro que saiu do caixa.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/pagamentos-sancionados" },
+  openGraph: { title: "Pagamentos a empresas sancionadas — Governo de MG | The BR Insider", description: "Empenhos pagos pelo Estado de Minas Gerais a fornecedores condenados pela Lei Anticorrupção entre 2022 e 2026. Não só contrato assinado: dinheiro que saiu do caixa.", url: "https://www.thebrinsider.com/mg/pagamentos-sancionados", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Pagamentos a empresas sancionadas — Governo de MG | The BR Insider", description: "Empenhos pagos pelo Estado de Minas Gerais a fornecedores condenados pela Lei Anticorrupção entre 2022 e 2026. Não só contrato assinado: dinheiro que saiu do caixa." },
 };
 
 const FREE_LIMIT = 20;

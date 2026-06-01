@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description:
     "Quanto o Poder Executivo de Minas Gerais gasta com pessoal frente ao limite da Lei de Responsabilidade Fiscal (49% da RCL). Limite prudencial, de alerta e máximo, e a despesa de pessoal mês a mês.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/lrf" },
+  openGraph: { title: "Despesa com pessoal x limite da LRF — Governo de MG | The BR Insider", description: "Quanto o Poder Executivo de Minas Gerais gasta com pessoal frente ao limite da Lei de Responsabilidade Fiscal (49% da RCL). Limite prudencial, de alerta e máximo, e a despesa de pessoal mês a mês.", url: "https://www.thebrinsider.com/mg/lrf", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Despesa com pessoal x limite da LRF — Governo de MG | The BR Insider", description: "Quanto o Poder Executivo de Minas Gerais gasta com pessoal frente ao limite da Lei de Responsabilidade Fiscal (49% da RCL). Limite prudencial, de alerta e máximo, e a despesa de pessoal mês a mês." },
 };
 
 type Lim = {

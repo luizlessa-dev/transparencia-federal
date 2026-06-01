@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description:
     "Contratos de obras do DER-MG: obras paralisadas, percentual de execução e cruzamento com empresas sancionadas. Dados do Portal de Transparência de MG.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/obras" },
+  openGraph: { title: "Obras do Estado de Minas Gerais — paradas e fornecedores | The BR Insider", description: "Contratos de obras do DER-MG: obras paralisadas, percentual de execução e cruzamento com empresas sancionadas. Dados do Portal de Transparência de MG.", url: "https://www.thebrinsider.com/mg/obras", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Obras do Estado de Minas Gerais — paradas e fornecedores | The BR Insider", description: "Contratos de obras do DER-MG: obras paralisadas, percentual de execução e cruzamento com empresas sancionadas. Dados do Portal de Transparência de MG." },
 };
 
 const FREE_LIMIT = 20;

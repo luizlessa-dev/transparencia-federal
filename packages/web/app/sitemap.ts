@@ -90,6 +90,25 @@ const STATIC_PAGES: MetadataRoute.Sitemap = [
   },
 ];
 
+// Módulo de fiscalização do Executivo de Minas Gerais (/mg/*).
+const MG_LASTMOD = new Date("2026-06-01");
+const MG_PAGES: MetadataRoute.Sitemap = ([
+  { url: `${BASE}/mg`, priority: 0.9, changeFrequency: "daily" },
+  { url: `${BASE}/mg/supersalarios`, priority: 0.8, changeFrequency: "weekly" },
+  { url: `${BASE}/mg/contratos-sancionados`, priority: 0.8, changeFrequency: "weekly" },
+  { url: `${BASE}/mg/pagamentos-sancionados`, priority: 0.8, changeFrequency: "weekly" },
+  { url: `${BASE}/mg/licitacoes`, priority: 0.8, changeFrequency: "weekly" },
+  { url: `${BASE}/mg/emendas-federais`, priority: 0.8, changeFrequency: "weekly" },
+  { url: `${BASE}/mg/obras`, priority: 0.7, changeFrequency: "weekly" },
+  { url: `${BASE}/mg/convenios`, priority: 0.7, changeFrequency: "weekly" },
+  { url: `${BASE}/mg/covid`, priority: 0.7, changeFrequency: "monthly" },
+  { url: `${BASE}/mg/terceirizados`, priority: 0.7, changeFrequency: "monthly" },
+  { url: `${BASE}/mg/reparacao`, priority: 0.7, changeFrequency: "monthly" },
+  { url: `${BASE}/mg/lrf`, priority: 0.7, changeFrequency: "monthly" },
+  { url: `${BASE}/mg/restos`, priority: 0.7, changeFrequency: "monthly" },
+  { url: `${BASE}/mg/diarias`, priority: 0.7, changeFrequency: "monthly" },
+] as MetadataRoute.Sitemap).map((p) => ({ ...p, lastModified: MG_LASTMOD }));
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Índice de parlamentares + um perfil por parlamentar ativo (Câmara + Senado).
   // É o ativo de SEO principal: cada político tem URL própria indexável.
@@ -109,5 +128,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     perfis = []; // se a consulta falhar, mantém o sitemap estático válido
   }
 
-  return [...STATIC_PAGES, ...indice, ...perfis];
+  return [...STATIC_PAGES, ...MG_PAGES, ...indice, ...perfis];
 }

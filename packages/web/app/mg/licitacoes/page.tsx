@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description:
     "Itens de licitação do Estado de Minas Gerais homologados acima do próprio preço de referência, entre 2022 e 2026. Ranking por valor e por órgão. Sinal de sobrepreço.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/licitacoes" },
+  openGraph: { title: "Sobrepreço em licitações — Estado de MG | The BR Insider", description: "Itens de licitação do Estado de Minas Gerais homologados acima do próprio preço de referência, entre 2022 e 2026. Ranking por valor e por órgão. Sinal de sobrepreço.", url: "https://www.thebrinsider.com/mg/licitacoes", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Sobrepreço em licitações — Estado de MG | The BR Insider", description: "Itens de licitação do Estado de Minas Gerais homologados acima do próprio preço de referência, entre 2022 e 2026. Ranking por valor e por órgão. Sinal de sobrepreço." },
 };
 
 const FREE_LIMIT = 30;

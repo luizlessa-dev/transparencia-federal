@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description:
     "Rastreio das emendas parlamentares federais executadas pelo Estado de Minas Gerais: autor, valor indicado, objeto e órgão de destino. Emendas individuais, de bancada, de comissão e de relator.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/emendas-federais" },
+  openGraph: { title: "Emendas federais em Minas Gerais: quem indicou e para onde foi | The BR Insider", description: "Rastreio das emendas parlamentares federais executadas pelo Estado de Minas Gerais: autor, valor indicado, objeto e órgão de destino. Emendas individuais, de bancada, de comissão e de relator.", url: "https://www.thebrinsider.com/mg/emendas-federais", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Emendas federais em Minas Gerais: quem indicou e para onde foi | The BR Insider", description: "Rastreio das emendas parlamentares federais executadas pelo Estado de Minas Gerais: autor, valor indicado, objeto e órgão de destino. Emendas individuais, de bancada, de comissão e de relator." },
 };
 
 const FREE_LIMIT = 40;

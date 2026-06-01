@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description:
     "Quantos trabalhadores terceirizados cada empresa mantém em cada órgão do Executivo de MG, e quais fornecedoras são sancionadas. Agregado, sem dados pessoais.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/terceirizados" },
+  openGraph: { title: "Terceirizados do Governo de Minas Gerais por empresa | The BR Insider", description: "Quantos trabalhadores terceirizados cada empresa mantém em cada órgão do Executivo de MG, e quais fornecedoras são sancionadas. Agregado, sem dados pessoais.", url: "https://www.thebrinsider.com/mg/terceirizados", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Terceirizados do Governo de Minas Gerais por empresa | The BR Insider", description: "Quantos trabalhadores terceirizados cada empresa mantém em cada órgão do Executivo de MG, e quais fornecedoras são sancionadas. Agregado, sem dados pessoais." },
 };
 
 const FREE_LIMIT = 20;

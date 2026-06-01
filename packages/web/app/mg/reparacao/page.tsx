@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description:
     "Iniciativas e valores do acordo judicial de reparação de Brumadinho executadas pelo Estado de Minas Gerais. Rodoanel, bacias, rodovias, hospitais.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/reparacao" },
+  openGraph: { title: "Para onde vai o dinheiro do acordo Vale / Brumadinho | The BR Insider", description: "Iniciativas e valores do acordo judicial de reparação de Brumadinho executadas pelo Estado de Minas Gerais. Rodoanel, bacias, rodovias, hospitais.", url: "https://www.thebrinsider.com/mg/reparacao", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Para onde vai o dinheiro do acordo Vale / Brumadinho | The BR Insider", description: "Iniciativas e valores do acordo judicial de reparação de Brumadinho executadas pelo Estado de Minas Gerais. Rodoanel, bacias, rodovias, hospitais." },
 };
 
 type Ini = { iniciativa: string | null; anexo: string | null; valor: number | null };

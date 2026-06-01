@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   description:
     "Painel de fiscalização do Poder Executivo de Minas Gerais: supersalários, contratos com empresas sancionadas, obras paradas, convênios, COVID, terceirizados e o acordo Vale/Brumadinho.",
   alternates: { canonical: "https://www.thebrinsider.com/mg" },
+  openGraph: { title: "Governo de Minas Gerais — Fiscalização do Executivo | The BR Insider", description: "Painel de fiscalização do Poder Executivo de Minas Gerais: supersalários, contratos com empresas sancionadas, obras paradas, convênios, COVID, terceirizados e o acordo Vale/Brumadinho.", url: "https://www.thebrinsider.com/mg", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Governo de Minas Gerais — Fiscalização do Executivo | The BR Insider", description: "Painel de fiscalização do Poder Executivo de Minas Gerais: supersalários, contratos com empresas sancionadas, obras paradas, convênios, COVID, terceirizados e o acordo Vale/Brumadinho." },
 };
 
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);

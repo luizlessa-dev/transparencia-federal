@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description:
     "Quanto cada órgão do Executivo de Minas Gerais gasta com diárias de viagem, por ano. Ranking por unidade orçamentária a partir do Portal de Dados Abertos.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/diarias" },
+  openGraph: { title: "Gasto com diárias por órgão — Governo de MG | The BR Insider", description: "Quanto cada órgão do Executivo de Minas Gerais gasta com diárias de viagem, por ano. Ranking por unidade orçamentária a partir do Portal de Dados Abertos.", url: "https://www.thebrinsider.com/mg/diarias", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Gasto com diárias por órgão — Governo de MG | The BR Insider", description: "Quanto cada órgão do Executivo de Minas Gerais gasta com diárias de viagem, por ano. Ranking por unidade orçamentária a partir do Portal de Dados Abertos." },
 };
 
 const ANOS = [2026, 2025, 2024, 2023, 2022];

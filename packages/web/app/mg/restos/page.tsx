@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description:
     "Quanto cada órgão do Executivo de Minas Gerais carrega em restos a pagar (despesa de anos anteriores não quitada) e quanto pagou, por ano. Saldo represado com fornecedores.",
   alternates: { canonical: "https://www.thebrinsider.com/mg/restos" },
+  openGraph: { title: "Restos a pagar por órgão — Governo de MG | The BR Insider", description: "Quanto cada órgão do Executivo de Minas Gerais carrega em restos a pagar (despesa de anos anteriores não quitada) e quanto pagou, por ano. Saldo represado com fornecedores.", url: "https://www.thebrinsider.com/mg/restos", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
+  twitter: { card: "summary_large_image", title: "Restos a pagar por órgão — Governo de MG | The BR Insider", description: "Quanto cada órgão do Executivo de Minas Gerais carrega em restos a pagar (despesa de anos anteriores não quitada) e quanto pagou, por ano. Saldo represado com fornecedores." },
 };
 
 const ANOS = [2026, 2025, 2024, 2023, 2022];
