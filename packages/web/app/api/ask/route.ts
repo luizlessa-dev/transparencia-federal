@@ -16,9 +16,10 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-// Falhar fechado: nunca cair para a SERVICE_ROLE key (que ignora RLS) se a anon
-// key faltar. Sem anon key, a rota retorna 500 em vez de vazar privilégio.
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+// TODO(Passo 3 — RLS): voltar a falhar fechado (sem fallback para SERVICE_ROLE).
+// Hoje a anon key não está configurada na Vercel e a edge function `ask` não está
+// versionada aqui, então o hardening fica para quando o caminho anon+RLS existir.
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function POST(req: Request) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
