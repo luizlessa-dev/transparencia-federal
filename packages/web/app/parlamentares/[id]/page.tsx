@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getParlamentar } from "~/services/ranking";
 import { getEmendasParlamentarFull, type EmendaCompleta } from "~/services/emendas";
+import { ConfiancaBadge } from "~/components/ConfiancaBadge";
+import { FonteNota } from "~/components/FonteNota";
 
 export const dynamic = "force-dynamic";
 
@@ -734,18 +736,25 @@ export default async function ParlamentarPage({ params }: Props) {
           </div>
         )}
 
-        <p
+        <div
           style={{
-            fontSize: "0.75rem",
-            color: "hsl(var(--text-caption))",
             marginTop: "1.5rem",
-            lineHeight: 1.6,
+            display: "flex",
+            alignItems: "baseline",
+            gap: "0.5rem",
+            flexWrap: "wrap",
           }}
         >
-          Fonte: Portal da Transparência do Governo Federal. Valores em R$ nominais.
-          Vínculo emenda-parlamentar feito por nome (<code>{nomeExibido}</code>) — pode
-          haver homônimos.
-        </p>
+          <ConfiancaBadge nivel="revisar" />
+          <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", lineHeight: 1.6 }}>
+            Vínculo emenda-parlamentar feito por nome (<code>{nomeExibido}</code>), pode haver
+            homônimos. Valores em R$ nominais.
+          </span>
+        </div>
+        <FonteNota
+          fonte="Portal da Transparência do Governo Federal"
+          href="https://portaldatransparencia.gov.br/"
+        />
       </div>
     </>
   );
