@@ -97,6 +97,24 @@ export async function getTseCandidatoHistorico(sqCandidato: string): Promise<Can
   return (data ?? []) as CandidatoReceita[];
 }
 
+/** Top doadores da eleição mais recente do candidato, casado por CPF. */
+export async function getTopDoadoresPorCpf(
+  cpf: string | null | undefined
+): Promise<{ ano: number; doadores: TopDoador[] } | null> {
+  if (!cpf) return null;
+  const sb = getSupabase();
+  const { data, error } = await sb
+    .from("tse_candidatos_receitas_agg")
+    .select("ano_eleicao, top_doadores")
+    .eq("nr_cpf_candidato", cpf.replace(/\D/g, ""))
+    .order("ano_eleicao", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error || !data) return null;
+  const doadores = Array.isArray(data.top_doadores) ? (data.top_doadores as TopDoador[]) : [];
+  return { ano: data.ano_eleicao as number, doadores };
+}
+
 // ─── G2: Declaração de Bens ──────────────────────────────────────────────────
 
 export interface CandidatoBens {

@@ -9,6 +9,8 @@ import { DatasetSection } from "~/components/DatasetSection";
 import { getUser } from "~/lib/supabase-auth";
 import { getParlamentarRisco } from "~/services/risco";
 import { getCeapsSenadorHistorico } from "~/services/ceaps-senado";
+import { getFrentesDeDeputado } from "~/services/frentes";
+import { getTopDoadoresPorCpf } from "~/services/tse";
 import { normalizarNome } from "~/lib/texto";
 
 export const dynamic = "force-dynamic";
@@ -119,6 +121,10 @@ export default async function ParlamentarPage({ params }: Props) {
     : [];
   const ceapsTotal = ceapsSenado.reduce((s, r) => s + (Number(r.total_reembolsado) || 0), 0);
   const ceapsDocs = ceapsSenado.reduce((s, r) => s + (Number(r.total_documentos) || 0), 0);
+
+  // Paridade com o dossiê (Câmara): frentes + top doadores de campanha.
+  const frentes = p.id_camara && risco ? await getFrentesDeDeputado(p.id_camara).catch(() => []) : [];
+  const doadores = risco?.cpf ? await getTopDoadoresPorCpf(risco.cpf).catch(() => null) : null;
 
   // ── Agregações ────────────────────────────────────────────────────
   const totalEmpenhado = emendas.reduce((s, e) => s + (Number(e.valor_empenhado) || 0), 0);
@@ -331,6 +337,67 @@ export default async function ParlamentarPage({ params }: Props) {
               <Kpi label="Financiamento (2022)" value={fmtBRL(Number(risco.financiamento_total) || 0)} />
               <Kpi label="Frentes" value={fmtNum(Number(risco.total_frentes) || 0)} />
               <Kpi label="Comissões" value={fmtNum(Number(risco.total_comissoes) || 0)} />
+            </div>
+          </DatasetSection>
+        )}
+
+        {doadores && doadores.doadores.length > 0 && (
+          <DatasetSection
+            titulo={`Top doadores de campanha (${doadores.ano})`}
+            fonte="TSE"
+            verDetalheHref="/funding"
+            verDetalheLabel="Financiamento eleitoral →"
+            style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
+          >
+            <table className="bloomberg-table" style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: "left" }}>Doador</th>
+                  <th style={{ textAlign: "right" }}>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doadores.doadores.slice(0, 8).map((d, i) => (
+                  <tr key={i}>
+                    <td>{d.nome}</td>
+                    <td style={{ textAlign: "right" }}>{fmtBRL(Number(d.total) || 0)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </DatasetSection>
+        )}
+
+        {frentes.length > 0 && (
+          <DatasetSection
+            titulo={`Frentes parlamentares (${frentes.length})`}
+            fonte="Câmara dos Deputados"
+            verDetalheHref="/frentes"
+            verDetalheLabel="Todas as frentes →"
+            style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
+          >
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+              {frentes.slice(0, 24).map((f) => (
+                <Link
+                  key={f.frente_id}
+                  href={`/frentes/${f.frente_id}`}
+                  style={{
+                    fontSize: "0.75rem",
+                    padding: "0.25rem 0.625rem",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "2px",
+                    color: "hsl(var(--text-body))",
+                    textDecoration: "none",
+                  }}
+                >
+                  {f.titulo}
+                </Link>
+              ))}
+              {frentes.length > 24 && (
+                <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", alignSelf: "center" }}>
+                  +{frentes.length - 24}
+                </span>
+              )}
             </div>
           </DatasetSection>
         )}
