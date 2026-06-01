@@ -74,6 +74,14 @@ export const FEDERAL_CONFIG: SiteConfig = {
       ],
     },
     {
+      label: "Governos",
+      children: [
+        { label: "Minas Gerais — Executivo", href: "/mg" },
+        { label: "Supersalários (MG)", href: "/mg/supersalarios" },
+        { label: "Contratos × sancionadas (MG)", href: "/mg/contratos-sancionados" },
+      ],
+    },
+    {
       label: "Mais",
       children: [
         { label: "Empresas Sancionadas", href: "/sancionados" },
