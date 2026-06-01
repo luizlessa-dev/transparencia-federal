@@ -3,6 +3,9 @@
  * Lê apenas da camada publicada; não acessa tabelas brutas nem build.
  */
 
+// Falha em build se este módulo (que usa a SERVICE_ROLE key) for importado
+// por engano em um Client Component. Guarda de defesa-em-profundidade.
+import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let client: SupabaseClient | null = null;

@@ -60,6 +60,8 @@ export default async function MgConveniosPage({ searchParams }: { searchParams: 
 
   const base = recorte === "emenda" ? linhasEmenda : linhasMaiores;
   const visiveis = pago ? base : base.slice(0, FREE_LIMIT);
+  // Aba "empresa sancionada" = conteúdo pago (a contagem fica no KPI público).
+  const sancVisiveis = pago ? sancionadas : [];
 
   return (
     <>
@@ -115,7 +117,7 @@ export default async function MgConveniosPage({ searchParams }: { searchParams: 
                   <td style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", color: (c.vr_emenda_parl ?? 0) > 0 ? "hsl(var(--accent))" : "hsl(var(--text-caption))" }}>{fmtBRL(c.vr_emenda_parl)}</td>
                 </tr>
               ))}
-              {recorte === "sancionadas" && sancionadas.map((s, i) => (
+              {recorte === "sancionadas" && sancVisiveis.map((s, i) => (
                 <tr key={i}>
                   <td style={{ fontSize: "0.8125rem", fontWeight: 600, color: "hsl(var(--text-headline))" }}>{s.convenente ?? "—"}</td>
                   <td style={{ textAlign: "right", color: "hsl(var(--text-caption))" }}>{s.ano ?? "—"}</td>
@@ -123,7 +125,7 @@ export default async function MgConveniosPage({ searchParams }: { searchParams: 
                   <td style={{ fontSize: "0.75rem", color: "hsl(var(--text-body))" }}>{s.conduta ?? "—"}</td>
                 </tr>
               ))}
-              {((recorte !== "sancionadas" && base.length === 0) || (recorte === "sancionadas" && sancionadas.length === 0)) && (
+              {((recorte !== "sancionadas" && base.length === 0) || (recorte === "sancionadas" && pago && sancionadas.length === 0)) && (
                 <tr><td colSpan={4} style={{ padding: "1.5rem", textAlign: "center", color: "hsl(var(--text-caption))" }}>Nenhum registro neste recorte.</td></tr>
               )}
             </tbody>
@@ -133,6 +135,17 @@ export default async function MgConveniosPage({ searchParams }: { searchParams: 
         {recorte !== "sancionadas" && !pago && base.length > FREE_LIMIT && (
           <div style={{ marginTop: "1.5rem" }}>
             <ParedeDeAcesso titulo="Veja a lista completa de convênios" descricao={`Mostrando os ${FREE_LIMIT} maiores deste recorte.`} next="/mg/convenios" />
+          </div>
+        )}
+
+        {recorte === "sancionadas" && !pago && (
+          <div style={{ marginTop: "1.5rem" }}>
+            <ParedeDeAcesso
+              tipo="pago"
+              titulo="Convênios com empresas condenadas (plano pago)"
+              descricao={`${fmtNum(sancionadas.length)} convênio(s) com convenente(s) condenado(s) pela Lei Anticorrupção. Assine para ver os nomes, os anos, os valores repassados e a conduta apurada.`}
+              next="/mg/convenios?recorte=sancionadas"
+            />
           </div>
         )}
 

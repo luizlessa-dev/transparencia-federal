@@ -66,6 +66,8 @@ export default async function MgObrasPage({ searchParams }: { searchParams: Prom
   const valorParado = paradas.reduce((s, o) => s + (Number(o.valor_total) || 0), 0);
 
   const linhasParadas = pago ? paradas : paradas.slice(0, FREE_LIMIT);
+  // Aba "empresa sancionada" = conteúdo pago (a contagem fica no KPI público).
+  const sancVisiveis = pago ? sancionadas : [];
 
   return (
     <>
@@ -125,7 +127,7 @@ export default async function MgObrasPage({ searchParams }: { searchParams: Prom
                   <td style={{ textAlign: "right", fontVariantNumeric: "tabular-nums", color: "hsl(var(--text-body))" }}>{fmtPct(o.percentual_execucao)}</td>
                 </tr>
               ))}
-              {recorte === "sancionadas" && sancionadas.map((s, i) => (
+              {recorte === "sancionadas" && sancVisiveis.map((s, i) => (
                 <tr key={i}>
                   <td style={{ fontSize: "0.8125rem", fontWeight: 600, color: "hsl(var(--text-headline))" }}>{s.empresa ?? "—"}</td>
                   <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))" }}>{s.orgao ?? "—"}</td>
@@ -133,7 +135,7 @@ export default async function MgObrasPage({ searchParams }: { searchParams: Prom
                   <td style={{ fontSize: "0.75rem", color: "hsl(var(--text-body))" }}>{s.conduta ?? "—"}</td>
                 </tr>
               ))}
-              {((recorte === "paradas" && paradas.length === 0) || (recorte === "sancionadas" && sancionadas.length === 0)) && (
+              {((recorte === "paradas" && paradas.length === 0) || (recorte === "sancionadas" && pago && sancionadas.length === 0)) && (
                 <tr><td colSpan={5} style={{ padding: "1.5rem", textAlign: "center", color: "hsl(var(--text-caption))" }}>Nenhum registro neste recorte.</td></tr>
               )}
             </tbody>
@@ -143,6 +145,17 @@ export default async function MgObrasPage({ searchParams }: { searchParams: Prom
         {recorte === "paradas" && !pago && paradas.length > FREE_LIMIT && (
           <div style={{ marginTop: "1.5rem" }}>
             <ParedeDeAcesso titulo={`Veja todas as ${fmtNum(paradas.length)} obras paralisadas`} descricao={`Mostrando as ${FREE_LIMIT} de maior valor.`} next="/mg/obras" />
+          </div>
+        )}
+
+        {recorte === "sancionadas" && !pago && (
+          <div style={{ marginTop: "1.5rem" }}>
+            <ParedeDeAcesso
+              tipo="pago"
+              titulo="Obras de empresas condenadas (plano pago)"
+              descricao={`${fmtNum(sancionadas.length)} obra(s) de empresa(s) condenada(s) pela Lei Anticorrupção. Assine para ver as empresas, os órgãos contratantes, os valores e a conduta apurada.`}
+              next="/mg/obras?recorte=sancionadas"
+            />
           </div>
         )}
 

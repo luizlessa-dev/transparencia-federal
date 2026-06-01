@@ -47,7 +47,8 @@ export default async function MgTerceirizadosPage({ searchParams }: { searchPara
   const totalUltimoMes = todos.filter((t) => t.mes_referencia === ultimoMes).reduce((s, t) => s + (Number(t.qtd_trabalhadores) || 0), 0);
 
   const base = recorte === "sancionadas" ? sancionadas : todos;
-  const visiveis = pago ? base : base.slice(0, FREE_LIMIT);
+  // Aba "empresa sancionada" = conteúdo pago: sem prévia (a contagem fica no KPI).
+  const visiveis = pago ? base : recorte === "sancionadas" ? [] : base.slice(0, FREE_LIMIT);
 
   return (
     <>
@@ -96,13 +97,24 @@ export default async function MgTerceirizadosPage({ searchParams }: { searchPara
                   {recorte === "sancionadas" && <td style={{ fontSize: "0.72rem", color: "hsl(var(--text-body))" }}>{(t as Sanc).conduta ?? "—"}</td>}
                 </tr>
               ))}
-              {base.length === 0 && <tr><td colSpan={recorte === "sancionadas" ? 5 : 4} style={{ padding: "1.5rem", textAlign: "center", color: "hsl(var(--text-caption))" }}>Nenhum registro neste recorte.</td></tr>}
+              {base.length === 0 && (pago || recorte !== "sancionadas") && <tr><td colSpan={recorte === "sancionadas" ? 5 : 4} style={{ padding: "1.5rem", textAlign: "center", color: "hsl(var(--text-caption))" }}>Nenhum registro neste recorte.</td></tr>}
             </tbody>
           </table>
         </div>
 
         {recorte === "empresas" && !pago && base.length > FREE_LIMIT && (
           <div style={{ marginTop: "1.5rem" }}><ParedeDeAcesso titulo="Veja todas as empresas" descricao={`Mostrando as ${FREE_LIMIT} maiores por nº de terceirizados.`} next="/mg/terceirizados" /></div>
+        )}
+
+        {recorte === "sancionadas" && !pago && (
+          <div style={{ marginTop: "1.5rem" }}>
+            <ParedeDeAcesso
+              tipo="pago"
+              titulo="Terceirizados de empresas condenadas (plano pago)"
+              descricao={`${fmtNum(new Set(sancionadas.map((s) => s.cnpj_norm)).size)} empresa(s) condenada(s) pela Lei Anticorrupção fornecendo mão de obra ao Estado. Assine para ver os nomes, os órgãos e a conduta apurada.`}
+              next="/mg/terceirizados?recorte=sancionadas"
+            />
+          </div>
         )}
 
         <p style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", marginTop: "1.5rem", lineHeight: 1.6 }}>

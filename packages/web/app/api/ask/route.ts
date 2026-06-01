@@ -16,7 +16,9 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Falhar fechado: nunca cair para a SERVICE_ROLE key (que ignora RLS) se a anon
+// key faltar. Sem anon key, a rota retorna 500 em vez de vazar privilégio.
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 export async function POST(req: Request) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {

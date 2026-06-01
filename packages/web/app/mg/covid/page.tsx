@@ -54,6 +54,8 @@ export default async function MgCovidPage({ searchParams }: { searchParams: Prom
   const maiorPct = sobre.reduce((m, r) => Math.max(m, Number(r.sobrepreco_pct) || 0), 0);
   const base = sobre;
   const visiveis = pago ? base : base.slice(0, FREE_LIMIT);
+  // Aba "empresa sancionada" = conteúdo pago (a contagem fica no KPI público).
+  const sancVisiveis = pago ? sancionadas : [];
 
   return (
     <>
@@ -111,7 +113,7 @@ export default async function MgCovidPage({ searchParams }: { searchParams: Prom
               <>
                 <thead><tr><th>Fornecedor</th><th>Órgão</th><th style={{ textAlign: "right" }}>Homologado</th><th>Punição</th></tr></thead>
                 <tbody>
-                  {sancionadas.map((r, i) => (
+                  {sancVisiveis.map((r, i) => (
                     <tr key={i}>
                       <td style={{ fontSize: "0.8125rem", fontWeight: 600, color: "hsl(var(--text-headline))" }}>{r.contratado ?? "—"}</td>
                       <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))" }}>{r.orgao_demandante ?? "—"}</td>
@@ -119,7 +121,7 @@ export default async function MgCovidPage({ searchParams }: { searchParams: Prom
                       <td style={{ fontSize: "0.72rem", color: "hsl(var(--text-body))" }}>{r.conduta ?? "—"}</td>
                     </tr>
                   ))}
-                  {sancionadas.length === 0 && <tr><td colSpan={4} style={{ padding: "1.5rem", textAlign: "center", color: "hsl(var(--text-caption))" }}>Nenhum fornecedor condenado nas compras COVID.</td></tr>}
+                  {pago && sancionadas.length === 0 && <tr><td colSpan={4} style={{ padding: "1.5rem", textAlign: "center", color: "hsl(var(--text-caption))" }}>Nenhum fornecedor condenado nas compras COVID.</td></tr>}
                 </tbody>
               </>
             )}
@@ -128,6 +130,17 @@ export default async function MgCovidPage({ searchParams }: { searchParams: Prom
 
         {recorte === "sobrepreco" && !pago && base.length > FREE_LIMIT && (
           <div style={{ marginTop: "1.5rem" }}><ParedeDeAcesso titulo={`Veja todos os ${fmtNum(base.length)} itens com sobrepreço`} descricao={`Mostrando os ${FREE_LIMIT} de maior impacto.`} next="/mg/covid" /></div>
+        )}
+
+        {recorte === "sancionadas" && !pago && (
+          <div style={{ marginTop: "1.5rem" }}>
+            <ParedeDeAcesso
+              tipo="pago"
+              titulo="Fornecedores COVID condenados (plano pago)"
+              descricao={`${fmtNum(sancionadas.length)} fornecedor(es) condenado(s) pela Lei Anticorrupção nas compras de pandemia. Assine para ver os nomes, os órgãos, os valores homologados e a conduta apurada.`}
+              next="/mg/covid?recorte=sancionadas"
+            />
+          </div>
         )}
 
         <p style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", marginTop: "1.5rem", lineHeight: 1.6 }}>

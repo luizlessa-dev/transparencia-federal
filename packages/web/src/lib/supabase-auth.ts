@@ -4,6 +4,7 @@
  * Nunca exposto ao browser — apenas server-side.
  */
 
+import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
