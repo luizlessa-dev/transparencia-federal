@@ -54,3 +54,15 @@ Cada fase é deployável sozinha.
 - **Fase 5 — SÓ ENTÃO a folha.** Adicionar folha (gabinete, salário, doador, nepotismo, custo) como seções no perfil + páginas de dataset, já dentro da camada de confiança.
 
 **Recomendação de estrela-guia: busca orgânica / público amplo como primária**, tooling de jornalista como secundária. Razão: é o que liga direto no seu objetivo declarado de relevância e autoridade, e é onde a plataforma tem ativo único (uma página forte por político ranqueia pra "deputado fulano gastos"). Isso prioriza a **Fase 3**. Se a estrela for o produto institucional/API paga, a ordem muda (densidade e export antes de SEO).
+
+---
+
+## Decisões de produto (jun/2026)
+
+- **Estrela-guia:** busca orgânica / público amplo (confirmado).
+- **Rota canônica:** `/parlamentares/[id]` (renomeada de `/ranking/[id]`, com 301).
+- **Escada freemium-SEO** (confirmada):
+  1. **Anônimo** (inclui Googlebot): teaser indexável — identificação, KPIs, agregados e uma prévia de linhas. É o que ranqueia.
+  2. **Free (cadastro)**: dados de transparência completos do perfil (lista de emendas etc). `gate = user != null`.
+  3. **Pago** (`hasPaidAccess`): camada de inteligência — score de risco, export/API e os **leads de folha (doador/nepotismo)** quando entrarem.
+- **Implicação pra folha:** seções de transparência da folha (quem trabalha, salário) → free login; seções de **leads/análise** (doador-funcionário, nepotismo) → pago. A `ParedeDeAcesso` aceita os dois (é só o destino do CTA + a checagem `user` vs `hasPaidAccess`).
