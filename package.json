@@ -43,7 +43,8 @@
     "enriquecimento": "npm run enriquecimento:ts -w @transparencia/enriquecimento",
     "analytics": "npm run analytics:ts -w @transparencia/analytics",
     "publicar": "npm run publicar:ts -w @transparencia/analytics",
-    "api:dev": "npm run dev -w @transparencia/api"
+    "api:dev": "npm run dev -w @transparencia/api",
+    "ingestao-mg:doacoes": "npm run doacoes:ts -w @transparencia/ingestao-mg-executivo"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
