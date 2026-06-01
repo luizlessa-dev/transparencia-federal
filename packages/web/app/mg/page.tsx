@@ -27,7 +27,7 @@ export default async function MgPainelPage() {
     sb.from("mg_contratos_sancionados").select("valor_total,condenada"),
     sb.from("mg_obras_paradas").select("*", { count: "exact", head: true }),
     sb.from("mg_convenios").select("*", { count: "exact", head: true }),
-    sb.from("mg_empenhos_sancionados").select("valor_pago"),
+    sb.from("mg_pagamentos_condenadas").select("valor_pago"),
     sb.from("mg_covid_sobrepreco").select("*", { count: "exact", head: true }),
     sb.from("mg_terceirizados").select("cnpj_norm"),
     sb.from("mg_reparacao_vale").select("valor"),
