@@ -109,11 +109,29 @@ export default async function MgIndexPage() {
             <span className="badge-danger" style={{ fontSize: "0.625rem" }}>investigativo</span>
           </Link>
 
+          {/* Obras — ativo */}
+          <Link href="/mg/obras" className="bloomberg-card" style={{ padding: "1.25rem", textDecoration: "none", display: "block" }}>
+            <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "hsl(var(--text-headline))" }}>Obras (DER)</div>
+            <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))", margin: "0.375rem 0 0.75rem", lineHeight: 1.5 }}>
+              Obras paralisadas, percentual de execução e fornecedores sancionados.
+            </p>
+            <span className="badge-neutral" style={{ fontSize: "0.625rem" }}>obras paradas</span>
+          </Link>
+
+          {/* Convênios — ativo */}
+          <Link href="/mg/convenios" className="bloomberg-card" style={{ padding: "1.25rem", textDecoration: "none", display: "block" }}>
+            <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "hsl(var(--text-headline))" }}>Convênios e repasses</div>
+            <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))", margin: "0.375rem 0 0.75rem", lineHeight: 1.5 }}>
+              Repasses a entidades, parcela de emenda parlamentar e sancionados.
+            </p>
+            <span className="badge-neutral" style={{ fontSize: "0.625rem" }}>86 mil convênios</span>
+          </Link>
+
           {/* Próximos eixos — em breve */}
           {[
-            { t: "Diárias e viagens", d: "Gasto com diárias por órgão (favorecido é anonimizado na fonte)." },
+            { t: "Pagamentos a sancionadas", d: "Empenhos pagos a empresas condenadas (dado já ingerido)." },
             { t: "Despesas e orçamento", d: "Para onde vai o dinheiro, por órgão e programa (SIAFI/SISOR)." },
-            { t: "Convênios de saída", d: "Repasses a ONGs, municípios e entidades." },
+            { t: "Emendas estaduais (LOA)", d: "Autores de emenda e destino do recurso." },
           ].map((c) => (
             <div
               key={c.t}
