@@ -4,6 +4,8 @@ import { getParlamentar } from "~/services/ranking";
 import { getEmendasParlamentarFull, type EmendaCompleta } from "~/services/emendas";
 import { ConfiancaBadge } from "~/components/ConfiancaBadge";
 import { FonteNota } from "~/components/FonteNota";
+import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
+import { getUser } from "~/lib/supabase-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -65,10 +67,19 @@ export async function generateMetadata({ params }: Props) {
   const resultado = await getParlamentar(id);
   if (!resultado) return { title: "Parlamentar não encontrado — The BR Insider" };
   const { parlamentar: p } = resultado;
+  const nome = p.nome_parlamentar || p.nome;
+  const descricao = `Emendas, ranking e detalhamento de ${nome} (${p.partido}/${p.uf}).`;
   return {
-    title: `${p.nome_parlamentar || p.nome} — The BR Insider`,
-    description: `Emendas, ranking e detalhamento de ${p.nome_parlamentar || p.nome} (${p.partido}/${p.uf})`,
+    title: `${nome} — The BR Insider`,
+    description: descricao,
     alternates: { canonical: `/parlamentares/${id}` },
+    openGraph: {
+      type: "profile",
+      title: `${nome} — The BR Insider`,
+      description: descricao,
+      url: `/parlamentares/${id}`,
+      images: p.foto_url ? [{ url: p.foto_url }] : undefined,
+    },
   };
 }
 
@@ -83,6 +94,12 @@ export default async function ParlamentarPage({ params }: Props) {
 
   // Busca tudo de uma vez, agrega em memória (estilo ALMG)
   const emendas = await getEmendasParlamentarFull(nomeExibido, 2000).catch(() => [] as EmendaCompleta[]);
+
+  // Freemium-SEO: anônimo (inclui Googlebot) vê o teaser indexável — KPIs e
+  // agregados públicos + uma prévia da tabela; a lista completa exige login.
+  const user = await getUser();
+  const liberado = user != null;
+  const emendasTabela = liberado ? emendas : emendas.slice(0, 5);
 
   // ── Agregações ────────────────────────────────────────────────────
   const totalEmpenhado = emendas.reduce((s, e) => s + (Number(e.valor_empenhado) || 0), 0);
@@ -149,8 +166,24 @@ export default async function ParlamentarPage({ params }: Props) {
   const anosAtivo = porAno.length;
   const qtdEmendas = emendas.length;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: nomeExibido,
+    jobTitle: p.casa_legislativa === "senado" ? "Senador" : "Deputado Federal",
+    affiliation: { "@type": "Organization", name: p.partido },
+    memberOf: { "@type": "GovernmentOrganization", name: casa },
+    ...(p.foto_url ? { image: p.foto_url } : {}),
+    url: `https://www.thebrinsider.com/parlamentares/${id}`,
+    address: { "@type": "PostalAddress", addressRegion: p.uf, addressCountry: "BR" },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ── Cabeçalho ─────────────────────────────────────────────── */}
       <section
         style={{
@@ -549,7 +582,7 @@ export default async function ParlamentarPage({ params }: Props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {emendas.slice(0, 200).map((e) => {
+                    {emendasTabela.slice(0, 200).map((e) => {
                       const exec =
                         e.valor_empenhado > 0
                           ? Math.round((e.valor_pago / e.valor_empenhado) * 100)
@@ -651,7 +684,7 @@ export default async function ParlamentarPage({ params }: Props) {
                   </tbody>
                 </table>
               </div>
-              {qtdEmendas > 200 && (
+              {liberado && qtdEmendas > 200 && (
                 <p
                   style={{
                     padding: "0.75rem 1.25rem",
@@ -669,6 +702,16 @@ export default async function ParlamentarPage({ params }: Props) {
               )}
             </div>
           </>
+        )}
+
+        {!liberado && emendas.length > 5 && (
+          <div style={{ marginTop: "1.25rem" }}>
+            <ParedeDeAcesso
+              titulo="Lista completa de emendas"
+              descricao={`Mostrando 5 de ${fmtNum(qtdEmendas)} emendas. Crie uma conta gratuita ou entre para ver a lista completa, com detalhamento por linha.`}
+              next={`/parlamentares/${id}`}
+            />
+          </div>
         )}
 
         {/* Histórico de posição no ranking */}
