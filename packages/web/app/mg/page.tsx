@@ -127,11 +127,38 @@ export default async function MgIndexPage() {
             <span className="badge-neutral" style={{ fontSize: "0.625rem" }}>86 mil convênios</span>
           </Link>
 
+          {/* Pagamentos a sancionadas — ativo */}
+          <Link href="/mg/pagamentos-sancionados" className="bloomberg-card" style={{ padding: "1.25rem", textDecoration: "none", display: "block" }}>
+            <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "hsl(var(--text-headline))" }}>Pagamentos a sancionadas</div>
+            <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))", margin: "0.375rem 0 0.75rem", lineHeight: 1.5 }}>
+              Dinheiro efetivamente pago a empresas condenadas (não só contrato).
+            </p>
+            <span className="badge-danger" style={{ fontSize: "0.625rem" }}>investigativo</span>
+          </Link>
+
+          {/* COVID — ativo */}
+          <Link href="/mg/covid" className="bloomberg-card" style={{ padding: "1.25rem", textDecoration: "none", display: "block" }}>
+            <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "hsl(var(--text-headline))" }}>Compras COVID-19</div>
+            <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))", margin: "0.375rem 0 0.75rem", lineHeight: 1.5 }}>
+              Compras de pandemia acima do preço de referência, por dispensa.
+            </p>
+            <span className="badge-neutral" style={{ fontSize: "0.625rem" }}>sobrepreço</span>
+          </Link>
+
+          {/* Terceirizados — ativo */}
+          <Link href="/mg/terceirizados" className="bloomberg-card" style={{ padding: "1.25rem", textDecoration: "none", display: "block" }}>
+            <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "hsl(var(--text-headline))" }}>Terceirizados</div>
+            <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-body))", margin: "0.375rem 0 0.75rem", lineHeight: 1.5 }}>
+              Quantos terceirizados cada empresa mantém em cada órgão.
+            </p>
+            <span className="badge-neutral" style={{ fontSize: "0.625rem" }}>por empresa</span>
+          </Link>
+
           {/* Próximos eixos — em breve */}
           {[
-            { t: "Pagamentos a sancionadas", d: "Empenhos pagos a empresas condenadas (dado já ingerido)." },
-            { t: "Despesas e orçamento", d: "Para onde vai o dinheiro, por órgão e programa (SIAFI/SISOR)." },
             { t: "Emendas estaduais (LOA)", d: "Autores de emenda e destino do recurso." },
+            { t: "Reparação Vale / Brumadinho", d: "Projetos e recursos do acordo judicial." },
+            { t: "Despesas e orçamento", d: "Para onde vai o dinheiro, por órgão e programa (SIAFI/SISOR)." },
           ].map((c) => (
             <div
               key={c.t}

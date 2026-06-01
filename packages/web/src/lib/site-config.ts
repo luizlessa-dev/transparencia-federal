@@ -81,6 +81,9 @@ export const FEDERAL_CONFIG: SiteConfig = {
         { label: "Contratos × sancionadas (MG)", href: "/mg/contratos-sancionados" },
         { label: "Obras (MG)", href: "/mg/obras" },
         { label: "Convênios (MG)", href: "/mg/convenios" },
+        { label: "Pagamentos a sancionadas (MG)", href: "/mg/pagamentos-sancionados" },
+        { label: "Compras COVID (MG)", href: "/mg/covid" },
+        { label: "Terceirizados (MG)", href: "/mg/terceirizados" },
       ],
     },
     {
