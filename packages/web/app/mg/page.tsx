@@ -22,7 +22,7 @@ const condenadaDe = (d: string | null) => !!d && !/arquiv/i.test(d) && !/absolv/
 
 export default async function MgPainelPage() {
   const sb = getSupabase();
-  const [supersal, contratos, obrasParadas, convenios, pagamentos, covidSob, terceir, reparacao, lrf] = await Promise.all([
+  const [supersal, contratos, obrasParadas, convenios, pagamentos, covidSob, terceir, reparacao, lrf, diarias, restos] = await Promise.all([
     sb.from("mg_supersalarios").select("*", { count: "exact", head: true }),
     sb.from("mg_contratos_sancionados").select("valor_total,condenada"),
     sb.from("mg_obras_paradas").select("*", { count: "exact", head: true }),
@@ -32,6 +32,8 @@ export default async function MgPainelPage() {
     sb.from("mg_terceirizados").select("cnpj_norm"),
     sb.from("mg_reparacao_vale").select("valor"),
     sb.from("mg_lrf_limites").select("ano_ref,pct_dtp,pct_prudencial").order("ano_ref", { ascending: false }).limit(1),
+    sb.from("mg_diarias_orgao").select("vr_pago").eq("ano", 2025),
+    sb.from("mg_restos_orgao").select("vr_inscrito").eq("ano", 2025),
   ]);
 
   const contratosCond = ((contratos.data ?? []) as { valor_total: number | null; condenada: boolean | null }[]).filter((r) => r.condenada);
@@ -42,6 +44,8 @@ export default async function MgPainelPage() {
   const lrfRow = ((lrf.data ?? []) as { pct_dtp: number | null; pct_prudencial: number | null }[])[0];
   const lrfPct = Number(lrfRow?.pct_dtp) || 0;
   const lrfAcimaPrud = lrfPct >= (Number(lrfRow?.pct_prudencial) || 100);
+  const somaDiarias = ((diarias.data ?? []) as { vr_pago: number | null }[]).reduce((s, r) => s + (Number(r.vr_pago) || 0), 0);
+  const somaRestos = ((restos.data ?? []) as { vr_inscrito: number | null }[]).reduce((s, r) => s + (Number(r.vr_inscrito) || 0), 0);
 
   const cards = [
     { href: "/mg/supersalarios", titulo: "Supersalários", num: fmtNum(supersal.count ?? 0), sub: "servidores acima do teto", tom: "danger" },
@@ -53,6 +57,8 @@ export default async function MgPainelPage() {
     { href: "/mg/terceirizados", titulo: "Terceirizados", num: fmtNum(empresasTerc), sub: "empresas fornecedoras", tom: "" },
     { href: "/mg/reparacao", titulo: "Acordo Vale / Brumadinho", num: fmtCompact(somaReparacao), sub: "em iniciativas de reparação", tom: "" },
     { href: "/mg/lrf", titulo: "Despesa com pessoal (LRF)", num: lrfPct ? `${lrfPct.toFixed(1).replace(".", ",")}%` : "—", sub: `da RCL — ${lrfAcimaPrud ? "acima do prudencial" : "dentro do limite"}`, tom: lrfAcimaPrud ? "danger" : "" },
+    { href: "/mg/restos", titulo: "Restos a pagar", num: fmtCompact(somaRestos), sub: "inscritos em 2025 (conta represada)", tom: "warn" },
+    { href: "/mg/diarias", titulo: "Diárias por órgão", num: fmtCompact(somaDiarias), sub: "pagas em diárias em 2025", tom: "" },
   ];
 
   return (

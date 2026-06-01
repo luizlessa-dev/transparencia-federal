@@ -86,6 +86,8 @@ export const FEDERAL_CONFIG: SiteConfig = {
         { label: "Terceirizados (MG)", href: "/mg/terceirizados" },
         { label: "Acordo Vale/Brumadinho (MG)", href: "/mg/reparacao" },
         { label: "Despesa com pessoal · LRF (MG)", href: "/mg/lrf" },
+        { label: "Restos a pagar por órgão (MG)", href: "/mg/restos" },
+        { label: "Diárias por órgão (MG)", href: "/mg/diarias" },
       ],
     },
     {
