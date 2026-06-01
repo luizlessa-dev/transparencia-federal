@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: Props) {
       title: `${nome} — The BR Insider`,
       description: descricao,
       url: `/parlamentares/${id}`,
-      images: p.foto_url ? [{ url: p.foto_url }] : undefined,
+      // imagem: gerada por opengraph-image.tsx (card de marca com nome + partido)
     },
   };
 }
