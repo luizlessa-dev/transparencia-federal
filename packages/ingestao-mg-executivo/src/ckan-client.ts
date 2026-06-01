@@ -23,6 +23,32 @@ const USER_AGENT =
 
 const throttle = new Throttle({ minIntervalMs: Number(process.env.MG_THROTTLE_MS ?? 1500) });
 
+const RETRIES = Number(process.env.MG_RETRIES ?? 4);
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * fetch com retry/backoff. O CKAN de MG é instável (502/503/504 do nginx,
+ * 429 de rate-limit, quedas de conexão). Repete em 5xx/429/erro de rede;
+ * devolve a resposta (mesmo ruim) na última tentativa pra o caller logar.
+ */
+async function fetchRetry(url: string, init: RequestInit): Promise<Response> {
+  let lastErr: unknown;
+  for (let attempt = 1; attempt <= RETRIES; attempt++) {
+    try {
+      const res = await throttle.run(() => fetch(url, init));
+      const retriable = res.status >= 500 || res.status === 429;
+      if (!retriable || attempt === RETRIES) return res;
+      console.warn(`  ↻ HTTP ${res.status} em ${url.slice(0, 80)} — tentativa ${attempt}/${RETRIES}`);
+    } catch (e) {
+      lastErr = e;
+      if (attempt === RETRIES) throw e;
+      console.warn(`  ↻ erro de rede (${(e as Error).message?.slice(0, 60)}) — tentativa ${attempt}/${RETRIES}`);
+    }
+    await sleep(1500 * attempt);
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("fetchRetry esgotou tentativas");
+}
+
 export type CkanResource = {
   id: string;
   name: string | null;
@@ -46,9 +72,7 @@ async function action<T>(name: string, params: Record<string, string | number> =
     Object.entries(params).map(([k, v]) => [k, String(v)]),
   ).toString();
   const url = `${BASE}/api/3/action/${name}${qs ? `?${qs}` : ""}`;
-  const res = await throttle.run(() =>
-    fetch(url, { headers: { "User-Agent": USER_AGENT, Accept: "application/json" } }),
-  );
+  const res = await fetchRetry(url, { headers: { "User-Agent": USER_AGENT, Accept: "application/json" } });
   const txt = await res.text();
   if (!res.ok) {
     throw new Error(`CKAN ${name} HTTP ${res.status} — ${txt.slice(0, 200)}`);
@@ -106,7 +130,7 @@ export async function fetchResourceText(
   url: string,
   encoding: "utf-8" | "latin1" = "utf-8",
 ): Promise<string> {
-  const res = await throttle.run(() => fetch(url, { headers: { "User-Agent": USER_AGENT } }));
+  const res = await fetchRetry(url, { headers: { "User-Agent": USER_AGENT } });
   if (!res.ok) throw new Error(`download resource HTTP ${res.status} — ${url}`);
   let buf = Buffer.from(await res.arrayBuffer());
   // .gz pela URL ou pelo magic number (1f 8b).
