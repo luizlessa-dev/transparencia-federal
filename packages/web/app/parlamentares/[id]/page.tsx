@@ -8,6 +8,8 @@ import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 import { DatasetSection } from "~/components/DatasetSection";
 import { getUser } from "~/lib/supabase-auth";
 import { getParlamentarRisco } from "~/services/risco";
+import { getCeapsSenadorHistorico } from "~/services/ceaps-senado";
+import { normalizarNome } from "~/lib/texto";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +111,14 @@ export default async function ParlamentarPage({ params }: Props) {
     p.casa_legislativa === "camara" && p.id_camara
       ? await getParlamentarRisco(p.id_camara).catch(() => null)
       : null;
+
+  // Senador: despesas de gabinete (CEAPS), vínculo por nome normalizado.
+  const senadorNorm = p.casa_legislativa === "senado" ? normalizarNome(nomeExibido) : null;
+  const ceapsSenado = senadorNorm
+    ? await getCeapsSenadorHistorico(senadorNorm).catch(() => [])
+    : [];
+  const ceapsTotal = ceapsSenado.reduce((s, r) => s + (Number(r.total_reembolsado) || 0), 0);
+  const ceapsDocs = ceapsSenado.reduce((s, r) => s + (Number(r.total_documentos) || 0), 0);
 
   // ── Agregações ────────────────────────────────────────────────────
   const totalEmpenhado = emendas.reduce((s, e) => s + (Number(e.valor_empenhado) || 0), 0);
@@ -321,6 +331,22 @@ export default async function ParlamentarPage({ params }: Props) {
               <Kpi label="Financiamento (2022)" value={fmtBRL(Number(risco.financiamento_total) || 0)} />
               <Kpi label="Frentes" value={fmtNum(Number(risco.total_frentes) || 0)} />
               <Kpi label="Comissões" value={fmtNum(Number(risco.total_comissoes) || 0)} />
+            </div>
+          </DatasetSection>
+        )}
+
+        {ceapsSenado.length > 0 && (
+          <DatasetSection
+            titulo="Despesas de gabinete (CEAPS)"
+            confianca="revisar"
+            fonte="Senado Federal"
+            verDetalheHref={`/senate-expenses/${encodeURIComponent(senadorNorm ?? "")}`}
+            verDetalheLabel="Ver notas e fornecedores →"
+            style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
+          >
+            <div className="bloomberg-kpi-grid">
+              <Kpi label="Total reembolsado" value={fmtBRL(ceapsTotal)} sub={`${ceapsSenado.length} ano(s)`} />
+              <Kpi label="Notas fiscais" value={fmtNum(ceapsDocs)} />
             </div>
           </DatasetSection>
         )}
