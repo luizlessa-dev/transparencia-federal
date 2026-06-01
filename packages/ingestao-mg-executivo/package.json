@@ -17,7 +17,8 @@
     "terceirizados:ts": "tsx src/run-terceirizados.ts",
     "reparacao:ts": "tsx src/run-reparacao.ts",
     "doacoes:ts": "tsx src/run-doacoes.ts",
-    "lrf:ts": "tsx src/run-lrf.ts"
+    "lrf:ts": "tsx src/run-lrf.ts",
+    "agregados:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-agregados.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
