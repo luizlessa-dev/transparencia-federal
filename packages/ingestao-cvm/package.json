@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "discover:ts": "tsx src/run-discover.ts"
+    "discover:ts": "tsx src/run-discover.ts",
+    "cadastro:ts": "tsx src/run-cadastro.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

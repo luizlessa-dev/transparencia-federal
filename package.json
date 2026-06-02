@@ -19,6 +19,7 @@
   "scripts": {
     "typecheck": "npm run typecheck -w @transparencia/ingestao-portal -w @transparencia/ingestao-camara -w @transparencia/ingestao-almg -w @transparencia/ingestao-alesp -w @transparencia/ingestao-alepe -w @transparencia/ingestao-folha -w @transparencia/ingestao-mg-executivo -w @transparencia/ingestao-cvm -w @transparencia/enriquecimento -w @transparencia/analytics -w @transparencia/api -w @transparencia/web",
     "ingestao-cvm:discover": "npm run discover:ts -w @transparencia/ingestao-cvm",
+    "ingestao-cvm:cadastro": "npm run cadastro:ts -w @transparencia/ingestao-cvm",
     "ingestao-portal": "npm run ingestao-portal:ts -w @transparencia/ingestao-portal",
     "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara",
     "ingestao-almg": "npm run verba:ts -w @transparencia/ingestao-almg",

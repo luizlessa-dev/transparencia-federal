@@ -46,6 +46,9 @@ console.log(`  instrumentos com repasse: ${repasse.size}`);
 // termos → 1 linha por instrumento, com repasse anexado
 const uT = urlOf(RID.termos);
 if (!uT) { console.error("arquivo de termos ausente"); process.exit(1); }
+// rebuild: flushUpsert ignora conflitos (não atualiza) → limpa antes p/ refletir repasse
+const del = await client.from("mg_os_parcerias").delete().not("id", "is", null);
+if (del.error) console.log(`  ⚠ delete: ${del.error.message}`);
 let iId = -1, iTipo = -1, iNum = -1, iOrg = -1, iEnt = -1, iSig = -1, iCnpj = -1, iObj = -1, iSit = -1, iIni = -1, iFim = -1;
 const erros: string[] = [];
 let inseridos = 0;

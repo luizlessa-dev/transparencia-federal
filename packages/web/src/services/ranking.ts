@@ -126,6 +126,12 @@ export async function getParlamentar(id: string): Promise<{
   parlamentar: Parlamentar;
   historico: HistoricoEntry[];
 } | null> {
+  // `id` é o UUID da tabela parlamentares. Um id malformado (ex.: /parlamentares/1
+  // de um link quebrado ou crawler) faria o Postgres lançar 22P02 → 500; validar
+  // o formato antes e retornar null devolve um 404 limpo via notFound().
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(id)) return null;
+
   const sb = getSupabase();
 
   const [{ data: parl, error: e1 }, { data: hist, error: e2 }] =
