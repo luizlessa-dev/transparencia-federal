@@ -24,6 +24,7 @@
     "ingestao-cvm:fip": "npm run fip:ts -w @transparencia/ingestao-cvm",
     "ingestao-cvm:cda": "npm run cda:ts -w @transparencia/ingestao-cvm",
     "ingestao-cvm:oferta": "npm run oferta:ts -w @transparencia/ingestao-cvm",
+    "ingestao-cvm:receita": "npm run receita:ts -w @transparencia/ingestao-cvm",
     "ingestao-portal": "npm run ingestao-portal:ts -w @transparencia/ingestao-portal",
     "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara",
     "ingestao-almg": "npm run verba:ts -w @transparencia/ingestao-almg",

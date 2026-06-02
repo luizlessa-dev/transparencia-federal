@@ -10,7 +10,8 @@
     "cadastro:ts": "tsx src/run-cadastro.ts",
     "fip:ts": "tsx src/run-fip.ts",
     "cda:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-cda.ts",
-    "oferta:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-oferta.ts"
+    "oferta:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-oferta.ts",
+    "receita:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-receita.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
