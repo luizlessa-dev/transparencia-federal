@@ -96,6 +96,14 @@ export const FEDERAL_CONFIG: SiteConfig = {
       ],
     },
     {
+      label: "Mercado de Capitais",
+      children: [
+        { label: "Visão geral (CVM)", href: "/mercado-de-capitais" },
+        { label: "Caso Galo Forte (Atlético-MG)", href: "/mercado-de-capitais/galo-forte" },
+        { label: "Emissores sancionados", href: "/mercado-de-capitais/emissores-sancionados" },
+      ],
+    },
+    {
       label: "Mais",
       children: [
         { label: "Empresas Sancionadas", href: "/sancionados" },

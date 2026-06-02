@@ -109,6 +109,13 @@ const MG_PAGES: MetadataRoute.Sitemap = ([
   { url: `${BASE}/mg/diarias`, priority: 0.7, changeFrequency: "monthly" },
 ] as MetadataRoute.Sitemap).map((p) => ({ ...p, lastModified: MG_LASTMOD }));
 
+// Eixo Mercado de Capitais (/mercado-de-capitais/*).
+const MERCADO_PAGES: MetadataRoute.Sitemap = ([
+  { url: `${BASE}/mercado-de-capitais`, priority: 0.9, changeFrequency: "weekly" },
+  { url: `${BASE}/mercado-de-capitais/galo-forte`, priority: 0.9, changeFrequency: "weekly" },
+  { url: `${BASE}/mercado-de-capitais/emissores-sancionados`, priority: 0.8, changeFrequency: "weekly" },
+] as MetadataRoute.Sitemap).map((p) => ({ ...p, lastModified: new Date("2026-06-01") }));
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Índice de parlamentares + um perfil por parlamentar ativo (Câmara + Senado).
   // É o ativo de SEO principal: cada político tem URL própria indexável.
@@ -128,5 +135,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     perfis = []; // se a consulta falhar, mantém o sitemap estático válido
   }
 
-  return [...STATIC_PAGES, ...MG_PAGES, ...indice, ...perfis];
+  return [...STATIC_PAGES, ...MG_PAGES, ...MERCADO_PAGES, ...indice, ...perfis];
 }
