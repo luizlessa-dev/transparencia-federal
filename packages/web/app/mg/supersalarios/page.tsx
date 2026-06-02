@@ -318,6 +318,29 @@ export default async function MgSupersalariosPage({
           </div>
         )}
 
+        {pago && (
+          <div style={{ marginTop: "1rem" }}>
+            <a
+              href="/api/export/mg-supersalarios"
+              download
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                padding: "0.375rem 0.875rem",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "2px",
+                color: "hsl(var(--text-body))",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.375rem",
+              }}
+            >
+              ↓ Baixar lista completa (.csv)
+            </a>
+          </div>
+        )}
+
         {/* ── Nota metodológica / LGPD ──────────────────────────────────── */}
         <p
           style={{

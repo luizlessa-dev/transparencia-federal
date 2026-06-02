@@ -201,6 +201,29 @@ export default async function MgContratosSancionadosPage({
           </div>
         )}
 
+        {pago && (
+          <div style={{ marginTop: "1rem" }}>
+            <a
+              href="/api/export/mg-contratos"
+              download
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                padding: "0.375rem 0.875rem",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "2px",
+                color: "hsl(var(--text-body))",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.375rem",
+              }}
+            >
+              ↓ Baixar contratos × sancionadas (.csv)
+            </a>
+          </div>
+        )}
+
         <p style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", marginTop: "1.5rem", lineHeight: 1.6 }}>
           <strong>Metodologia:</strong> cruzamento por CNPJ entre os contratos do Estado
           (portal de compras de MG, anos de assinatura 2022–2026) e a lista de empresas

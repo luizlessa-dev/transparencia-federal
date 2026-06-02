@@ -919,6 +919,50 @@ export default async function ParlamentarPage({ params }: Props) {
           </div>
         )}
 
+        {/* Botão de export — visível apenas para assinantes pagos */}
+        {pago && emendas.length > 0 && (
+          <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <a
+              href={`/api/export/emendas?nome=${encodeURIComponent(nomeExibido)}`}
+              download
+              style={{
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                padding: "0.375rem 0.875rem",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "2px",
+                color: "hsl(var(--text-body))",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.375rem",
+              }}
+            >
+              ↓ Baixar emendas (.csv)
+            </a>
+            {leadsFolha && (leadsFolha.doadores.length > 0 || leadsFolha.nepotismo.length > 0) && p.id_camara && (
+              <a
+                href={`/api/export/leads?id_camara=${p.id_camara}`}
+                download
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  padding: "0.375rem 0.875rem",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "2px",
+                  color: "hsl(var(--text-body))",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.375rem",
+                }}
+              >
+                ↓ Baixar leads de investigação (.csv)
+              </a>
+            )}
+          </div>
+        )}
+
         {/* Histórico de posição no ranking */}
         {historico.length > 0 && (
           <div className="bloomberg-card" style={{ marginTop: "1.25rem" }}>
