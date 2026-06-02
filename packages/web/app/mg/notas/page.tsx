@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgNotasResumo, getMgNotasFornecedores, getMgEmpresasSancionadas } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -30,11 +30,10 @@ const cond = (d: string | null) => !!d && !/arquiv/i.test(d) && !/absolv/i.test(
 
 export default async function MgNotasPage() {
   const { pago } = await getViewer();
-  const sb = getSupabase();
   const [resumoRes, topRes, sancRes] = await Promise.all([
-    sb.from("mg_notas_resumo").select("total,fornecedores,notas").maybeSingle(),
-    sb.from("mg_notas_fornecedor_total").select("cnpj_norm,nome,valor_total,n_notas").order("valor_total", { ascending: false }).limit(150),
-    sb.from("mg_empresas_sancionadas").select("cnpj_norm,decisao,conduta"),
+    getMgNotasResumo(),
+    getMgNotasFornecedores(),
+    getMgEmpresasSancionadas(),
   ]);
   if (topRes.error) return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {topRes.error.message}</p></div>);
   const resumo = resumoRes.data as { total: string; fornecedores: number; notas: number } | null;

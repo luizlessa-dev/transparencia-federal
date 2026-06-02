@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgVoos } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -19,14 +19,10 @@ export const metadata: Metadata = {
 type Row = { data_voo: string | null; aeronave: string | null; origem: string | null; destino: string | null; passageiro: string | null; cargo_passageiro: string | null };
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 const up = (s: string | null) => (s ?? "?").toUpperCase().trim();
-async function fetchAll(cols: string): Promise<Row[]> {
-  const sb = getSupabase(); let out: Row[] = [], from = 0;
-  while (true) { const { data } = await sb.from("mg_voos_governador").select(cols).order("data_voo", { ascending: false }).range(from, from + 999); const d = (data ?? []) as unknown as Row[]; out = out.concat(d); if (d.length < 1000) break; from += 1000; }
-  return out;
-}
 
 export default async function MgVoosPage() {
-  const rows = await fetchAll("data_voo,aeronave,origem,destino,passageiro,cargo_passageiro");
+  const { data: _voos } = await getMgVoos();
+  const rows = _voos ?? [];
   const porPax = new Map<string, number>(); for (const r of rows) { const k = r.passageiro?.trim() || "?"; porPax.set(k, (porPax.get(k) ?? 0) + 1); }
   const pax = [...porPax.entries()].sort((a, b) => b[1] - a[1]);
   const porDest = new Map<string, number>(); for (const r of rows) { const k = up(r.destino); porDest.set(k, (porDest.get(k) ?? 0) + 1); }

@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgLicitacaoSobrepreco, getMgLicitacaoPorAno, getMgLicitacaoPorOrgao } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -44,16 +44,10 @@ export default async function MgLicitacoesPage({ searchParams }: { searchParams:
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
-  let detalheQ = sb.from("mg_licitacao_sobrepreco_rel")
-    .select("ano,orgao,fornecedor,item_descricao,numero_processo,vr_unit_referencia,vr_unit_homologado,sobrepreco_valor,sobrepreco_pct")
-    .order("sobrepreco_valor", { ascending: false }).limit(120);
-  if (anoSel) detalheQ = detalheQ.eq("ano", anoSel);
-
   const [porAnoRes, porOrgaoRes, detalheRes] = await Promise.all([
-    sb.from("mg_licitacao_sobrepreco_por_ano").select("ano,n,total"),
-    sb.from("mg_licitacao_sobrepreco_por_orgao").select("orgao,n,total").limit(12),
-    detalheQ,
+    getMgLicitacaoPorAno(),
+    getMgLicitacaoPorOrgao(),
+    getMgLicitacaoSobrepreco(anoSel),
   ]);
 
   if (detalheRes.error) {

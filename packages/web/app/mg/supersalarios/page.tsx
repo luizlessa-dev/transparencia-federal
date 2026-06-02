@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgSupersalarios } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -87,13 +87,8 @@ export default async function MgSupersalariosPage({
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
   // A view já vem ordenada por abate_teto desc e filtrada para abate > 0.
-  const { data, error } = await sb
-    .from("mg_supersalarios")
-    .select(
-      "servidor_nome,orgao,cargo,situacao,remuneracao_bruta,remuneracao_liquida,abate_teto,servidor_id_externo,ano,mes",
-    );
+  const { data, error } = await getMgSupersalarios();
 
   if (error || !data) {
     return (

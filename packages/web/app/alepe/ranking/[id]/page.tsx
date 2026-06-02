@@ -11,7 +11,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getSupabase } from "~/lib/supabase-server";
+import { getAlepeDeputado, getAlEpeDespesasDeputado } from "~/services/assembleias";
 
 export const dynamic = "force-dynamic";
 
@@ -48,12 +48,7 @@ export async function generateMetadata({
   const idNum = Number(id);
   if (!Number.isFinite(idNum) || idNum <= 0) return { title: "Deputado — ALEPE" };
 
-  const sb = getSupabase();
-  const { data } = await sb
-    .from("alepe_deputados")
-    .select("nome,partido,ativo")
-    .eq("id_alepe", idNum)
-    .maybeSingle();
+  const { data } = await getAlepeDeputado(id);
 
   const nome = data?.nome ?? "Deputado";
   const partido = data?.partido ?? "";
@@ -110,16 +105,12 @@ export default async function AlepeDeputadoDetalhePage({
   const idNum = Number(id);
   if (!Number.isFinite(idNum) || idNum <= 0) notFound();
 
-  const sb = getSupabase();
-
-  // Info do deputado em paralelo com paginação das notas
-  const [{ data: depData, error: depErr }] = await Promise.all([
-    sb
-      .from("alepe_deputados")
-      .select("id_alepe,nome,partido,ativo,legislatura")
-      .eq("id_alepe", idNum)
-      .maybeSingle(),
-  ]);
+  // Info do deputado + notas em paralelo
+  const [{ data: depData, error: depErr }, { data: notasData, error: notasErr }] =
+    await Promise.all([
+      getAlepeDeputado(String(idNum)),
+      getAlEpeDespesasDeputado(String(idNum)),
+    ]);
 
   if (depErr) {
     return (
@@ -132,41 +123,17 @@ export default async function AlepeDeputadoDetalhePage({
   }
   if (!depData) notFound();
 
-  // Busca paginada das notas (deputados históricos podem ter centenas)
-  const notas: Nota[] = [];
-  const pageSize = 1000;
-  let offset = 0;
-  let notasErr: string | null = null;
-
-  for (;;) {
-    const { data, error } = await sb
-      .from("alepe_verba_indenizatoria")
-      .select("id,ano,mes,cod_categoria,categoria,fornecedor,cnpj_cpf,data_emissao,valor")
-      .eq("id_alepe", idNum)
-      .order("data_emissao", { ascending: false, nullsFirst: false })
-      .order("ano", { ascending: false })
-      .order("mes", { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    if (error) {
-      notasErr = error.message;
-      break;
-    }
-    if (!data || data.length === 0) break;
-    notas.push(...(data as Nota[]));
-    if (data.length < pageSize) break;
-    offset += pageSize;
-  }
-
   if (notasErr) {
     return (
       <div className="container" style={{ padding: "3rem 1.5rem" }}>
         <p style={{ color: "hsl(var(--badge-danger-fg))" }}>
-          Erro ao carregar notas: {notasErr}
+          Erro ao carregar notas: {notasErr.message}
         </p>
       </div>
     );
   }
+
+  const notas = (notasData ?? []) as Nota[];
 
   const dep = depData as Deputado;
 

@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getCvmEmissoresSancionados } from "~/services/cvm";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -56,10 +56,7 @@ export default async function EmissoresSancionadosPage({
   const recorte = sp.recorte === "todos" ? "todos" : "ativas";
 
   const { pago } = await getViewer();
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("cvm_emissor_sancionado")
-    .select("cnpj_emissor,nome_emissor,n_ofertas,valor_total,ultima_oferta,tipos_ativo,origem_sancao,sancao_orgao,sancao_ativa,condenada");
+  const { data, error } = await getCvmEmissoresSancionados();
 
   if (error || !data) {
     return (

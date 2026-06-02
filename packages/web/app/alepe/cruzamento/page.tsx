@@ -8,7 +8,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getAlepeFornecedoresIntersetados } from "~/services/assembleias";
 
 export const dynamic = "force-dynamic";
 
@@ -92,21 +92,13 @@ export default async function CruzamentoPage({
     ? params.filtro
     : "todos") as Filtro;
 
-  const sb = getSupabase();
+  const { data: allData, error } = await getAlepeFornecedoresIntersetados();
 
-  let query = sb
-    .from("fornecedores_intersetados")
-    .select(
-      "cnpj,nome,total_alepe,notas_alepe,deps_alepe,total_alesp,notas_alesp,deps_alesp,total_camara,notas_camara,deps_camara,em_alepe,em_alesp,em_camara,n_casas,total_geral",
-    )
-    .order("total_geral", { ascending: false });
-
-  if (filtro === "3-casas") query = query.eq("n_casas", 3);
-  else if (filtro === "alepe-camara") query = query.eq("em_camara", true).eq("n_casas", 2).eq("em_alesp", false);
-  else if (filtro === "alepe-alesp") query = query.eq("em_alesp", true).eq("n_casas", 2).eq("em_camara", false);
-
-  const { data, error } = await query.limit(200);
-  const rows = (data ?? []) as Fornecedor[];
+  let rows = (allData ?? []) as Fornecedor[];
+  if (filtro === "3-casas") rows = rows.filter((r) => r.n_casas === 3);
+  else if (filtro === "alepe-camara") rows = rows.filter((r) => r.em_camara && r.n_casas === 2 && !r.em_alesp);
+  else if (filtro === "alepe-alesp") rows = rows.filter((r) => r.em_alesp && r.n_casas === 2 && !r.em_camara);
+  rows = rows.slice(0, 200);
 
   const totalGeral = rows.reduce((s, r) => s + (r.total_geral ?? 0), 0);
   const totalAlepe = rows.reduce((s, r) => s + (r.total_alepe ?? 0), 0);

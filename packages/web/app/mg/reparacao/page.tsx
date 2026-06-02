@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgReparacao } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -30,11 +30,7 @@ function fmtCompact(v: number): string {
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 
 export default async function MgReparacaoPage() {
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("mg_reparacao_vale")
-    .select("iniciativa,anexo,valor")
-    .order("valor", { ascending: false });
+  const { data, error } = await getMgReparacao();
 
   if (error || !data) {
     return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {error?.message ?? "vazio"}</p></div>);

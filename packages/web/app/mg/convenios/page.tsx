@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgConveniosCount, getMgConveniosComEmendaCount, getMgConveniosMaiores, getMgConveniosComEmenda, getMgConveniosSancionados } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -43,13 +43,12 @@ export default async function MgConveniosPage({ searchParams }: { searchParams: 
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
   const [total, comEmenda, maiores, comEmendaRows, sancRows] = await Promise.all([
-    sb.from("mg_convenios").select("*", { count: "exact", head: true }),
-    sb.from("mg_convenios").select("*", { count: "exact", head: true }).gt("vr_emenda_parl", 0),
-    sb.from("mg_convenios").select("convenente,ano,orgao_id,vr_total,vr_emenda_parl").order("vr_total", { ascending: false }).limit(TOPN),
-    sb.from("mg_convenios").select("convenente,ano,orgao_id,vr_total,vr_emenda_parl").gt("vr_emenda_parl", 0).order("vr_emenda_parl", { ascending: false }).limit(TOPN),
-    sb.from("mg_convenios_sancionados").select("convenente,ano,vr_total,conduta,condenada"),
+    getMgConveniosCount(),
+    getMgConveniosComEmendaCount(),
+    getMgConveniosMaiores(TOPN),
+    getMgConveniosComEmenda(TOPN),
+    getMgConveniosSancionados(),
   ]);
 
   const totalConv = total.count ?? 0;

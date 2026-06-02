@@ -94,6 +94,7 @@ const STATIC_PAGES: MetadataRoute.Sitemap = [
 const MG_LASTMOD = new Date("2026-06-01");
 const MG_PAGES: MetadataRoute.Sitemap = ([
   { url: `${BASE}/mg`, priority: 0.9, changeFrequency: "daily" },
+  { url: `${BASE}/mg/fornecedores`, priority: 0.9, changeFrequency: "weekly" },
   { url: `${BASE}/mg/supersalarios`, priority: 0.8, changeFrequency: "weekly" },
   { url: `${BASE}/mg/contratos-sancionados`, priority: 0.8, changeFrequency: "weekly" },
   { url: `${BASE}/mg/pagamentos-sancionados`, priority: 0.8, changeFrequency: "weekly" },

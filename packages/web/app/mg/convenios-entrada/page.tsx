@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgConveniosEntrada } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -22,14 +22,9 @@ const fmtBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency"
 const fmtCompact = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(v || 0);
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 
-async function fetchAll(table: string, cols: string): Promise<Row[]> {
-  const sb = getSupabase(); let out: Row[] = [], from = 0;
-  while (true) { const { data } = await sb.from(table).select(cols).range(from, from + 999); const d = (data ?? []) as unknown as Row[]; out = out.concat(d); if (d.length < 1000) break; from += 1000; }
-  return out;
-}
-
 export default async function MgConveniosEntradaPage() {
-  const rows = await fetchAll("mg_convenios_entrada", "concedente,ano,vr_concedente");
+  const { data: _convEnt } = await getMgConveniosEntrada();
+  const rows = _convEnt ?? [];
   const total = rows.reduce((s, r) => s + num(r.vr_concedente), 0);
   const porC = new Map<string, { n: number; v: number }>(); for (const r of rows) { const k = r.concedente ?? "(não informado)"; const a = porC.get(k) ?? { n: 0, v: 0 }; a.n++; a.v += num(r.vr_concedente); porC.set(k, a); }
   const conced = [...porC.entries()].sort((a, b) => b[1].v - a[1].v);

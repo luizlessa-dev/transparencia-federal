@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgDashboardStats } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "Observatório do Poder Executivo de Minas Gerais: supersalários, contratos e pagamentos a empresas sancionadas, sobrepreço, notas fiscais e compras por fornecedor, emendas, organizações sociais, voos oficiais e mais.",
   alternates: { canonical: "https://www.thebrinsider.com/mg" },
   openGraph: { title: "Governo de Minas Gerais — Fiscalização do Executivo | The BR Insider", description: "Observatório do Executivo de MG: supersalários, contratos × sancionadas, sobrepreço, notas fiscais, compras, emendas, organizações sociais, voos oficiais e mais.", url: "https://www.thebrinsider.com/mg", siteName: "The BR Insider", type: "website", locale: "pt_BR" },
-  twitter: { card: "summary_large_image", title: "Governo de Minas Gerais — Fiscalização do Executivo | The BR Insider", description: "Observatório do Executivo de MG: 22 eixos de fiscalização a partir dos dados abertos do Estado." },
+  twitter: { card: "summary_large_image", title: "Governo de Minas Gerais — Fiscalização do Executivo | The BR Insider", description: "Observatório do Executivo de MG: 23 eixos de fiscalização a partir dos dados abertos do Estado." },
 };
 
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
@@ -22,35 +22,12 @@ const fmtCompact = (v: number) => new Intl.NumberFormat("pt-BR", { style: "curre
 const n = (v: unknown) => Number(v) || 0;
 
 export default async function MgPainelPage() {
-  const sb = getSupabase();
   const [
     supersal, contratos, obrasParadas, convenios, pagamentos, covidSob, terceir, reparacao,
     lrf, diarias, restos, licit, emendasFed,
     notasR, comprasR, emEstR, os, convEnt, doacoes, voos, valeP, ipsemg,
-  ] = await Promise.all([
-    sb.from("mg_supersalarios").select("*", { count: "exact", head: true }),
-    sb.from("mg_contratos_sancionados").select("valor_total,condenada"),
-    sb.from("mg_obras_paradas").select("*", { count: "exact", head: true }),
-    sb.from("mg_convenios").select("*", { count: "exact", head: true }),
-    sb.from("mg_pagamentos_condenadas").select("valor_pago"),
-    sb.from("mg_covid_sobrepreco").select("*", { count: "exact", head: true }),
-    sb.from("mg_terceirizados").select("cnpj_norm"),
-    sb.from("mg_reparacao_vale").select("valor"),
-    sb.from("mg_lrf_limites").select("ano_ref,pct_dtp,pct_prudencial").order("ano_ref", { ascending: false }).limit(1),
-    sb.from("mg_diarias_orgao").select("vr_pago").eq("ano", 2025),
-    sb.from("mg_restos_orgao").select("vr_inscrito").eq("ano", 2025),
-    sb.from("mg_licitacao_sobrepreco_por_ano").select("total"),
-    sb.from("mg_emendas_federais").select("valor_indicado"),
-    sb.from("mg_notas_resumo").select("total,fornecedores").maybeSingle(),
-    sb.from("mg_compras_resumo").select("total,fornecedores").maybeSingle(),
-    sb.from("mg_emendas_estaduais_resumo").select("total,autores").maybeSingle(),
-    sb.from("mg_os_parcerias").select("vr_repasse_atualizado"),
-    sb.from("mg_convenios_entrada").select("*", { count: "exact", head: true }),
-    sb.from("mg_doacoes").select("*", { count: "exact", head: true }),
-    sb.from("mg_voos_governador").select("*", { count: "exact", head: true }),
-    sb.from("mg_despesa_pessoal_vale").select("*", { count: "exact", head: true }),
-    sb.from("mg_ipsemg_contratos").select("*", { count: "exact", head: true }),
-  ]);
+    fornR,
+  ] = await getMgDashboardStats();
 
   const contratosCond = ((contratos.data ?? []) as { valor_total: number | null; condenada: boolean | null }[]).filter((r) => r.condenada);
   const somaContratos = contratosCond.reduce((s, r) => s + n(r.valor_total), 0);
@@ -68,6 +45,7 @@ export default async function MgPainelPage() {
   const rNotas = notasR.data as { total: string; fornecedores: number } | null;
   const rCompras = comprasR.data as { total: string; fornecedores: number } | null;
   const rEmEst = emEstR.data as { total: string; autores: number } | null;
+  const rForn = fornR.data as { fornecedores: number; condenadas_faturando: number; pago_a_condenadas: string } | null;
 
   const sections: { titulo: string; cards: { href: string; titulo: string; num: string; sub: string; tom: string }[] }[] = [
     {
@@ -84,6 +62,7 @@ export default async function MgPainelPage() {
     {
       titulo: "Fornecedores — quem fatura com o Estado",
       cards: [
+        { href: "/mg/fornecedores", titulo: "★ Raio-X de fornecedores", num: fmtNum(n(rForn?.condenadas_faturando)), sub: `condenadas faturando · ${fmtNum(n(rForn?.fornecedores))} empresas com score de risco`, tom: "danger" },
         { href: "/mg/notas", titulo: "Notas fiscais", num: fmtCompact(n(rNotas?.total)), sub: `${fmtNum(n(rNotas?.fornecedores))} fornecedores (2022–26)`, tom: "" },
         { href: "/mg/compras", titulo: "Compras (SIAD)", num: fmtCompact(n(rCompras?.total)), sub: `${fmtNum(n(rCompras?.fornecedores))} fornecedores`, tom: "" },
         { href: "/mg/terceirizados", titulo: "Terceirizados", num: fmtNum(empresasTerc), sub: "empresas fornecedoras", tom: "" },
@@ -129,7 +108,7 @@ export default async function MgPainelPage() {
           <h1 style={{ fontSize: "1.875rem", margin: "0.5rem 0 0", lineHeight: 1.2 }}>Governo de Minas Gerais</h1>
           <p style={{ fontSize: "0.9375rem", color: "hsl(var(--text-body))", margin: "0.625rem 0 0", maxWidth: "680px", lineHeight: 1.6 }}>
             Observatório do <strong>Poder Executivo</strong> mineiro a partir do Portal de Dados Abertos
-            do Estado — 22 eixos de fiscalização, cada um atualizado direto da fonte oficial.
+            do Estado — 23 eixos de fiscalização, cada um atualizado direto da fonte oficial.
           </p>
         </div>
       </section>

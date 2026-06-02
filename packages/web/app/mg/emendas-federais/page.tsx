@@ -7,7 +7,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgEmendasFederais } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -42,10 +42,7 @@ export default async function MgEmendasFederaisPage({ searchParams }: { searchPa
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("mg_emendas_federais")
-    .select("modalidade,autoria,ano,valor_indicado,valor_repassado,objeto,funcao_governo,orgao_executor");
+  const { data, error } = await getMgEmendasFederais();
 
   if (error || !data) {
     return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {error?.message ?? "vazio"}</p></div>);

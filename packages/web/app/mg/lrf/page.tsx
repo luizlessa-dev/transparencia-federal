@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgLrfLimites, getMgLrfPessoal } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -42,10 +42,9 @@ function mesFim(periodo: string): number {
 }
 
 export default async function MgLrfPage() {
-  const sb = getSupabase();
   const [limRes, pesRes] = await Promise.all([
-    sb.from("mg_lrf_limites").select("periodo,ano_ref,rcl_ajustada,dtp,limite_maximo,limite_prudencial,limite_alerta,pct_dtp,pct_maximo,pct_prudencial"),
-    sb.from("mg_lrf_pessoal").select("mes_ano,ano,mes,despesa_liquida").order("ano", { ascending: false }).order("mes", { ascending: false }).limit(12),
+    getMgLrfLimites(),
+    getMgLrfPessoal(),
   ]);
 
   if (limRes.error || pesRes.error) {

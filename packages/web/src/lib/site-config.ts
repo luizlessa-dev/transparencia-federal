@@ -80,6 +80,7 @@ export const FEDERAL_CONFIG: SiteConfig = {
           label: "Minas Gerais — Executivo",
           href: "/mg",
           children: [
+            { label: "Raio-X de fornecedores", href: "/mg/fornecedores" },
             { label: "Supersalários", href: "/mg/supersalarios" },
             { label: "Contratos × sancionadas", href: "/mg/contratos-sancionados" },
             { label: "Pagamentos a sancionadas", href: "/mg/pagamentos-sancionados" },
@@ -90,7 +91,7 @@ export const FEDERAL_CONFIG: SiteConfig = {
             { label: "Emendas estaduais (LOA)", href: "/mg/emendas-estaduais" },
             { label: "Organizações sociais", href: "/mg/organizacoes-sociais" },
             { label: "Voos do Governador", href: "/mg/voos" },
-            { label: "→ Ver todos os 22 eixos", href: "/mg" },
+            { label: "→ Ver todos os 23 eixos", href: "/mg" },
           ],
         },
       ],

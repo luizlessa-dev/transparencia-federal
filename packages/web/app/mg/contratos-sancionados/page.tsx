@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgContratosSancionados } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -67,10 +67,7 @@ export default async function MgContratosSancionadosPage({
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("mg_contratos_sancionados")
-    .select("fornecedor,cnpj_fmt,cnpj_norm,orgao,objeto,valor_total,situacao,conduta,decisao,fase,condenada");
+  const { data, error } = await getMgContratosSancionados();
 
   if (error || !data) {
     return (

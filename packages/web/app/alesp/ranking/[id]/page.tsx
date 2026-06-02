@@ -12,7 +12,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getSupabase } from "~/lib/supabase-server";
+import { getAlespDeputado, getAlespDespesasDeputado } from "~/services/assembleias";
 
 export const dynamic = "force-dynamic";
 
@@ -46,12 +46,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const sb = getSupabase();
-  const { data } = await sb
-    .from("alesp_deputados")
-    .select("nome,partido,ativo")
-    .eq("matricula", id)
-    .maybeSingle();
+  const { data } = await getAlespDeputado(id);
 
   const nome = data?.nome ?? "Deputado";
   const partido = data?.partido ?? "";
@@ -99,16 +94,12 @@ export default async function DeputadoDetalhePage({
   const matricula = decodeURIComponent(id).trim();
   if (!matricula) notFound();
 
-  const sb = getSupabase();
-
-  // Info do deputado — paralelo com paginação das despesas
-  const [{ data: depData, error: depErr }] = await Promise.all([
-    sb
-      .from("alesp_deputados")
-      .select("matricula,nome,partido,tag_localizacao,ativo,legislatura")
-      .eq("matricula", matricula)
-      .maybeSingle(),
-  ]);
+  // Info do deputado + despesas em paralelo
+  const [{ data: depData, error: depErr }, { data: despesasData, error: despErr }] =
+    await Promise.all([
+      getAlespDeputado(matricula),
+      getAlespDespesasDeputado(matricula),
+    ]);
 
   if (depErr) {
     return (
@@ -121,39 +112,17 @@ export default async function DeputadoDetalhePage({
   }
   if (!depData) notFound();
 
-  // Busca paginada das despesas (deputados de longa data podem ter milhares)
-  const rows: Despesa[] = [];
-  const pageSize = 1000;
-  let offset = 0;
-  let despErr: string | null = null;
-
-  for (;;) {
-    const { data, error } = await sb
-      .from("alesp_despesas_gabinete")
-      .select("id,ano,mes,categoria,cod_categoria,fornecedor,cnpj_cpf,valor")
-      .eq("matricula", matricula)
-      .order("ano", { ascending: false })
-      .order("mes", { ascending: false })
-      .range(offset, offset + pageSize - 1);
-    if (error) {
-      despErr = error.message;
-      break;
-    }
-    if (!data || data.length === 0) break;
-    rows.push(...(data as Despesa[]));
-    if (data.length < pageSize) break;
-    offset += pageSize;
-  }
-
   if (despErr) {
     return (
       <div className="container" style={{ padding: "3rem 1.5rem" }}>
         <p style={{ color: "hsl(var(--badge-danger-fg))" }}>
-          Erro ao carregar despesas: {despErr}
+          Erro ao carregar despesas: {despErr.message}
         </p>
       </div>
     );
   }
+
+  const rows = (despesasData ?? []) as Despesa[];
 
   const dep = depData as Deputado;
 

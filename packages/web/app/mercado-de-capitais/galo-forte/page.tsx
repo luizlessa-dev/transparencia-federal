@@ -9,11 +9,9 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getCvmGaloForteHistorico } from "~/services/cvm";
 
 export const dynamic = "force-dynamic";
-
-const CNPJ_GALO = "51856050000106";
 
 export const metadata: Metadata = {
   title: "O FIP Galo Forte e a SAF do Atlético-MG — os números da CVM | The BR Insider",
@@ -50,12 +48,7 @@ const fmtData = (iso: string) => {
 };
 
 export default async function GaloFortePage() {
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("cvm_fip_informe")
-    .select("dt_comptc,vl_patrim_liq,vl_cap_integr,nr_cotst,pr_pf")
-    .eq("cnpj_norm", CNPJ_GALO)
-    .order("dt_comptc", { ascending: true });
+  const { data, error } = await getCvmGaloForteHistorico();
 
   const informes = ((data ?? []) as Informe[]).filter((r) => r.vl_patrim_liq != null);
   // Uma linha por competência (a fonte traz classes; pegamos o maior PL do mês).

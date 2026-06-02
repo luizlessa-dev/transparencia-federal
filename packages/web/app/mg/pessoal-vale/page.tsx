@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgPessoalVale } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -21,14 +21,9 @@ const num = (v: string | number | null | undefined) => (v == null ? 0 : Number(v
 const fmtBRL = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(v || 0);
 const fmtCompact = (v: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", notation: "compact", maximumFractionDigits: 1 }).format(v || 0);
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
-async function fetchAll(cols: string): Promise<Row[]> {
-  const sb = getSupabase(); let out: Row[] = [], from = 0;
-  while (true) { const { data } = await sb.from("mg_despesa_pessoal_vale").select(cols).range(from, from + 999); const d = (data ?? []) as unknown as Row[]; out = out.concat(d); if (d.length < 1000) break; from += 1000; }
-  return out;
-}
-
 export default async function MgPessoalValePage() {
-  const rows = await fetchAll("ano_mes,orgao_sigla,orgao,nome,valor,cargo_descricao");
+  const { data: _pessoal } = await getMgPessoalVale();
+  const rows = _pessoal ?? [];
   const totalFolha = rows.reduce((s, r) => s + num(r.valor), 0);
   const pessoas = new Set(rows.map((r) => r.nome).filter(Boolean)).size;
   const porOrg = new Map<string, { nome: string; v: number; p: Set<string> }>();

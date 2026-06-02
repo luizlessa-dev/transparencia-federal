@@ -8,7 +8,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getAlepeRanking } from "~/services/assembleias";
 
 export const dynamic = "force-dynamic";
 
@@ -136,41 +136,19 @@ export default async function AlepeRankingPage({
   const incluirHistoricos = params.historicos === "1";
   const soAtivos = !incluirHistoricos;
 
-  // Busca paginada da view — 163 deps × ~130 meses = até ~21k linhas
-  const sb = getSupabase();
-  const todasRows: ViewRow[] = [];
-  const pageSize = 1000;
-  let offset = 0;
-  let erroSql: string | null = null;
-
-  for (;;) {
-    const { data, error } = await sb
-      .from("alepe_verba_resumo_mensal")
-      .select("id_alepe,nome,partido,ativo,legislatura,ano,mes,qtd_notas,qtd_fornecedores,total")
-      .order("ano", { ascending: true })
-      .order("mes", { ascending: true })
-      .range(offset, offset + pageSize - 1);
-
-    if (error) {
-      erroSql = error.message;
-      break;
-    }
-    if (!data || data.length === 0) break;
-    todasRows.push(...(data as ViewRow[]));
-    if (data.length < pageSize) break;
-    offset += pageSize;
-  }
+  const { data, error: erroSql } = await getAlepeRanking();
 
   if (erroSql) {
     return (
       <div className="container" style={{ padding: "3rem 1.5rem" }}>
         <p style={{ color: "hsl(var(--badge-danger-fg))" }}>
-          Erro ao carregar dados: {erroSql}
+          Erro ao carregar dados: {erroSql.message}
         </p>
       </div>
     );
   }
 
+  const todasRows = (data ?? []) as ViewRow[];
   const filtradas = filtrar(todasRows, periodo, soAtivos);
   const ranking = agregar(filtradas);
 

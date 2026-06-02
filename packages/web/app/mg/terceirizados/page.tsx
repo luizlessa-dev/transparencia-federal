@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgTerceirizadosList, getMgTerceirizadosSancionados } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -34,10 +34,9 @@ export default async function MgTerceirizadosPage({ searchParams }: { searchPara
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
   const [{ data: tData }, { data: sData }] = await Promise.all([
-    sb.from("mg_terceirizados").select("empresa,cnpj_norm,orgao,mes_referencia,qtd_trabalhadores"),
-    sb.from("mg_terceirizados_sancionados").select("empresa,cnpj_norm,orgao,mes_referencia,qtd_trabalhadores,conduta,condenada"),
+    getMgTerceirizadosList(),
+    getMgTerceirizadosSancionados(),
   ]);
 
   const todos = ((tData ?? []) as Terc[]).sort((a, b) => (Number(b.qtd_trabalhadores) || 0) - (Number(a.qtd_trabalhadores) || 0));

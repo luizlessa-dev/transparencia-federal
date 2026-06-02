@@ -7,7 +7,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgPagamentosCondenadas } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -38,10 +38,7 @@ const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 export default async function MgPagamentosSancionadosPage() {
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("mg_pagamentos_condenadas")
-    .select("credor,orgao,cnpj_norm,elemento_despesa,valor_pago,ano,conduta,decisao,fase");
+  const { data, error } = await getMgPagamentosCondenadas();
 
   if (error || !data) {
     return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {error?.message ?? "vazio"}</p></div>);

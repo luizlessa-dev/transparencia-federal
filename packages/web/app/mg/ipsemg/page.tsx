@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgIpsemg } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -18,14 +18,10 @@ export const metadata: Metadata = {
 
 type Row = { nome: string | null; cnpj_norm: string | null; ramo_atividade: string | null; municipio: string | null };
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
-async function fetchAll(cols: string): Promise<Row[]> {
-  const sb = getSupabase(); let out: Row[] = [], from = 0;
-  while (true) { const { data } = await sb.from("mg_ipsemg_contratos").select(cols).range(from, from + 999); const d = (data ?? []) as unknown as Row[]; out = out.concat(d); if (d.length < 1000) break; from += 1000; }
-  return out;
-}
 
 export default async function MgIpsemgPage() {
-  const rows = await fetchAll("nome,cnpj_norm,ramo_atividade,municipio");
+  const { data: _ipsemg } = await getMgIpsemg();
+  const rows = _ipsemg ?? [];
   const porRamo = new Map<string, number>(); for (const r of rows) { const k = r.ramo_atividade ?? "(s/ ramo)"; porRamo.set(k, (porRamo.get(k) ?? 0) + 1); }
   const ramos = [...porRamo.entries()].sort((a, b) => b[1] - a[1]);
   const porMun = new Map<string, number>(); for (const r of rows) { const k = r.municipio ?? "?"; porMun.set(k, (porMun.get(k) ?? 0) + 1); }

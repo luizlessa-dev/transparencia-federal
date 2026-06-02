@@ -8,7 +8,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getAlmgFornecedoresIntersetados } from "~/services/assembleias";
 
 export const dynamic = "force-dynamic";
 
@@ -92,21 +92,13 @@ export default async function AlmgCruzamentoPage({
     ? params.filtro
     : "todos") as Filtro;
 
-  const sb = getSupabase();
+  const { data: allData, error } = await getAlmgFornecedoresIntersetados();
 
-  let query = sb
-    .from("almg_fornecedores_intersetados")
-    .select(
-      "cnpj,nome,total_almg,notas_almg,deps_almg,total_alesp,notas_alesp,deps_alesp,total_camara,notas_camara,deps_camara,em_almg,em_alesp,em_camara,n_casas,total_geral",
-    )
-    .order("total_geral", { ascending: false });
-
-  if (filtro === "3-casas") query = query.eq("n_casas", 3);
-  else if (filtro === "almg-camara") query = query.eq("em_camara", true).eq("em_alesp", false);
-  else if (filtro === "almg-alesp") query = query.eq("em_alesp", true).eq("em_camara", false);
-
-  const { data, error } = await query.limit(300);
-  const rows = (data ?? []) as Fornecedor[];
+  let rows = (allData ?? []) as Fornecedor[];
+  if (filtro === "3-casas") rows = rows.filter((r) => r.n_casas === 3);
+  else if (filtro === "almg-camara") rows = rows.filter((r) => r.em_camara && !r.em_alesp);
+  else if (filtro === "almg-alesp") rows = rows.filter((r) => r.em_alesp && !r.em_camara);
+  rows = rows.slice(0, 300);
 
   const totalGeral = rows.reduce((s, r) => s + (r.total_geral ?? 0), 0);
   const totalAlmg = rows.reduce((s, r) => s + (r.total_almg ?? 0), 0);

@@ -6,7 +6,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgRestos } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -33,12 +33,7 @@ export default async function MgRestosPage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const ano = ANOS.includes(Number(sp.ano)) ? Number(sp.ano) : 2025;
 
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("mg_restos_orgao")
-    .select("orgao,sigla,vr_inscrito,vr_pago")
-    .eq("ano", ano)
-    .order("vr_inscrito", { ascending: false });
+  const { data, error } = await getMgRestos(ano);
 
   if (error || !data) {
     return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {error?.message ?? "vazio"}</p></div>);

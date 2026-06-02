@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgObrasList, getMgObrasSancionadas } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -55,10 +55,9 @@ export default async function MgObrasPage({ searchParams }: { searchParams: Prom
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
   const [{ data: obrasData }, { data: sancData }] = await Promise.all([
-    sb.from("mg_obras").select("contrato,objeto,empresa,orgao,situacao,municipios,dias_paralisados,valor_total,total_medido,percentual_execucao,cnpj_norm"),
-    sb.from("mg_obras_sancionadas").select("empresa,orgao,valor_total,situacao,dias_paralisados,conduta,condenada"),
+    getMgObrasList(),
+    getMgObrasSancionadas(),
   ]);
 
   const obras = (obrasData ?? []) as Obra[];

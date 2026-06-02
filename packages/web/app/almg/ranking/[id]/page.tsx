@@ -5,7 +5,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getSupabase } from "~/lib/supabase-server";
+import { getAlmgDeputado, getAlmgVerbaDeputado } from "~/services/assembleias";
 
 export const dynamic = "force-dynamic";
 
@@ -40,12 +40,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const sb = getSupabase();
-  const { data } = await sb
-    .from("almg_deputados")
-    .select("nome,partido")
-    .eq("id_almg", Number(id))
-    .single();
+  const { data } = await getAlmgDeputado(id);
 
   const nome = data?.nome ?? "Deputado";
   const partido = data?.partido ?? "";
@@ -98,24 +93,11 @@ export default async function DeputadoDetalhePage({
   const idNum = Number(id);
   if (!Number.isFinite(idNum) || idNum <= 0) notFound();
 
-  const sb = getSupabase();
-
   // Busca paralela: info do deputado + todas as notas dele
   const [{ data: depData, error: depErr }, { data: notas, error: notasErr }] =
     await Promise.all([
-      sb
-        .from("almg_deputados")
-        .select("id_almg,nome,partido,tag_localizacao")
-        .eq("id_almg", idNum)
-        .single(),
-      sb
-        .from("almg_verba_indenizatoria")
-        .select(
-          "id,ano,mes,categoria,categoria_total,emitente,cnpj_cpf,num_documento,data_emissao,valor_despesa,valor_reembolso",
-        )
-        .eq("deputado_id_almg", idNum)
-        .order("data_emissao", { ascending: false })
-        .limit(1000),
+      getAlmgDeputado(String(idNum)),
+      getAlmgVerbaDeputado(String(idNum)),
     ]);
 
   if (depErr || !depData) notFound();

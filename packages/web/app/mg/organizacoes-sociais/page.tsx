@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgOrganizacoesSociais } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +23,7 @@ const fmtCompact = (v: number) => new Intl.NumberFormat("pt-BR", { style: "curre
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 
 export default async function MgOsPage() {
-  const sb = getSupabase();
-  const { data, error } = await sb.from("mg_os_parcerias").select("id_instrumento,tipo_instrumento,entidade,cnpj_norm,objeto,situacao,vr_repasse_atualizado").order("vr_repasse_atualizado", { ascending: false });
+  const { data, error } = await getMgOrganizacoesSociais();
   if (error || !data) return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {error?.message ?? "vazio"}</p></div>);
   const rows = data as Row[];
   const total = rows.reduce((s, r) => s + num(r.vr_repasse_atualizado), 0);

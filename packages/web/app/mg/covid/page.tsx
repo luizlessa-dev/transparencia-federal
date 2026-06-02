@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgCovidCount, getMgCovidSobrepreco, getMgCovidSancionados } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -43,11 +43,10 @@ export default async function MgCovidPage({ searchParams }: { searchParams: Prom
 
   const { pago } = await getViewer();
 
-  const sb = getSupabase();
   const [totalItens, { data: sobData }, { data: sancData }] = await Promise.all([
-    sb.from("mg_covid_compras").select("*", { count: "exact", head: true }),
-    sb.from("mg_covid_sobrepreco").select("contratado,orgao_demandante,objeto,item,procedimento,quantidade,valor_ref_unit,valor_hom_unit,valor_homologado,sobrepreco_pct").limit(500),
-    sb.from("mg_covid_sancionados").select("contratado,orgao_demandante,valor_homologado,conduta,condenada"),
+    getMgCovidCount(),
+    getMgCovidSobrepreco(),
+    getMgCovidSancionados(),
   ]);
 
   const sobre = (sobData ?? []) as Sob[];

@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgEmendasEstaduaisResumo, getMgEmendasEstaduaisPorAutor, getMgEmendasEstaduais } from "~/services/mg";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
@@ -29,11 +29,10 @@ const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 
 export default async function MgEmendasEstaduaisPage() {
   const { pago } = await getViewer();
-  const sb = getSupabase();
   const [resumoRes, autoresRes, maioresRes] = await Promise.all([
-    sb.from("mg_emendas_estaduais_resumo").select("total,emendas,autores").maybeSingle(),
-    sb.from("mg_emendas_estaduais_por_autor").select("autor,n,total").order("total", { ascending: false }).limit(120),
-    sb.from("mg_emendas_estaduais").select("autor,ano,objeto,uo_beneficiada,vr_emenda").order("vr_emenda", { ascending: false }).limit(60),
+    getMgEmendasEstaduaisResumo(),
+    getMgEmendasEstaduaisPorAutor(),
+    getMgEmendasEstaduais(),
   ]);
   if (autoresRes.error) return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {autoresRes.error.message}</p></div>);
   const resumo = resumoRes.data as { total: string; emendas: number; autores: number } | null;

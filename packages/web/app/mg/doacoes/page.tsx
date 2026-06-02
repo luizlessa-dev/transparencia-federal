@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgDoacoes } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +20,7 @@ type Row = { doador: string | null; objeto: string | null; orgao_recebedor: stri
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 
 export default async function MgDoacoesPage() {
-  const sb = getSupabase();
-  const { data, error } = await sb.from("mg_doacoes").select("doador,objeto,orgao_recebedor,natureza_doador,categoria_valor,ano").order("ano", { ascending: false });
+  const { data, error } = await getMgDoacoes();
   if (error || !data) return (<div className="container" style={{ padding: "3rem 1.5rem" }}><p style={{ color: "hsl(var(--badge-danger-fg))" }}>Erro: {error?.message ?? "vazio"}</p></div>);
   const rows = data as Row[];
   const doadores = new Set(rows.map((r) => r.doador).filter(Boolean)).size;

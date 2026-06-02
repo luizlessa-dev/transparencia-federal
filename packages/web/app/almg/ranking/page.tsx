@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getAlmgVerbaResumo } from "~/services/assembleias";
 
 export const dynamic = "force-dynamic";
 
@@ -124,12 +124,7 @@ export default async function AlmgRankingPage({
     : "tudo") as Filtro;
 
   // Busca view completa (77 dep × 15 meses = 1155 linhas — cabe em memória)
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("almg_verba_resumo_mensal")
-    .select("id_almg,nome,partido,ano,mes,qtd_notas,qtd_fornecedores,total_reembolsado,total_despesa")
-    .order("ano", { ascending: true })
-    .order("mes", { ascending: true });
+  const { data, error } = await getAlmgVerbaResumo();
 
   if (error || !data) {
     return (
