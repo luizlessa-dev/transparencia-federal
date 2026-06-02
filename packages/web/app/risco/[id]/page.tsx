@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getParlamentarRisco } from "~/services/risco";
 import { getFrentesDeDeputado, getComissoesDeDeputado } from "~/services/frentes";
+import { getViewer } from "~/lib/dal";
+import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
 export const dynamic = "force-dynamic";
 
@@ -73,10 +75,11 @@ export default async function ParlamentarRiscoPage({ params }: Props) {
 
   if (isNaN(deputadoId)) notFound();
 
-  const [dep, frentes, comissoes] = await Promise.all([
+  const [dep, frentes, comissoes, viewer] = await Promise.all([
     getParlamentarRisco(deputadoId),
     getFrentesDeDeputado(deputadoId),
     getComissoesDeDeputado(deputadoId),
+    getViewer(),
   ]);
   if (!dep) notFound();
 
@@ -259,6 +262,7 @@ export default async function ParlamentarRiscoPage({ params }: Props) {
           <h2 style={{ fontSize: "0.875rem", fontWeight: 700, margin: "0 0 1rem", color: "hsl(var(--text-headline))", textTransform: "uppercase", letterSpacing: "0.08em" }}>
             Dados Brutos
           </h2>
+          {viewer.pago ? (
           <table className="bloomberg-table">
             <tbody>
               <tr>
@@ -305,6 +309,14 @@ export default async function ParlamentarRiscoPage({ params }: Props) {
               )}
             </tbody>
           </table>
+          ) : (
+            <ParedeDeAcesso
+              tipo="pago"
+              titulo="Dados brutos do parlamentar (plano pago)"
+              descricao={`Figuras detalhadas de ${dep.nome}: CEAP, passagens aéreas, FEFC, concordância partidária e patrimônio declarado. Assine para ver o detalhamento completo.`}
+              next={`/risco/${deputadoId}`}
+            />
+          )}
         </div>
 
         {/* ── Mandatos & contexto ──────────────────────────────────────── */}

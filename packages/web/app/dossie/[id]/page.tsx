@@ -13,7 +13,8 @@ import { notFound } from "next/navigation";
 import { getParlamentarRisco } from "~/services/risco";
 import { getFrentesDeDeputado, getComissoesDeDeputado } from "~/services/frentes";
 import { getDeputadoProposicaoAgg } from "~/services/proposicoes";
-import { getSupabase } from "~/lib/supabase-server";
+import { getViewer, getReceitasDossie, getBensDossie } from "~/lib/dal";
+import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
 export const dynamic = "force-dynamic";
 
@@ -48,61 +49,6 @@ const corScore = (s: number) =>
 const corBadge = (s: number) =>
   s >= 70 ? "badge-danger" : s >= 40 ? "badge-warn" : "badge-success";
 
-// ── tipos auxiliares pra dados via supabase direto ────────────────────────
-
-interface DoadorTop {
-  nome: string;
-  cpf_cnpj: string;
-  total: number;
-}
-
-interface ReceitaAgg {
-  ano_eleicao: number;
-  nm_candidato: string;
-  sg_partido: string;
-  sg_uf: string;
-  ds_cargo: string;
-  total_receitas: number;
-  posicao: number | null;
-  posicao_cargo: number | null;
-  top_doadores: DoadorTop[] | null;
-  sq_candidato: string;
-}
-
-async function getReceitasPorCpf(cpf: string | null): Promise<ReceitaAgg[]> {
-  if (!cpf) return [];
-  const sb = getSupabase();
-  const { data, error } = await sb
-    .from("tse_candidatos_receitas_agg")
-    .select("ano_eleicao,nm_candidato,sg_partido,sg_uf,ds_cargo,total_receitas,posicao,posicao_cargo,top_doadores,sq_candidato")
-    .eq("nr_cpf_candidato", cpf.replace(/\D/g, ""))
-    .order("ano_eleicao", { ascending: false });
-  if (error) return [];
-  return (data ?? []) as ReceitaAgg[];
-}
-
-async function getBensPorCpf(cpf: string | null): Promise<{ ano: number; quantidade: number; valor: number }[]> {
-  if (!cpf) return [];
-  const sb = getSupabase();
-  // primeiro pega sq_candidato em receitas (cobertura igual de bens)
-  const { data: recs } = await sb
-    .from("tse_candidatos_receitas_agg")
-    .select("sq_candidato,ano_eleicao")
-    .eq("nr_cpf_candidato", cpf.replace(/\D/g, ""));
-  const result: { ano: number; quantidade: number; valor: number }[] = [];
-  for (const r of recs ?? []) {
-    const { data: bens } = await sb
-      .from("tse_bens_candidatos")
-      .select("vr_bem")
-      .eq("sq_candidato", r.sq_candidato);
-    if (bens && bens.length > 0) {
-      const total = bens.reduce((s, b: { vr_bem: number | null }) => s + (b.vr_bem ?? 0), 0);
-      result.push({ ano: r.ano_eleicao, quantidade: bens.length, valor: total });
-    }
-  }
-  return result.sort((a, b) => b.ano - a.ano);
-}
-
 // ── página ────────────────────────────────────────────────────────────────
 
 export default async function DossiePage({ params }: Props) {
@@ -113,14 +59,17 @@ export default async function DossiePage({ params }: Props) {
   const dep = await getParlamentarRisco(deputadoId);
   if (!dep) notFound();
 
-  // dados paralelos
+  const viewer = await getViewer();
+
+  // dados paralelos (receitas/bens já vêm cortados pelo DAL conforme o plano)
   const [frentes, comissoes, propAgg, receitas, bens] = await Promise.all([
     getFrentesDeDeputado(deputadoId),
     getComissoesDeDeputado(deputadoId),
     getDeputadoProposicaoAgg(deputadoId),
-    getReceitasPorCpf(dep.cpf),
-    getBensPorCpf(dep.cpf),
+    getReceitasDossie(dep.cpf, viewer),
+    getBensDossie(dep.cpf, viewer),
   ]);
+  const totalDoadoresOcultos = receitas.reduce((s, r) => s + r.n_doadores, 0);
 
   const score = Math.round(dep.score_total);
   const scoreCor = corScore(dep.score_total);
@@ -310,38 +259,57 @@ export default async function DossiePage({ params }: Props) {
                 )}
               </div>
             ))}
+            {!viewer.pago && totalDoadoresOcultos > 0 && (
+              <ParedeDeAcesso
+                tipo="pago"
+                titulo="Quem financiou esta campanha (plano pago)"
+                descricao={`${totalDoadoresOcultos} principal(is) doador(es) identificado(s) no TSE. Assine para ver os nomes e os valores doados a ${dep.nome}.`}
+                next={`/dossie/${deputadoId}`}
+              />
+            )}
           </div>
         )}
 
         {/* ── Patrimônio histórico TSE ────────────────────────── */}
-        {bens.length > 0 && (
+        {bens.anosComBens > 0 && (
           <div className="bloomberg-card" style={{ padding: "1.25rem", marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "0.875rem", fontWeight: 700, margin: "0 0 0.875rem", color: "hsl(var(--text-headline))", textTransform: "uppercase", letterSpacing: "0.08em" }}>
               Patrimônio declarado (TSE)
             </h2>
-            <table className="bloomberg-table">
-              <thead>
-                <tr>
-                  <th style={{ textAlign: "left" }}>Ano eleição</th>
-                  <th style={{ textAlign: "right" }}>Bens declarados</th>
-                  <th style={{ textAlign: "right" }}>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bens.map((b) => (
-                  <tr key={b.ano}>
-                    <td>{b.ano}</td>
-                    <td style={{ textAlign: "right" }}>{b.quantidade}</td>
-                    <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: 600 }}>{fmtBRL(b.valor)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <p style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", marginTop: "0.625rem" }}>
-              <Link href="/patrimonios" style={{ color: "hsl(var(--primary))", textDecoration: "none" }}>
-                → Ver bens detalhados
-              </Link>
-            </p>
+            {bens.detalhe ? (
+              <>
+                <table className="bloomberg-table">
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: "left" }}>Ano eleição</th>
+                      <th style={{ textAlign: "right" }}>Bens declarados</th>
+                      <th style={{ textAlign: "right" }}>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bens.detalhe.map((b) => (
+                      <tr key={b.ano}>
+                        <td>{b.ano}</td>
+                        <td style={{ textAlign: "right" }}>{b.quantidade}</td>
+                        <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: 600 }}>{fmtBRL(b.valor)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", marginTop: "0.625rem" }}>
+                  <Link href="/patrimonios" style={{ color: "hsl(var(--primary))", textDecoration: "none" }}>
+                    → Ver bens detalhados
+                  </Link>
+                </p>
+              </>
+            ) : (
+              <ParedeDeAcesso
+                tipo="pago"
+                titulo="Patrimônio declarado ano a ano (plano pago)"
+                descricao={`Maior patrimônio declarado: ${fmtBRL(bens.maiorTotal)} em ${bens.anosComBens} eleição(ões). Assine para ver a evolução por ano e a quantidade de bens.`}
+                next={`/dossie/${deputadoId}`}
+              />
+            )}
           </div>
         )}
 

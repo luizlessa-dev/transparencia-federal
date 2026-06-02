@@ -22,7 +22,8 @@
     "licitacoes:ts": "tsx src/run-licitacoes.ts",
     "emendas-federais:ts": "tsx src/run-emendas-federais.ts",
     "convenios-entrada:ts": "tsx src/run-convenios-entrada.ts",
-    "ipsemg:ts": "tsx src/run-ipsemg.ts"
+    "ipsemg:ts": "tsx src/run-ipsemg.ts",
+    "compras:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-compras.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
