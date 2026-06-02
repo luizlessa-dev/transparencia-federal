@@ -6,6 +6,7 @@
   "scripts": {
     "repasses:ts": "tsx src/run-repasses-local.ts",
     "enrich:ts":   "tsx src/enrich-brasilapi.ts",
+    "nf:ts":       "tsx src/run-nf-partidos.ts",
     "typecheck":   "tsc --noEmit"
   },
   "dependencies": {
