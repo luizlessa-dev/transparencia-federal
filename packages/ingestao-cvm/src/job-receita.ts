@@ -2,11 +2,11 @@
  * Ingestão ENXUTA do QSA da Receita → cnpj_socios + cnpj_empresa.
  *
  * Estratégia (lição do disco): NUNCA grava a base inteira (25M sócios). Monta o
- * "universo" de CNPJs do eixo CVM a partir do banco (gestores/administradores/
- * controladores de fundos + emissores de oferta + empresas sancionadas MG) e,
- * ao varrer cada arquivo Socios/Empresas da Receita, grava SÓ as linhas cujo
- * CNPJ básico (8 díg.) está no universo. Stream linha-a-linha (unzip -p + for-
- * await) com backpressure — heap constante mesmo nos arquivos de centenas de MB.
+ * "universo" de CNPJs a partir de TODAS as fontes do banco — fundos CVM
+ * (gestores/admins/controladores), emissores de oferta, sancionadas MG e federal,
+ * e principalmente os CONTRATANTES do Estado (mg_contratos, mg_licitacoes,
+ * mg_convenios, mg_empenhos_sancionados) que é onde políticos aparecem como
+ * sócios. Grava SÓ as linhas cujo CNPJ básico (8 díg.) está no universo.
  */
 import { spawn } from "child_process";
 import { createInterface } from "readline";
@@ -21,27 +21,52 @@ const parseDataReceita = (v: string): string | null => {
   return /^\d{8}$/.test(t) && t !== "00000000" ? `${t.slice(0, 4)}-${t.slice(4, 6)}-${t.slice(6, 8)}` : null;
 };
 
-/** Monta o conjunto de CNPJs básicos (8 díg.) de interesse, a partir do banco. */
+/**
+ * Monta o conjunto de CNPJs básicos (8 díg.) de interesse, a partir do banco.
+ * Inclui todas as fontes: fundos CVM, emissores, sancionadas E contratantes do
+ * Estado (mg_contratos/licitacoes/convenios) — onde políticos aparecem como sócios.
+ */
 export async function montarUniverso(client: SupabaseClient): Promise<Set<string>> {
   const set = new Set<string>();
   const add = (s: string | null | undefined) => { const b = basico(s ?? ""); if (b.length === 8) set.add(b); };
 
-  // Páginas de cvm_fundo (gestor/admin/controlador) — pagina pra pegar tudo.
+  const paginado = async (tabela: string, coluna: string) => {
+    for (let from = 0; ; from += 10000) {
+      const { data, error } = await client.from(tabela).select(coluna).range(from, from + 9999);
+      if (error || !data || data.length === 0) break;
+      for (const r of data as unknown as Record<string, string | null>[]) add(r[coluna]);
+      if (data.length < 10000) break;
+    }
+  };
+
+  // ── Eixo CVM (gestores/admins/controladores de fundos) ──────────────────
   for (let from = 0; ; from += 10000) {
     const { data, error } = await client.from("cvm_fundo")
       .select("cnpj_gestor,cnpj_admin,cnpj_controlador").range(from, from + 9999);
     if (error || !data || data.length === 0) break;
-    for (const r of data as Record<string, string | null>[]) { add(r.cnpj_gestor); add(r.cnpj_admin); add(r.cnpj_controlador); }
+    for (const r of data as Record<string, string | null>[]) {
+      add(r.cnpj_gestor); add(r.cnpj_admin); add(r.cnpj_controlador);
+    }
     if (data.length < 10000) break;
   }
-  for (let from = 0; ; from += 10000) {
-    const { data, error } = await client.from("cvm_oferta").select("cnpj_emissor").range(from, from + 9999);
-    if (error || !data || data.length === 0) break;
-    for (const r of data as { cnpj_emissor: string | null }[]) add(r.cnpj_emissor);
-    if (data.length < 10000) break;
-  }
-  const { data: sanc } = await client.from("mg_empresas_sancionadas").select("cnpj_norm");
-  for (const r of (sanc ?? []) as { cnpj_norm: string | null }[]) add(r.cnpj_norm);
+  await paginado("cvm_oferta", "cnpj_emissor");
+
+  // ── Sancionadas (MG + federal) ───────────────────────────────────────────
+  await paginado("mg_empresas_sancionadas", "cnpj_norm");
+  const { data: sanFed } = await client.from("portal_sancionados")
+    .select("cpf_cnpj").not("cpf_cnpj", "is", null);
+  for (const r of (sanFed ?? []) as { cpf_cnpj: string }[]) add(r.cpf_cnpj);
+
+  // ── Contratantes do Estado MG ────────────────────────────────────────────
+  // Aqui está o cross jornalístico: se um político é sócio de empresa
+  // que tem contrato/empenho/convênio com o governo, o QSA vai revelar.
+  await paginado("mg_contratos", "cnpj_norm");
+  await paginado("mg_licitacao_sobrepreco", "cnpj_norm");  // sobrepreço em licitações
+  await paginado("mg_convenios", "convenente_cnpj");       // convênios saída (nome real)
+  await paginado("mg_empenhos_sancionados", "cnpj_norm");  // pagamentos a sancionadas
+  await paginado("mg_obras", "cnpj_norm");                 // obras DER
+  await paginado("mg_covid_compras", "cnpj_norm");         // compras COVID
+  await paginado("mg_terceirizados", "cnpj_norm");         // terceirizados
 
   return set;
 }
