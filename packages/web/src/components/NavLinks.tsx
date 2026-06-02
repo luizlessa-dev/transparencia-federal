@@ -105,6 +105,36 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
         >
           {children.map((child) => {
             const active = isActive(pathname, child.href);
+            // GRUPO aninhado (ex.: estado "Minas Gerais" com seus eixos)
+            if (child.children && child.children.length > 0) {
+              return (
+                <div key={child.label} style={{ borderTop: "1px solid hsl(var(--border))", marginTop: "0.25rem", paddingTop: "0.25rem" }}>
+                  {child.href ? (
+                    <Link
+                      href={child.href}
+                      onClick={() => setOpen(false)}
+                      style={{ display: "block", padding: "0.5rem 0.75rem 0.25rem", fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "hsl(var(--accent))", textDecoration: "none" }}
+                    >
+                      {child.label}
+                    </Link>
+                  ) : (
+                    <div style={{ padding: "0.5rem 0.75rem 0.25rem", fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "hsl(var(--text-caption))" }}>{child.label}</div>
+                  )}
+                  {child.children.map((g) =>
+                    g.href ? (
+                      <Link
+                        key={g.href}
+                        href={g.href}
+                        onClick={() => setOpen(false)}
+                        style={{ display: "block", padding: "0.375rem 0.75rem 0.375rem 1.25rem", fontSize: "0.8125rem", fontWeight: isActive(pathname, g.href) ? 700 : 500, color: isActive(pathname, g.href) ? "hsl(var(--text-headline))" : "hsl(var(--text-body))", backgroundColor: isActive(pathname, g.href) ? "hsl(var(--surface))" : "transparent", textDecoration: "none", borderRadius: "2px" }}
+                      >
+                        {g.label}
+                      </Link>
+                    ) : null,
+                  )}
+                </div>
+              );
+            }
             if (child.external && child.href) {
               return (
                 <a
