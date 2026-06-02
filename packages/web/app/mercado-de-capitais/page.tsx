@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getCvmFundos, getCvmCarteira, getCvmOfertas, getCvmFips, getCvmEmissoresSancionadosCount, getCvmGaloForteHistorico } from "~/services/cvm";
 
 export const dynamic = "force-dynamic";
 
@@ -21,22 +21,23 @@ const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 const fmtMi = (v: number) => `R$ ${(v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
 
 export default async function MercadoCapitaisPage() {
-  const sb = getSupabase();
-  const [fundos, arestas, ofertas, fips, galo, emisSanc] = await Promise.all([
-    sb.from("cvm_fundo").select("*", { count: "exact", head: true }),
-    sb.from("cvm_carteira_edge").select("*", { count: "exact", head: true }),
-    sb.from("cvm_oferta").select("*", { count: "exact", head: true }),
-    sb.from("cvm_fundo").select("*", { count: "exact", head: true }).eq("tipo", "FIP"),
-    sb.from("cvm_fip_informe").select("vl_patrim_liq").eq("cnpj_norm", "51856050000106").order("dt_comptc", { ascending: false }).limit(1).maybeSingle(),
-    sb.from("cvm_emissor_sancionado").select("cnpj_emissor"),
+  const [fundos, arestas, ofertas, fips, emissoresUnicos, galoHistorico] = await Promise.all([
+    getCvmFundos(),
+    getCvmCarteira(),
+    getCvmOfertas(),
+    getCvmFips(),
+    getCvmEmissoresSancionadosCount(),
+    getCvmGaloForteHistorico(),
   ]);
 
-  const emissoresUnicos = new Set(((emisSanc.data ?? []) as { cnpj_emissor: string }[]).map((r) => r.cnpj_emissor)).size;
-  const galoPl = Number((galo.data as { vl_patrim_liq: number | null } | null)?.vl_patrim_liq ?? 0);
+  const galoSerie = ((galoHistorico.data ?? []) as { vl_patrim_liq: number | null; dt_comptc: string }[])
+    .filter((r) => r.vl_patrim_liq != null)
+    .sort((a, b) => b.dt_comptc.localeCompare(a.dt_comptc));
+  const galoPl = Number(galoSerie[0]?.vl_patrim_liq ?? 0);
 
   const cards: { href: string; titulo: string; num: string; sub: string; tom: string }[] = [
     { href: "/mercado-de-capitais/galo-forte", titulo: "Caso Galo Forte", num: galoPl ? fmtMi(galoPl) : "—", sub: "FIP que controla parte da SAF do Atlético-MG", tom: "danger" },
-    { href: "/mercado-de-capitais/emissores-sancionados", titulo: "Emissores sancionados", num: fmtNum(emissoresUnicos), sub: "captaram no mercado e estão em lista de sanção", tom: "danger" },
+    { href: "/mercado-de-capitais/emissores-sancionados", titulo: "Emissores sancionados", num: fmtNum(emissoresUnicos.count ?? 0), sub: "captaram no mercado e estão em lista de sanção", tom: "danger" },
     { href: "/mercado-de-capitais/galo-forte", titulo: "Informes de FIP", num: fmtNum(fips.count ?? 0), sub: "fundos de participação monitorados", tom: "" },
     { href: "/mercado-de-capitais", titulo: "Grafo de fundos", num: fmtNum(arestas.count ?? 0), sub: "arestas fundo→fundo (quem investe em quem)", tom: "" },
     { href: "/mercado-de-capitais", titulo: "Fundos cadastrados", num: fmtNum(fundos.count ?? 0), sub: "nós do grafo (CVM)", tom: "" },
