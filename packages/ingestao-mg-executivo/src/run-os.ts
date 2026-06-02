@@ -28,6 +28,8 @@ if (!url || !key) { console.error("SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY obri
 const client = createClient(url, key, { auth: { persistSession: false } });
 
 const at = (l: string[], i: number) => (i >= 0 ? (l[i] ?? "").trim() : "");
+// normaliza ID_INSTRUMENTO p/ join (termos usa "CG-001/2018", repasses "TP_001/2005" — separador difere)
+const normInstr = (s: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
 console.log("▶ Termos de Parceria / Contratos de Gestão (OSs · MG)");
 const pkg = await packageShow(DS);
@@ -38,7 +40,7 @@ const repasse = new Map<string, { prev: number; atu: number }>();
 { const u = urlOf(RID.repasses); let iId = -1, iP = -1, iA = -1;
   if (u) eachRow(await fetchResourceText(u, "latin1"),
     (h) => { const idx = mapColunas(h); iId = idx("id_instrumento"); iP = idx("repasse_previsto"); iA = idx("repasse_atualizado"); },
-    (l) => { const id = at(l, iId); if (!id) return; const r = repasse.get(id) ?? { prev: 0, atu: 0 }; r.prev += parseValorBR(at(l, iP)) ?? 0; r.atu += parseValorBR(at(l, iA)) ?? 0; repasse.set(id, r); }); }
+    (l) => { const id = normInstr(at(l, iId)); if (!id) return; const r = repasse.get(id) ?? { prev: 0, atu: 0 }; r.prev += parseValorBR(at(l, iP)) ?? 0; r.atu += parseValorBR(at(l, iA)) ?? 0; repasse.set(id, r); }); }
 console.log(`  instrumentos com repasse: ${repasse.size}`);
 
 // termos → 1 linha por instrumento, com repasse anexado
@@ -47,6 +49,7 @@ if (!uT) { console.error("arquivo de termos ausente"); process.exit(1); }
 let iId = -1, iTipo = -1, iNum = -1, iOrg = -1, iEnt = -1, iSig = -1, iCnpj = -1, iObj = -1, iSit = -1, iIni = -1, iFim = -1;
 const erros: string[] = [];
 let inseridos = 0;
+let casados = 0;
 let buffer: Record<string, unknown>[] = [];
 const total = eachRow(await fetchResourceText(uT, "latin1"),
   (h) => {
@@ -58,7 +61,8 @@ const total = eachRow(await fetchResourceText(uT, "latin1"),
   },
   (l) => {
     const id = at(l, iId); if (!id) return;
-    const rp = repasse.get(id);
+    const rp = repasse.get(normInstr(id));
+    if (rp) casados++;
     buffer.push({
       id_instrumento: id,
       tipo_instrumento: at(l, iTipo) || null,
@@ -76,7 +80,7 @@ const total = eachRow(await fetchResourceText(uT, "latin1"),
     });
   });
 for (let i = 0; i < buffer.length; i += 500) inseridos += await flushUpsert(client, "mg_os_parcerias", "id_instrumento", buffer.slice(i, i + 500), erros);
-console.log(`  ${total} termos | gravados ${inseridos}`);
+console.log(`  ${total} termos | casaram c/ repasse ${casados} | gravados ${inseridos}`);
 for (const e of erros.slice(0, 3)) console.log(`  erro: ${e}`);
 if (erros.length && inseridos === 0) process.exit(1);
 console.log("✓ OSs concluído");

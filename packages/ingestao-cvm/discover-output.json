@@ -1,0 +1,3357 @@
+{
+  "base": "https://dados.cvm.gov.br",
+  "totalPacotesCatalogo": 54,
+  "eixos": [
+    {
+      "eixo": "fundos-cadastro",
+      "pacotes": [
+        {
+          "name": "fi-cad",
+          "title": "Fundos de Investimento: Informação Cadastral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "1d2e99b8-b2fb-4153-903b-75f259d49179",
+              "name": "Dicionário de Dados (Fundos de Investimento, Classes e Subclasses de Cotas)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/CAD/META/meta_registro_fundo_classe.zip",
+              "datastore": false
+            },
+            {
+              "id": "0fa5380d-7ff6-4aac-b000-80f38a9087f1",
+              "name": "Fundos de Investimento, Classes e Subclasses de Cotas",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/CAD/DADOS/registro_fundo_classe.zip",
+              "datastore": false
+            },
+            {
+              "id": "58aee816-1722-49c6-b576-651e7704b430",
+              "name": "Dicionário de Dados (Não Adaptados RCVM175)",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/CAD/META/meta_cad_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "1baccbb6-cd82-49f6-b70f-5a7d5ad7d616",
+              "name": "Fundos de Investimento - Não Adaptados RCVM175",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/CAD/DADOS/cad_fi.csv",
+              "datastore": false
+            },
+            {
+              "id": "c4403f55-ad9c-4f8f-b9d9-2d78c7488c92",
+              "name": "Dicionário de Dados (ICVM 555 - Histórico)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/CAD/META/meta_cad_fi.zip",
+              "datastore": false
+            },
+            {
+              "id": "9ff23a88-d333-4b04-8600-ee474d9e1aae",
+              "name": "Fundos de Investimento ICVM 555 - Histórico",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/CAD/DADOS/cad_fi_hist.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "adm_fii-cad",
+          "title": "Administradores de FII: Informação Cadastral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "adac9a0d-91fe-47ac-8400-6e59ae40239b",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/ADM_FII/CAD/META/meta_cad_adm_fii.txt",
+              "datastore": false
+            },
+            {
+              "id": "d20f3bac-1614-4dfe-84ad-d4119538188e",
+              "name": "Administradores de FII",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/ADM_FII/CAD/DADOS/cad_adm_fii.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "emissores",
+          "title": "Emissores",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "b2ef23f2-0196-48b7-af0b-40d5f3b2ff7c",
+              "name": "Características dos Fundos - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/caracteristicas-dos-fundos-planilha-agregada-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "037f809e-5754-43a0-8cf8-e5651d671615",
+              "name": "Características dos Fundos - ICVM 555 - s FIC",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/caracteristicas-dos-fundos-planilha-agregada-fundos-555-sem-fundos-de-cotas.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "e9336459-8a4f-45a9-82b2-6b2e25018e07",
+              "name": "Informe Diário - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/informe-diario-planilha-agregada-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "535c321a-d2fd-47c2-8eca-2ada327fd0ba",
+              "name": "Ativos em Carteira - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/ativos-em-carteira-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "e2248afa-f209-4ec8-b1e2-c395691c623e",
+              "name": "Ativos em Carteira - ICVM 555 - s FIC",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/ativos-em-carteira-fundos-555-sem-fundos-de-cotas.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "7d605260-3bfb-4d44-ad52-914d9f0d1a6e",
+              "name": "Companhias Abertas",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/cias-abertas.ods/view",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-entrega",
+          "title": "Fundos de Investimento: Documentos: Entrega",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "df252dad-5b02-470d-9f1b-ebd7840c1244",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/META/meta_fi_entrega_documento.txt",
+              "datastore": false
+            },
+            {
+              "id": "38d39d57-d35a-417e-bebd-d63acf6cdb3e",
+              "name": "Fundos de Investimento - Documentos Entregues (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "883cf549-c5cb-42ea-a82a-38fef251076c",
+              "name": "Fundos de Investimento - Documentos Entregues (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "ffbabf1e-a814-4d5b-974b-ab918a22c797",
+              "name": "Fundos de Investimento - Documentos Entregues (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "f1e5d511-4b5c-4e7c-9f6d-7702c1b1e937",
+              "name": "Fundos de Investimento - Documentos Entregues (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "311d7118-13fd-4d47-8453-4465194a27d2",
+              "name": "Fundos de Investimento - Documentos Entregues (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "26cc62a5-f40d-4b66-afb6-98db17904264",
+              "name": "Fundos de Investimento - Documentos Entregues (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "6ed837f3-2e23-4adb-817d-554ecc5cbb69",
+              "name": "Fundos de Investimento - Documentos Entregues (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "30bcfbb7-667a-4a23-ae29-c0133a6e3894",
+              "name": "Fundos de Investimento - Documentos Entregues (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "26bb379f-59a1-471d-870d-ec5a853f1148",
+              "name": "Fundos de Investimento - Documentos Entregues (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "5ebe24e9-17cd-4284-b072-7779dfc97d03",
+              "name": "Fundos de Investimento - Documentos Entregues (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "4ca93745-cc02-469a-b958-2f36b791ce71",
+              "name": "Fundos de Investimento - Documentos Entregues (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202604.zip",
+              "datastore": false
+            },
+            {
+              "id": "458b3cc6-2c20-4735-b0f0-f518a12728b1",
+              "name": "Fundos de Investimento - Documentos Entregues (Maio/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/ENTREGA/DADOS/fi_entrega_documento_202605.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-balancete",
+          "title": "Fundos de Investimento: Documentos: Balancete",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "0f06f39c-87e9-450f-bfa5-d20aa634457b",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/META/meta_balancete_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "7c0439d7-af0e-4700-b785-3f3d2a8acbd8",
+              "name": "Balancetes FI (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "9da6ff87-d808-4c54-b308-0b8f51c596fb",
+              "name": "Balancetes FI (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "2a198341-b914-49d6-b343-38bc6c7cf49b",
+              "name": "Balancetes FI (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "647b4267-5449-4fd7-a158-4b45a78d5f46",
+              "name": "Balancetes FI (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "1a73a538-7dbd-454d-b066-25da04298b46",
+              "name": "Balancetes FI (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "ef7ac392-fcb8-4763-ad22-9d4d11962a19",
+              "name": "Balancetes FI (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "f1d0c561-d5b0-4288-bf8f-3f2245f18192",
+              "name": "Balancetes FI (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "bfb2f3d4-77ea-4989-b24f-a6a69e293d95",
+              "name": "Balancetes FI (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "56702ddb-7bcb-4b1b-9199-e1a4d1239bd3",
+              "name": "Balancetes FI (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "4277afe8-8a7c-42c2-b45d-7686cae1d3f0",
+              "name": "Balancetes FI (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "d01c6ddf-ab5c-47ae-aa53-d2c880707ec5",
+              "name": "Balancetes FI (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/BALANCETE/DADOS/balancete_fi_202604.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-perfil_mensal",
+          "title": "Fundos de Investimento: Documentos: Perfil Mensal",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "d74c1c64-44be-421f-8356-23cda06ee043",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/META/meta_perfil_mensal_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "b32b55c7-65d9-424f-8bc4-81594b98daa4",
+              "name": "Perfis Mensais de Fundos de Investimento (Junho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202506.csv",
+              "datastore": false
+            },
+            {
+              "id": "5e55042f-4bd4-4d9a-8f5a-b6be8f45ec65",
+              "name": "Perfis Mensais de Fundos de Investimento (Julho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202507.csv",
+              "datastore": false
+            },
+            {
+              "id": "3652d387-42ad-405d-8545-46be550bb01b",
+              "name": "Perfis Mensais de Fundos de Investimento (Agosto/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202508.csv",
+              "datastore": false
+            },
+            {
+              "id": "4bde0d56-e732-491a-a149-62ef087f70f8",
+              "name": "Perfis Mensais de Fundos de Investimento (Setembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202509.csv",
+              "datastore": false
+            },
+            {
+              "id": "4c53153a-b07d-470b-b68c-974b871d3270",
+              "name": "Perfis Mensais de Fundos de Investimento (Outubro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202510.csv",
+              "datastore": false
+            },
+            {
+              "id": "14287d17-12e3-44b5-b942-6c4403e2d390",
+              "name": "Perfis Mensais de Fundos de Investimento (Novembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202511.csv",
+              "datastore": false
+            },
+            {
+              "id": "f1372cce-bc74-471d-a8df-b07dfa830b52",
+              "name": "Perfis Mensais de Fundos de Investimento (Dezembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202512.csv",
+              "datastore": false
+            },
+            {
+              "id": "3657854c-f36a-4665-95f0-210841876cc2",
+              "name": "Perfis Mensais de Fundos de Investimento (Janeiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202601.csv",
+              "datastore": false
+            },
+            {
+              "id": "e87f610e-25e9-41e1-b8c1-66509fdf4c36",
+              "name": "Perfis Mensais de Fundos de Investimento (Fevereiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202602.csv",
+              "datastore": false
+            },
+            {
+              "id": "c8ea1821-5e41-4bed-9318-d955d7dcf4bd",
+              "name": "Perfis Mensais de Fundos de Investimento (Março/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202603.csv",
+              "datastore": false
+            },
+            {
+              "id": "f4e725de-6534-409b-850a-31a2c2f881df",
+              "name": "Perfis Mensais de Fundos de Investimento (Abril/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202604.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-inf_diario",
+          "title": "Fundos de Investimento: Documentos: Informe Diário",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "40891357-ddf8-45eb-9a06-1239dde929cd",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/META/meta_inf_diario_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "1a074c72-1f9d-4ea5-bdc8-7119bd02b96b",
+              "name": "Informes Diários de Fundos de Investimento (Maio/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202505.zip",
+              "datastore": false
+            },
+            {
+              "id": "120e9fa9-9ef7-43cc-b4ca-0c0e8d369bab",
+              "name": "Informes Diários de Fundos de Investimento (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "2579a8f6-c3a0-4716-a50a-7c69e67a2748",
+              "name": "Informes Diários de Fundos de Investimento (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "fe0fe2ed-09cd-4e0a-93a8-c0fe3e6c5e62",
+              "name": "Informes Diários de Fundos de Investimento (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "9621c047-6e99-40a7-bf25-6c7472849fb1",
+              "name": "Informes Diários de Fundos de Investimento (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "54f3347c-dcde-4248-8a3d-90326d485392",
+              "name": "Informes Diários de Fundos de Investimento (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "ffd91c6e-b5fb-4529-a3b2-d20651ecef37",
+              "name": "Informes Diários de Fundos de Investimento (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "34b24ad3-6ce5-47f1-ba6d-9aa05d47565a",
+              "name": "Informes Diários de Fundos de Investimento (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "05db9bb8-b757-4466-b792-b6d5fbc250c5",
+              "name": "Informes Diários de Fundos de Investimento (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "da9d5189-4fac-4231-81c9-75673d267ded",
+              "name": "Informes Diários de Fundos de Investimento (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "bbba2a5d-3a6d-4b95-bd11-9f184d71c90b",
+              "name": "Informes Diários de Fundos de Investimento (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "470a8b62-5786-40ac-8a07-b0be28a23858",
+              "name": "Informes Diários de Fundos de Investimento (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202604.zip",
+              "datastore": false
+            },
+            {
+              "id": "b07b6566-bd55-4343-a65a-ef1075b91d27",
+              "name": "Informes Diários de Fundos de Investimento (Maio/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202605.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-compl",
+          "title": "Fundos de Investimento: Documentos: Formulário de Informações Complementares",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "6fa4339e-223c-4f43-b241-983ef0523444",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/META/meta_compl_fi_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "ce13bbca-5fc3-4c8b-acaa-423fc50eae3a",
+              "name": "Informações Complementares de Fundos de Investimento (Janeiro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201801.zip",
+              "datastore": false
+            },
+            {
+              "id": "536c2016-fdab-469e-982f-d959185792db",
+              "name": "Informações Complementares de Fundos de Investimento (Fevereiro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201802.zip",
+              "datastore": false
+            },
+            {
+              "id": "e30f21ef-53bb-4feb-97fe-3dec2dcd80d3",
+              "name": "Informações Complementares de Fundos de Investimento (Março/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201803.zip",
+              "datastore": false
+            },
+            {
+              "id": "1e2ad9b4-5088-4429-b4e7-47471d7ae3d2",
+              "name": "Informações Complementares de Fundos de Investimento (Abril/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201804.zip",
+              "datastore": false
+            },
+            {
+              "id": "61207ddf-864a-416b-b75f-f9dcc95ef7c2",
+              "name": "Informações Complementares de Fundos de Investimento (Maio/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201805.zip",
+              "datastore": false
+            },
+            {
+              "id": "941573f5-a094-4936-9e95-dae0979da8e9",
+              "name": "Informações Complementares de Fundos de Investimento (Junho/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201806.zip",
+              "datastore": false
+            },
+            {
+              "id": "2b5c1b48-baab-4ecf-8f3c-93e6695be52a",
+              "name": "Informações Complementares de Fundos de Investimento (Julho/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201807.zip",
+              "datastore": false
+            },
+            {
+              "id": "8f8db6ce-5fba-4642-aa7b-82e6cf1607c2",
+              "name": "Informações Complementares de Fundos de Investimento (Agosto/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201808.zip",
+              "datastore": false
+            },
+            {
+              "id": "50d2e729-49b7-4814-949e-e9917fa925a6",
+              "name": "Informações Complementares de Fundos de Investimento (Setembro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201809.zip",
+              "datastore": false
+            },
+            {
+              "id": "2d49b2a0-b400-49fc-8f62-48c625752ef9",
+              "name": "Informações Complementares de Fundos de Investimento (Outubro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201810.zip",
+              "datastore": false
+            },
+            {
+              "id": "4f3baf19-ecd7-4997-8985-9814b6404585",
+              "name": "Informações Complementares de Fundos de Investimento (Novembro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201811.zip",
+              "datastore": false
+            },
+            {
+              "id": "96b5f925-9fc1-480f-8116-7d2441718686",
+              "name": "Informações Complementares de Fundos de Investimento (Dezembro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201812.zip",
+              "datastore": false
+            },
+            {
+              "id": "fb541e6d-d987-4df7-a511-c9f681494bb1",
+              "name": "Informações Complementares de Fundos de Investimento (Janeiro/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201901.zip",
+              "datastore": false
+            },
+            {
+              "id": "2c301331-6077-402e-8fdf-a082fad68c07",
+              "name": "Informações Complementares de Fundos de Investimento (Fevereiro/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201902.zip",
+              "datastore": false
+            },
+            {
+              "id": "4411c139-5c73-4b2f-893b-2933ccac4287",
+              "name": "Informações Complementares de Fundos de Investimento (Março/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201903.zip",
+              "datastore": false
+            },
+            {
+              "id": "61245216-0e24-4c3b-8c2b-cfc9227c8d3c",
+              "name": "Informações Complementares de Fundos de Investimento (Abril/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201904.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-lamina",
+          "title": "Fundos de Investimento: Documentos: Lâmina de Informações Essenciais",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "704eb003-e53e-4c0a-b26a-deb38facbca6",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/META/meta_lamina_fi_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "bdf94876-6ef1-4236-bb29-d4a71e776029",
+              "name": "Lâminas de Fundos de Investimento (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "acfcd64d-593d-4b85-97db-a03bac6fd71f",
+              "name": "Lâminas de Fundos de Investimento (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "75b3df39-11b6-4052-a0c3-a6fd525adaa6",
+              "name": "Lâminas de Fundos de Investimento (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "2ed7c997-485d-497f-8dcd-116a09534ff9",
+              "name": "Lâminas de Fundos de Investimento (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "050a0f47-43da-418e-bbb0-ea464f33a28c",
+              "name": "Lâminas de Fundos de Investimento (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "95dfefee-0438-45d6-b09d-fe8f8e22c59a",
+              "name": "Lâminas de Fundos de Investimento (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "bd8595eb-8e17-4dbf-9054-a2e104c135e5",
+              "name": "Lâminas de Fundos de Investimento (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "d3d0446f-f931-4eb9-8cef-cd158113bdba",
+              "name": "Lâminas de Fundos de Investimento (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "f6549182-b41c-416b-85ee-a06f82b6682c",
+              "name": "Lâminas de Fundos de Investimento (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "d5171cb8-2eb3-412b-9ab0-ae871002f1b9",
+              "name": "Lâminas de Fundos de Investimento (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "2baa27d8-2cfc-4fe1-beb5-f9f89c374f14",
+              "name": "Lâminas de Fundos de Investimento (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/LAMINA/DADOS/lamina_fi_202604.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-extrato",
+          "title": "Fundos de Investimento: Documentos: Extrato das Informações",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "dfb792dd-c3a3-4237-bbd6-d95aef06f1ae",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/META/meta_extrato_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "57f16818-4fca-4c5d-9858-63b4aeee7c32",
+              "name": "Extratos de Fundos de Investimento (Atual)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi.csv",
+              "datastore": false
+            },
+            {
+              "id": "2286a221-05ff-4559-9d42-a4ff56f8fe02",
+              "name": "Extratos de Fundos de Investimento (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "3d1f5b6c-d954-4478-80f7-80d10f3457a9",
+              "name": "Extratos de Fundos de Investimento (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "0d9b4a02-c74a-4f98-a498-46ba4661ee44",
+              "name": "Extratos de Fundos de Investimento (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "10f048df-d4c1-4d73-9a9a-0fb4bddae109",
+              "name": "Extratos de Fundos de Investimento (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "012a7fd3-fc56-4b83-8ace-6711b4e3f13f",
+              "name": "Extratos de Fundos de Investimento (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "e5f7927a-bf0f-4d75-b7ba-e729b8c22cb9",
+              "name": "Extratos de Fundos de Investimento (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/extrato_fi_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-cda",
+          "title": "Fundos de Investimento: Documentos: Composição e Diversificação das Aplicações",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "c2e279d9-0f33-471d-98d6-7c75b56d1375",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/META/meta_cda_fi_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "46e9ff8d-7b52-44bc-9fa7-c445cf051656",
+              "name": "Carteiras de Fundos de Investimento (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "c8f2cff2-9c12-4aac-9c40-b013762f4877",
+              "name": "Carteiras de Fundos de Investimento (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "ff25f908-e883-4972-9a59-cda8c93cec82",
+              "name": "Carteiras de Fundos de Investimento (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "e20da561-89c2-44bb-8e91-0d6937c525f2",
+              "name": "Carteiras de Fundos de Investimento (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "764bebd0-0329-4e15-b608-831cfb7b48a3",
+              "name": "Carteiras de Fundos de Investimento (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "e3b91e1a-50da-42bb-9d20-f08c8fe4e603",
+              "name": "Carteiras de Fundos de Investimento (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "3799bbe4-fa7b-4955-89c3-1d4e51a2f91f",
+              "name": "Carteiras de Fundos de Investimento (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "788b0459-2cb1-4960-b9c2-6c85523fede3",
+              "name": "Carteiras de Fundos de Investimento (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "892d269b-7e2d-43a9-8d40-ce2613962d39",
+              "name": "Carteiras de Fundos de Investimento (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "0f1ad35c-b749-433e-a2a5-aecb66d83482",
+              "name": "Carteiras de Fundos de Investimento (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "b3fd3c5d-9302-466b-a561-fd463e120c19",
+              "name": "Carteiras de Fundos de Investimento (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202604.zip",
+              "datastore": false
+            },
+            {
+              "id": "11481741-919c-4652-b937-d3e7b625f59f",
+              "name": "Carteiras de Fundos de Investimento (Maio/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202605.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-eventual",
+          "title": "Fundos de Investimento: Documentos: Eventuais, DFs e Demonstrativos Trimestrais",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "d3592383-b776-4e69-895d-5ceea233b8eb",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/META/meta_eventual_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "0200b0d9-2d98-44ed-9a88-5e8259c1d857",
+              "name": "Documentos Eventuais de Fundos de Investimento (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "a70cc7c7-5114-455c-afe1-d45aee9eb7ac",
+              "name": "Documentos Eventuais de Fundos de Investimento (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "bd00a19d-ccda-4481-b9d7-525dbec2d7ab",
+              "name": "Documentos Eventuais de Fundos de Investimento (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "275dbb24-9089-4d00-bc98-3ce46caeb3d1",
+              "name": "Documentos Eventuais de Fundos de Investimento (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "1f7d93fa-bd2a-428a-be00-180d2184e9fc",
+              "name": "Documentos Eventuais de Fundos de Investimento (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "bdcc4bdd-ada2-42e8-a73b-83181f825f73",
+              "name": "Documentos Eventuais de Fundos de Investimento (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fie-doc-balancete",
+          "title": "Fundos Estruturados: Documentos: Balancete",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "e739174f-cd86-4730-aed9-91f59dfba619",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/META/meta_balancete_fie.txt",
+              "datastore": false
+            },
+            {
+              "id": "2828bebe-a098-4a81-bd6f-2b49f1ea25a8",
+              "name": "Balancetes de Fundos Estruturados (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "642b98ea-5354-4285-934f-b44cb3207760",
+              "name": "Balancetes de Fundos Estruturados (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "e40669c3-2196-49b9-8021-9e3b1d93a8a4",
+              "name": "Balancetes de Fundos Estruturados (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "e97d0271-5551-4461-bee9-20bc898de128",
+              "name": "Balancetes de Fundos Estruturados (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "8d06479a-9ce5-4b27-92ef-85f9870b4534",
+              "name": "Balancetes de Fundos Estruturados (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "d3ee1955-3cbb-485e-814f-e041305bd232",
+              "name": "Balancetes de Fundos Estruturados (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "2431048c-859e-4179-87f3-baa3e740df58",
+              "name": "Balancetes de Fundos Estruturados (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "4ad25e66-e0c6-4c07-80e0-9be282fde8a8",
+              "name": "Balancetes de Fundos Estruturados (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "eee5b38b-0630-49ac-af97-4a3481d0404a",
+              "name": "Balancetes de Fundos Estruturados (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "d89e6398-536f-449e-9e99-d738d219e9cc",
+              "name": "Balancetes de Fundos Estruturados (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "83bbd832-214d-4260-ba17-0ceb583b666d",
+              "name": "Balancetes de Fundos Estruturados (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCETE/DADOS/balancete_fie_202604.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fie-medidas",
+          "title": "Fundos Estruturados: Medidas",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "8de2727e-77ca-42a7-84b2-eae52fdad661",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/META/meta_medidas_mes_fie.txt",
+              "datastore": false
+            },
+            {
+              "id": "6ed295ee-11f3-4dfc-bd2d-d7716437c3c8",
+              "name": "Medidas Fundos Estruturados (Junho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202506.csv",
+              "datastore": false
+            },
+            {
+              "id": "56f58253-e709-426d-910c-d55489886040",
+              "name": "Medidas Fundos Estruturados (Julho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202507.csv",
+              "datastore": false
+            },
+            {
+              "id": "722a3d0f-72fc-43ea-8cd6-c7d04f41fb65",
+              "name": "Medidas Fundos Estruturados (Agosto/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202508.csv",
+              "datastore": false
+            },
+            {
+              "id": "b08e678d-c827-4fa1-b8f6-b51185ff5f71",
+              "name": "Medidas Fundos Estruturados (Setembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202509.csv",
+              "datastore": false
+            },
+            {
+              "id": "95384bd8-682a-4c75-ad19-f70d9c59d208",
+              "name": "Medidas Fundos Estruturados (Outubro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202510.csv",
+              "datastore": false
+            },
+            {
+              "id": "a9d63fa1-355c-47d2-b9c4-170a1869263c",
+              "name": "Medidas Fundos Estruturados (Novembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202511.csv",
+              "datastore": false
+            },
+            {
+              "id": "8217bb4f-2ed4-4812-ba14-af45d2c783b0",
+              "name": "Medidas Fundos Estruturados (Dezembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202512.csv",
+              "datastore": false
+            },
+            {
+              "id": "dfb266a3-71f5-49f5-adb5-02f508ef1003",
+              "name": "Medidas Fundos Estruturados (Janeiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202601.csv",
+              "datastore": false
+            },
+            {
+              "id": "ddbd6ee1-d483-48e3-97ed-1fa32068191d",
+              "name": "Medidas Fundos Estruturados (Fevereiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202602.csv",
+              "datastore": false
+            },
+            {
+              "id": "c3b78724-41e3-4563-8291-b8581a905908",
+              "name": "Medidas Fundos Estruturados (Março/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202603.csv",
+              "datastore": false
+            },
+            {
+              "id": "13439e88-9ed7-4dc0-bc49-c0cd566050ca",
+              "name": "Medidas Fundos Estruturados (Abril/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202604.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fie-doc-balanco",
+          "title": "Fundos Estruturados: Documentos: Balanço Semestral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "5eae1c4b-02c4-4c8f-982a-591c933f0825",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCO/META/meta_balanco_fie.txt",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "intermed-cad",
+          "title": "Participantes Intermediários: Informação Cadastral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "9611fd6a-e46b-4690-bb21-3a95f802d83d",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/INTERMED/CAD/META/meta_cad_intermed.zip",
+              "datastore": false
+            },
+            {
+              "id": "dc80b899-b52d-43fd-ba98-8b6055ad4dae",
+              "name": "Participantes Intermediários",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/INTERMED/CAD/DADOS/cad_intermed.zip",
+              "datastore": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "eixo": "fundos-carteira",
+      "pacotes": [
+        {
+          "name": "fi-doc-cda",
+          "title": "Fundos de Investimento: Documentos: Composição e Diversificação das Aplicações",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "c2e279d9-0f33-471d-98d6-7c75b56d1375",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/META/meta_cda_fi_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "46e9ff8d-7b52-44bc-9fa7-c445cf051656",
+              "name": "Carteiras de Fundos de Investimento (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "c8f2cff2-9c12-4aac-9c40-b013762f4877",
+              "name": "Carteiras de Fundos de Investimento (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "ff25f908-e883-4972-9a59-cda8c93cec82",
+              "name": "Carteiras de Fundos de Investimento (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "e20da561-89c2-44bb-8e91-0d6937c525f2",
+              "name": "Carteiras de Fundos de Investimento (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "764bebd0-0329-4e15-b608-831cfb7b48a3",
+              "name": "Carteiras de Fundos de Investimento (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "e3b91e1a-50da-42bb-9d20-f08c8fe4e603",
+              "name": "Carteiras de Fundos de Investimento (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "3799bbe4-fa7b-4955-89c3-1d4e51a2f91f",
+              "name": "Carteiras de Fundos de Investimento (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "788b0459-2cb1-4960-b9c2-6c85523fede3",
+              "name": "Carteiras de Fundos de Investimento (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "892d269b-7e2d-43a9-8d40-ce2613962d39",
+              "name": "Carteiras de Fundos de Investimento (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "0f1ad35c-b749-433e-a2a5-aecb66d83482",
+              "name": "Carteiras de Fundos de Investimento (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "b3fd3c5d-9302-466b-a561-fd463e120c19",
+              "name": "Carteiras de Fundos de Investimento (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202604.zip",
+              "datastore": false
+            },
+            {
+              "id": "11481741-919c-4652-b937-d3e7b625f59f",
+              "name": "Carteiras de Fundos de Investimento (Maio/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202605.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-perfil_mensal",
+          "title": "Fundos de Investimento: Documentos: Perfil Mensal",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "d74c1c64-44be-421f-8356-23cda06ee043",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/META/meta_perfil_mensal_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "b32b55c7-65d9-424f-8bc4-81594b98daa4",
+              "name": "Perfis Mensais de Fundos de Investimento (Junho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202506.csv",
+              "datastore": false
+            },
+            {
+              "id": "5e55042f-4bd4-4d9a-8f5a-b6be8f45ec65",
+              "name": "Perfis Mensais de Fundos de Investimento (Julho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202507.csv",
+              "datastore": false
+            },
+            {
+              "id": "3652d387-42ad-405d-8545-46be550bb01b",
+              "name": "Perfis Mensais de Fundos de Investimento (Agosto/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202508.csv",
+              "datastore": false
+            },
+            {
+              "id": "4bde0d56-e732-491a-a149-62ef087f70f8",
+              "name": "Perfis Mensais de Fundos de Investimento (Setembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202509.csv",
+              "datastore": false
+            },
+            {
+              "id": "4c53153a-b07d-470b-b68c-974b871d3270",
+              "name": "Perfis Mensais de Fundos de Investimento (Outubro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202510.csv",
+              "datastore": false
+            },
+            {
+              "id": "14287d17-12e3-44b5-b942-6c4403e2d390",
+              "name": "Perfis Mensais de Fundos de Investimento (Novembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202511.csv",
+              "datastore": false
+            },
+            {
+              "id": "f1372cce-bc74-471d-a8df-b07dfa830b52",
+              "name": "Perfis Mensais de Fundos de Investimento (Dezembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202512.csv",
+              "datastore": false
+            },
+            {
+              "id": "3657854c-f36a-4665-95f0-210841876cc2",
+              "name": "Perfis Mensais de Fundos de Investimento (Janeiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202601.csv",
+              "datastore": false
+            },
+            {
+              "id": "e87f610e-25e9-41e1-b8c1-66509fdf4c36",
+              "name": "Perfis Mensais de Fundos de Investimento (Fevereiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202602.csv",
+              "datastore": false
+            },
+            {
+              "id": "c8ea1821-5e41-4bed-9318-d955d7dcf4bd",
+              "name": "Perfis Mensais de Fundos de Investimento (Março/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202603.csv",
+              "datastore": false
+            },
+            {
+              "id": "f4e725de-6534-409b-850a-31a2c2f881df",
+              "name": "Perfis Mensais de Fundos de Investimento (Abril/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/PERFIL_MENSAL/DADOS/perfil_mensal_fi_202604.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fidc-doc-inf_mensal",
+          "title": "FIDC: Documentos: Informe Mensal",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "e44f6341-9827-4599-baf3-ac5e298e55f7",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/META/meta_inf_mensal_fidc_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "b694b0b3-44f9-4834-af0c-de13c546e396",
+              "name": "Informes Mensais FIDC (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "719ae4f6-6da1-43e3-9e31-6e2a5a43ef23",
+              "name": "Informes Mensais FIDC (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "75105d26-8a57-4325-a447-8cc834f8dde8",
+              "name": "Informes Mensais FIDC (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "fe5f635a-0752-43ae-9de8-ffafbc4e6959",
+              "name": "Informes Mensais FIDC (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "8325f7ec-ffe9-44fa-a9ef-7f37de524f86",
+              "name": "Informes Mensais FIDC (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "1bb6182a-e17c-4ea0-adba-89b6b384bcbd",
+              "name": "Informes Mensais FIDC (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "fe2d1faf-2ed8-4496-a8c7-a695561616c3",
+              "name": "Informes Mensais FIDC (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "31621946-f02d-4c20-9c68-360f7329c360",
+              "name": "Informes Mensais FIDC (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "ab633a8c-d73d-44d3-aa15-428dd1ad082c",
+              "name": "Informes Mensais FIDC (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "954289e3-6a8e-47a1-8bf1-721d15a72da7",
+              "name": "Informes Mensais FIDC (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "4aad0c7b-130f-40f8-854c-a85bd072bc60",
+              "name": "Informes Mensais FIDC (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FIDC/DOC/INF_MENSAL/DADOS/inf_mensal_fidc_202604.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-inf_diario",
+          "title": "Fundos de Investimento: Documentos: Informe Diário",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "40891357-ddf8-45eb-9a06-1239dde929cd",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/META/meta_inf_diario_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "1a074c72-1f9d-4ea5-bdc8-7119bd02b96b",
+              "name": "Informes Diários de Fundos de Investimento (Maio/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202505.zip",
+              "datastore": false
+            },
+            {
+              "id": "120e9fa9-9ef7-43cc-b4ca-0c0e8d369bab",
+              "name": "Informes Diários de Fundos de Investimento (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "2579a8f6-c3a0-4716-a50a-7c69e67a2748",
+              "name": "Informes Diários de Fundos de Investimento (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "fe0fe2ed-09cd-4e0a-93a8-c0fe3e6c5e62",
+              "name": "Informes Diários de Fundos de Investimento (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "9621c047-6e99-40a7-bf25-6c7472849fb1",
+              "name": "Informes Diários de Fundos de Investimento (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "54f3347c-dcde-4248-8a3d-90326d485392",
+              "name": "Informes Diários de Fundos de Investimento (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "ffd91c6e-b5fb-4529-a3b2-d20651ecef37",
+              "name": "Informes Diários de Fundos de Investimento (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "34b24ad3-6ce5-47f1-ba6d-9aa05d47565a",
+              "name": "Informes Diários de Fundos de Investimento (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "05db9bb8-b757-4466-b792-b6d5fbc250c5",
+              "name": "Informes Diários de Fundos de Investimento (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "da9d5189-4fac-4231-81c9-75673d267ded",
+              "name": "Informes Diários de Fundos de Investimento (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "bbba2a5d-3a6d-4b95-bd11-9f184d71c90b",
+              "name": "Informes Diários de Fundos de Investimento (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "470a8b62-5786-40ac-8a07-b0be28a23858",
+              "name": "Informes Diários de Fundos de Investimento (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202604.zip",
+              "datastore": false
+            },
+            {
+              "id": "b07b6566-bd55-4343-a65a-ef1075b91d27",
+              "name": "Informes Diários de Fundos de Investimento (Maio/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/inf_diario_fi_202605.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "emissores",
+          "title": "Emissores",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "b2ef23f2-0196-48b7-af0b-40d5f3b2ff7c",
+              "name": "Características dos Fundos - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/caracteristicas-dos-fundos-planilha-agregada-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "037f809e-5754-43a0-8cf8-e5651d671615",
+              "name": "Características dos Fundos - ICVM 555 - s FIC",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/caracteristicas-dos-fundos-planilha-agregada-fundos-555-sem-fundos-de-cotas.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "e9336459-8a4f-45a9-82b2-6b2e25018e07",
+              "name": "Informe Diário - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/informe-diario-planilha-agregada-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "535c321a-d2fd-47c2-8eca-2ada327fd0ba",
+              "name": "Ativos em Carteira - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/ativos-em-carteira-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "e2248afa-f209-4ec8-b1e2-c395691c623e",
+              "name": "Ativos em Carteira - ICVM 555 - s FIC",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/ativos-em-carteira-fundos-555-sem-fundos-de-cotas.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "7d605260-3bfb-4d44-ad52-914d9f0d1a6e",
+              "name": "Companhias Abertas",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/cias-abertas.ods/view",
+              "datastore": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "eixo": "fip",
+      "pacotes": [
+        {
+          "name": "fip-doc-inf_trimestral",
+          "title": "FIP: Documentos: Informe Trimestral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "de24eb41-1955-4d3b-a093-7c42c26a743f",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_TRIMESTRAL/META/meta_inf_trimestral_fip.txt",
+              "datastore": false
+            },
+            {
+              "id": "85357e39-8e97-41cd-ba5b-59fe8961c5a4",
+              "name": "Informes Trimestrais de FIP (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fip_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "9737684c-0cd5-4f18-b54b-c100675fad49",
+              "name": "Informes Trimestrais de FIP (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fip_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "84d7103a-943e-459a-96f4-3a630f011292",
+              "name": "Informes Trimestrais de FIP (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fip_2023.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fip-doc-inf_quadrimestral",
+          "title": "FIP: Documentos: Informe Quadrimestral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "1e71fe1e-e5ce-43ca-852f-223717b0ba58",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_QUADRIMESTRAL/META/meta_inf_quadrimestral_fip.txt",
+              "datastore": false
+            },
+            {
+              "id": "5a8640a1-80bc-457a-8f54-27c28d8e9123",
+              "name": "Informes Quadrimestrais de FIP (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_QUADRIMESTRAL/DADOS/inf_quadrimestral_fip_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "d9b31b46-d2fc-4759-912c-4ac4ace9a669",
+              "name": "Informes Quadrimestrais de FIP (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_QUADRIMESTRAL/DADOS/inf_quadrimestral_fip_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "e19da9ee-e61e-4507-b16f-cebf2428be0f",
+              "name": "Informes Quadrimestrais de FIP (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIP/DOC/INF_QUADRIMESTRAL/DADOS/inf_quadrimestral_fip_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fie-doc-balanco",
+          "title": "Fundos Estruturados: Documentos: Balanço Semestral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "5eae1c4b-02c4-4c8f-982a-591c933f0825",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FIE/DOC/BALANCO/META/meta_balanco_fie.txt",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fie-medidas",
+          "title": "Fundos Estruturados: Medidas",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "8de2727e-77ca-42a7-84b2-eae52fdad661",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/META/meta_medidas_mes_fie.txt",
+              "datastore": false
+            },
+            {
+              "id": "6ed295ee-11f3-4dfc-bd2d-d7716437c3c8",
+              "name": "Medidas Fundos Estruturados (Junho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202506.csv",
+              "datastore": false
+            },
+            {
+              "id": "56f58253-e709-426d-910c-d55489886040",
+              "name": "Medidas Fundos Estruturados (Julho/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202507.csv",
+              "datastore": false
+            },
+            {
+              "id": "722a3d0f-72fc-43ea-8cd6-c7d04f41fb65",
+              "name": "Medidas Fundos Estruturados (Agosto/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202508.csv",
+              "datastore": false
+            },
+            {
+              "id": "b08e678d-c827-4fa1-b8f6-b51185ff5f71",
+              "name": "Medidas Fundos Estruturados (Setembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202509.csv",
+              "datastore": false
+            },
+            {
+              "id": "95384bd8-682a-4c75-ad19-f70d9c59d208",
+              "name": "Medidas Fundos Estruturados (Outubro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202510.csv",
+              "datastore": false
+            },
+            {
+              "id": "a9d63fa1-355c-47d2-b9c4-170a1869263c",
+              "name": "Medidas Fundos Estruturados (Novembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202511.csv",
+              "datastore": false
+            },
+            {
+              "id": "8217bb4f-2ed4-4812-ba14-af45d2c783b0",
+              "name": "Medidas Fundos Estruturados (Dezembro/2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202512.csv",
+              "datastore": false
+            },
+            {
+              "id": "dfb266a3-71f5-49f5-adb5-02f508ef1003",
+              "name": "Medidas Fundos Estruturados (Janeiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202601.csv",
+              "datastore": false
+            },
+            {
+              "id": "ddbd6ee1-d483-48e3-97ed-1fa32068191d",
+              "name": "Medidas Fundos Estruturados (Fevereiro/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202602.csv",
+              "datastore": false
+            },
+            {
+              "id": "c3b78724-41e3-4563-8291-b8581a905908",
+              "name": "Medidas Fundos Estruturados (Março/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202603.csv",
+              "datastore": false
+            },
+            {
+              "id": "13439e88-9ed7-4dc0-bc49-c0cd566050ca",
+              "name": "Medidas Fundos Estruturados (Abril/2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FIE/MEDIDAS/DADOS/medidas_mes_fie_202604.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-cda",
+          "title": "Fundos de Investimento: Documentos: Composição e Diversificação das Aplicações",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "c2e279d9-0f33-471d-98d6-7c75b56d1375",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/META/meta_cda_fi_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "46e9ff8d-7b52-44bc-9fa7-c445cf051656",
+              "name": "Carteiras de Fundos de Investimento (Junho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202506.zip",
+              "datastore": false
+            },
+            {
+              "id": "c8f2cff2-9c12-4aac-9c40-b013762f4877",
+              "name": "Carteiras de Fundos de Investimento (Julho/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202507.zip",
+              "datastore": false
+            },
+            {
+              "id": "ff25f908-e883-4972-9a59-cda8c93cec82",
+              "name": "Carteiras de Fundos de Investimento (Agosto/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202508.zip",
+              "datastore": false
+            },
+            {
+              "id": "e20da561-89c2-44bb-8e91-0d6937c525f2",
+              "name": "Carteiras de Fundos de Investimento (Setembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202509.zip",
+              "datastore": false
+            },
+            {
+              "id": "764bebd0-0329-4e15-b608-831cfb7b48a3",
+              "name": "Carteiras de Fundos de Investimento (Outubro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202510.zip",
+              "datastore": false
+            },
+            {
+              "id": "e3b91e1a-50da-42bb-9d20-f08c8fe4e603",
+              "name": "Carteiras de Fundos de Investimento (Novembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202511.zip",
+              "datastore": false
+            },
+            {
+              "id": "3799bbe4-fa7b-4955-89c3-1d4e51a2f91f",
+              "name": "Carteiras de Fundos de Investimento (Dezembro/2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202512.zip",
+              "datastore": false
+            },
+            {
+              "id": "788b0459-2cb1-4960-b9c2-6c85523fede3",
+              "name": "Carteiras de Fundos de Investimento (Janeiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202601.zip",
+              "datastore": false
+            },
+            {
+              "id": "892d269b-7e2d-43a9-8d40-ce2613962d39",
+              "name": "Carteiras de Fundos de Investimento (Fevereiro/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202602.zip",
+              "datastore": false
+            },
+            {
+              "id": "0f1ad35c-b749-433e-a2a5-aecb66d83482",
+              "name": "Carteiras de Fundos de Investimento (Março/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202603.zip",
+              "datastore": false
+            },
+            {
+              "id": "b3fd3c5d-9302-466b-a561-fd463e120c19",
+              "name": "Carteiras de Fundos de Investimento (Abril/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202604.zip",
+              "datastore": false
+            },
+            {
+              "id": "11481741-919c-4652-b937-d3e7b625f59f",
+              "name": "Carteiras de Fundos de Investimento (Maio/2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/CDA/DADOS/cda_fi_202605.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fii-doc-inf_trimestral",
+          "title": "FII: Documentos: Informe Trimestral Estruturado",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "7bda8795-a308-49f2-9aca-48eda6ac9538",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/INF_TRIMESTRAL/META/meta_inf_trimestral_fii.zip",
+              "datastore": false
+            },
+            {
+              "id": "657ba5f3-10d1-4ab9-93c3-3d2347db2ffc",
+              "name": "Informes Trimestrais Estruturados de Fundos de Investimento Imobiliário (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fii_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "a0709ed5-d424-41fb-914c-cb6094496c25",
+              "name": "Informes Trimestrais Estruturados de Fundos de Investimento Imobiliário (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fii_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "70cb8f29-d9af-4c36-926c-12cccad1e931",
+              "name": "Informes Trimestrais Estruturados de Fundos de Investimento Imobiliário (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fii_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "0fd84118-2764-48c8-ac78-1ce81cfd4ccd",
+              "name": "Informes Trimestrais Estruturados de Fundos de Investimento Imobiliário (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fii_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "7acce6f7-0a6c-4e94-98c0-bdc48790b597",
+              "name": "Informes Trimestrais Estruturados de Fundos de Investimento Imobiliário (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fii_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "4a50612f-269b-4e4a-a2c4-b35e6d01660a",
+              "name": "Informes Trimestrais Estruturados de Fundos de Investimento Imobiliário (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/INF_TRIMESTRAL/DADOS/inf_trimestral_fii_2026.zip",
+              "datastore": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "eixo": "ofertas-emissores",
+      "pacotes": [
+        {
+          "name": "oferta-distrib",
+          "title": "Ofertas Públicas de Distribuição",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "f09452f3-6c25-4221-89e4-207f6f1fc711",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/OFERTA/DISTRIB/META/meta_oferta_distribuicao.zip",
+              "datastore": false
+            },
+            {
+              "id": "c70a97f3-8e3d-4ada-9d3b-b0005e9d1fcb",
+              "name": "Ofertas de Distribuição",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/OFERTA/DISTRIB/DADOS/oferta_distribuicao.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "coord_oferta-cad",
+          "title": "Coordenadores de Ofertas de Valores Mobiliários: Informação Cadastral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "645a9c56-3ecc-40be-8d65-05959166709d",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/COORD_OFERTA/CAD/META/meta_cad_coord_oferta.zip",
+              "datastore": false
+            },
+            {
+              "id": "219bee4a-e84b-4c11-af3e-d27d01ab2989",
+              "name": "Coordenadores de Ofertas de Valores Mobiliários",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/COORD_OFERTA/CAD/DADOS/cad_coord_oferta.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "securit-doc-inf_mensal_cri",
+          "title": "Securitizadoras: Documentos: Informe Mensal de CRI",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "893235b0-9698-4cf4-bbbc-b139b04ebf58",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRI/META/meta_inf_mensal_cri.zip",
+              "datastore": false
+            },
+            {
+              "id": "63f91fe1-6ee2-483c-be83-07915d6adac8",
+              "name": "Informes Mensais de CRI (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRI/DADOS/inf_mensal_cri_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "baad9418-61c4-4ba9-a7b3-da7158810882",
+              "name": "Informes Mensais de CRI (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRI/DADOS/inf_mensal_cri_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "95aa3817-1dc5-4b61-8d19-79010d7076e3",
+              "name": "Informes Mensais de CRI (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRI/DADOS/inf_mensal_cri_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "c6ed95c8-3a87-43f2-abf1-8768530d9a53",
+              "name": "Informes Mensais de CRI (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRI/DADOS/inf_mensal_cri_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "68d9f3c6-0bfd-4f0a-b2f3-040b202adadb",
+              "name": "Informes Mensais de CRI (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRI/DADOS/inf_mensal_cri_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "f4d98460-e07c-4fa4-9955-35aa3361f602",
+              "name": "Informes Mensais de CRI (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRI/DADOS/inf_mensal_cri_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "securit-doc-inf_mensal_cra",
+          "title": "Securitizadoras: Documentos: Informe Mensal de CRA",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "6599f6db-3223-4337-a017-e227d991f628",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRA/META/meta_inf_mensal_cra.zip",
+              "datastore": false
+            },
+            {
+              "id": "026c7b91-5dd8-4a16-af2c-a241e13ddcf1",
+              "name": "Informes Mensais de CRA (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRA/DADOS/inf_mensal_cra_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "231e53c7-2de3-40cf-8674-d73c0557d3f9",
+              "name": "Informes Mensais de CRA (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRA/DADOS/inf_mensal_cra_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "32b966df-c92e-4650-9311-b7a65be276b5",
+              "name": "Informes Mensais de CRA (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRA/DADOS/inf_mensal_cra_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "24123918-7392-4932-8535-2e6222880910",
+              "name": "Informes Mensais de CRA (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRA/DADOS/inf_mensal_cra_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "b7fb6ebe-5ee3-487d-8af7-cb9d3cbd5465",
+              "name": "Informes Mensais de CRA (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRA/DADOS/inf_mensal_cra_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "81591e13-aa53-43d4-a83a-1480a5f06666",
+              "name": "Informes Mensais de CRA (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_CRA/DADOS/inf_mensal_cra_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "distrpubl",
+          "title": "Ofertas Públicas",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "834a27d6-6a6f-4400-b70e-8721b65819c0",
+              "name": "Distribuições de Ações, CDAs e BDRs - Planilha Agregada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/acoes-c/distribuicoes-de-acoes-cdas-e-bdrs-planilha-agregada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "f66ba1de-f2a9-454e-bb36-16f442c396e1",
+              "name": "Distribuições de Ações, CDAs e BDRs - Planilha Individualizada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/acoes-c/distribuicoes-de-acoes-cdas-e-bdrs-planilha-individualizada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "86e250c6-c5d1-4725-a3fe-b634cb3824a3",
+              "name": "Distribuições de CRIs - Planilha Agregada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/cri/distribuicoes-de-cris-planilha-agregada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "b1971565-9da7-453b-8cdc-1416e4094f2e",
+              "name": "Distribuições de CRIs - Planilha Individualizada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/cri/distribuicoes-de-cris-planilha-individualizada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "9b23cdcb-94ef-4200-813f-1d682454dd95",
+              "name": "Distribuições de CRAs - Planilha Agregada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/cra/distribuicoes-de-cras-planilha-agregada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "3724c8e3-1ca7-4a9e-a0ef-0a66b8ce6574",
+              "name": "Distribuições de CRAs - Planilha Individualizada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/cra/distribuicoes-de-cras-planilha-individualizada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "c1bda90a-9624-405f-96e2-5cd3c32644be",
+              "name": "Distribuições de Debêntures - Planilha Agregada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/debentures/distribuicoes-de-debentures-planilha-agregada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "a876248c-ac9a-4101-ac6d-c1bda0cca376",
+              "name": "Distribuições de Debêntures - Planilha Individualizada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/debentures/distribuicoes-de-debentures-planilha-individualizada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "75a174aa-82e1-42e6-b37c-bd3ecb3d4d42",
+              "name": "Distribuições de FIIs - Planilha Agregada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/fii/distribuicoes-de-fiis-planilha-agregada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "6607927e-fca1-44a6-999b-cf25febce847",
+              "name": "Distribuições de FIIs - Planilha Individualizada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/fii/distribuicoes-de-fiis-planilha-individualizada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "e1f29c7a-ce31-434d-9d0b-9849db2395a1",
+              "name": "Distribuições de Letras Financeiras - Planilha Agregada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/letras-financeiras/distribuicoes-de-letras-financeiras-planilha-agregada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "23756690-218f-41db-ab6c-e8b95d14e32f",
+              "name": "Distribuições de Notas Promissórias - Planilha Agregada",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/notas-promissorias/distribuicoes-de-notas-promissorias-planilha-agregada.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "72d124b7-36b7-4e13-ba5e-08a8194f02d6",
+              "name": "Esforços Restritos de Colocação",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/distribuicoes-publicas/esforcos-restritos/ofertas-com-esforcos-restritos-icvm-476.ods/view",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-ipe",
+          "title": "Cias Abertas: Documentos: Periódicos e Eventuais (IPE)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "da4c41b8-de6d-486b-931b-12e4afd0f9cc",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/META/meta_ipe_cia_aberta.txt",
+              "datastore": false
+            },
+            {
+              "id": "63a29b6a-6e59-4ce1-8c8f-6272d65cfb26",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "645863d0-a986-4182-a3ff-4661b21fbb9a",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "4a91d9a6-2e4a-407e-af95-eae65cbdaa3d",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "e96fc967-75da-4276-8b04-1ffe2c93c999",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "26334b94-9e5a-4111-9b24-eb6b2ac3ba08",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "1203dc1b-648c-41cc-a67f-454fe7204834",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-eventual",
+          "title": "Fundos de Investimento: Documentos: Eventuais, DFs e Demonstrativos Trimestrais",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "d3592383-b776-4e69-895d-5ceea233b8eb",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/META/meta_eventual_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "0200b0d9-2d98-44ed-9a88-5e8259c1d857",
+              "name": "Documentos Eventuais de Fundos de Investimento (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "a70cc7c7-5114-455c-afe1-d45aee9eb7ac",
+              "name": "Documentos Eventuais de Fundos de Investimento (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "bd00a19d-ccda-4481-b9d7-525dbec2d7ab",
+              "name": "Documentos Eventuais de Fundos de Investimento (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "275dbb24-9089-4d00-bc98-3ce46caeb3d1",
+              "name": "Documentos Eventuais de Fundos de Investimento (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "1f7d93fa-bd2a-428a-be00-180d2184e9fc",
+              "name": "Documentos Eventuais de Fundos de Investimento (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "bdcc4bdd-ada2-42e8-a73b-83181f825f73",
+              "name": "Documentos Eventuais de Fundos de Investimento (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-fre",
+          "title": "Cias Abertas: Documentos: Formulário de Referência (FRE)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "4ffa636e-95a3-48ac-979c-7396213930ff",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/META/meta_fre_cia_aberta.zip",
+              "datastore": false
+            },
+            {
+              "id": "ec2b06d8-53d5-4e9a-b24d-4fcb3ed3173b",
+              "name": "Formulários de Referência de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "c839b653-a54f-48c9-9c65-18537175053f",
+              "name": "Formulários de Referência de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "9e411bba-28d2-4be5-9526-a97320d9ef40",
+              "name": "Formulários de Referência de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "725f96ff-0c6e-4de9-9d05-818f5ad34362",
+              "name": "Formulários de Referência de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "d66c5ac6-3ac2-4ef0-907b-f5041670bc58",
+              "name": "Formulários de Referência de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "61802518-e153-430d-9051-87e13355e44f",
+              "name": "Formulários de Referência de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "securit-doc-dfin_cri",
+          "title": "Securitizadoras: Documentos: Demonstrações Financeiras de CRI",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "7afda4e1-8995-41ec-ad23-802272219745",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/META/meta_dfin_cri.txt",
+              "datastore": false
+            },
+            {
+              "id": "2b7bf059-0227-494e-abe7-49d74422f46e",
+              "name": "Demonstrações Financeiras de CRI (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "fa3eb79d-e255-4bff-9a75-429d6f7f8ce5",
+              "name": "Demonstrações Financeiras de CRI (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "59a6c20a-fe4f-478f-8d98-a940cab1626c",
+              "name": "Demonstrações Financeiras de CRI (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "c1744442-1956-4fd1-986c-8c06df1c2fda",
+              "name": "Demonstrações Financeiras de CRI (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "8e328c58-0f88-4da8-a50e-ccc301a6a1f2",
+              "name": "Demonstrações Financeiras de CRI (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "226d4e18-81c0-4b29-885c-c51235b63b96",
+              "name": "Demonstrações Financeiras de CRI (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "securit-doc-dfin_cra",
+          "title": "Securitizadoras: Documentos: Demonstrações Financeiras de CRA",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "db6c49c3-fbf3-40de-9ea3-201b1ce0232b",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/META/meta_dfin_cra.txt",
+              "datastore": false
+            },
+            {
+              "id": "6fe71c12-1371-4124-8cba-ceee401d1195",
+              "name": "Demonstrações Financeiras de CRA (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "4c655951-8d95-4752-9a1a-d081f3058ba5",
+              "name": "Demonstrações Financeiras de CRA (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "a0873d7f-5579-4c45-9cf9-515e35610a24",
+              "name": "Demonstrações Financeiras de CRA (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "b3cea363-449e-46c5-825c-db948790ff8e",
+              "name": "Demonstrações Financeiras de CRA (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "13f4dc4f-5866-4f9e-a7fa-042684597288",
+              "name": "Demonstrações Financeiras de CRA (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "771aeedd-edc3-4481-a666-280c3ba8058d",
+              "name": "Demonstrações Financeiras de CRA (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "securit-doc-inf_mensal_ots",
+          "title": "Securitizadoras: Documentos: Informe Mensal de Outros Títulos de Securitização",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "435c6ccc-f154-4d2d-946d-c3915d75f994",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_OTS/META/meta_inf_mensal_ots.zip",
+              "datastore": false
+            },
+            {
+              "id": "50264349-db3e-4529-b3dc-e5dc18df6f3e",
+              "name": "Informes Mensais de OTS (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_OTS/DADOS/inf_mensal_ots_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "1b642852-8d2e-47fc-bb9d-d545ae1c46ab",
+              "name": "Informes Mensais de OTS (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_OTS/DADOS/inf_mensal_ots_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "14289e09-6e78-45fd-81fc-5823ecfa6a18",
+              "name": "Informes Mensais de OTS (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_OTS/DADOS/inf_mensal_ots_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "9055d748-43f0-415f-a565-f5d5d9e5e00d",
+              "name": "Informes Mensais de OTS (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/INF_MENSAL_OTS/DADOS/inf_mensal_ots_2026.zip",
+              "datastore": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "eixo": "cia-aberta",
+      "pacotes": [
+        {
+          "name": "cia_aberta-cad",
+          "title": "Cias Abertas: Informação Cadastral",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "f51d2be3-f521-4b79-ac76-d8319c86c86c",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/CAD/META/meta_cad_cia_aberta.txt",
+              "datastore": false
+            },
+            {
+              "id": "2391143f-1423-48a5-9f6a-423245aca362",
+              "name": "Cias Abertas",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/CAD/DADOS/cad_cia_aberta.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-dfp",
+          "title": "Cias Abertas: Documentos: Formulário de Demonstrações Financeiras Padronizadas (DFP)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "cbf44db1-06b8-45f7-8318-88d1564e9451",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/META/meta_dfp_cia_aberta_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "e7351e74-888d-4fed-82b0-cb034579ca38",
+              "name": "Formulários de Demonstrações Financeiras Padronizadas de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "629ef2df-d781-4eea-9796-b0b392b0432f",
+              "name": "Formulários de Demonstrações Financeiras Padronizadas de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "7dab19f4-f667-42ad-9126-aa6cd433626c",
+              "name": "Formulários de Demonstrações Financeiras Padronizadas de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "4e2507bf-01c2-4804-89b9-61b945b8480d",
+              "name": "Formulários de Demonstrações Financeiras Padronizadas de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "0632651e-1016-4f13-af5f-52a17cb2577b",
+              "name": "Formulários de Demonstrações Financeiras Padronizadas de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "738c8eef-8be3-4f19-950c-c44862432d9e",
+              "name": "Formulários de Demonstrações Financeiras Padronizadas de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/DADOS/dfp_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-itr",
+          "title": "Cias Abertas: Documentos: Formulário de Informações Trimestrais (ITR)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "062b8f02-ca6b-424a-bf65-180ff2b69af2",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/META/meta_itr_cia_aberta_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "703fde2d-389f-4eee-8bd8-c1a8ed81c16b",
+              "name": "Formulários de Informações Trimestrais de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "fb268f4f-723d-46bd-afe4-670c3be942d8",
+              "name": "Formulários de Informações Trimestrais de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "211aa099-17d1-4740-addc-d7a33260b8ac",
+              "name": "Formulários de Informações Trimestrais de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "ac6c606d-9d5e-486d-b8dc-fefd8ae126c1",
+              "name": "Formulários de Informações Trimestrais de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "c75f38a3-39ee-4d23-aec4-d5462c49ba77",
+              "name": "Formulários de Informações Trimestrais de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "5fc7da13-e93a-4224-bdb6-0e5f49da743e",
+              "name": "Formulários de Informações Trimestrais de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS/itr_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-fre",
+          "title": "Cias Abertas: Documentos: Formulário de Referência (FRE)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "4ffa636e-95a3-48ac-979c-7396213930ff",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/META/meta_fre_cia_aberta.zip",
+              "datastore": false
+            },
+            {
+              "id": "ec2b06d8-53d5-4e9a-b24d-4fcb3ed3173b",
+              "name": "Formulários de Referência de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "c839b653-a54f-48c9-9c65-18537175053f",
+              "name": "Formulários de Referência de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "9e411bba-28d2-4be5-9526-a97320d9ef40",
+              "name": "Formulários de Referência de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "725f96ff-0c6e-4de9-9d05-818f5ad34362",
+              "name": "Formulários de Referência de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "d66c5ac6-3ac2-4ef0-907b-f5041670bc58",
+              "name": "Formulários de Referência de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "61802518-e153-430d-9051-87e13355e44f",
+              "name": "Formulários de Referência de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FRE/DADOS/fre_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-fca",
+          "title": "Cias Abertas: Documentos: Formulário Cadastral (FCA)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "5b0493e9-1d9e-43e0-af59-f3eb75016bbc",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FCA/META/fca_cia_aberta.zip",
+              "datastore": false
+            },
+            {
+              "id": "40c172f5-1404-4553-89ba-8e058bec94be",
+              "name": "Formulários Cadastrais de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FCA/DADOS/fca_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "7c055535-45e3-4c21-9ceb-303e932b3c44",
+              "name": "Formulários Cadastrais de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FCA/DADOS/fca_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "4c68b3c9-28f4-4599-8db7-0fb6769974ca",
+              "name": "Formulários Cadastrais de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FCA/DADOS/fca_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "fe56b047-d57f-4d24-9e1d-ccb5089eac8e",
+              "name": "Formulários Cadastrais de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FCA/DADOS/fca_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "532068a7-79a3-4a4f-b822-f61ac573dbcf",
+              "name": "Formulários Cadastrais de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FCA/DADOS/fca_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "c3363056-156e-4fdd-9c44-66b21f040052",
+              "name": "Formulários Cadastrais de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/FCA/DADOS/fca_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-ipe",
+          "title": "Cias Abertas: Documentos: Periódicos e Eventuais (IPE)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "da4c41b8-de6d-486b-931b-12e4afd0f9cc",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/META/meta_ipe_cia_aberta.txt",
+              "datastore": false
+            },
+            {
+              "id": "63a29b6a-6e59-4ce1-8c8f-6272d65cfb26",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "645863d0-a986-4182-a3ff-4661b21fbb9a",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "4a91d9a6-2e4a-407e-af95-eae65cbdaa3d",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "e96fc967-75da-4276-8b04-1ffe2c93c999",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "26334b94-9e5a-4111-9b24-eb6b2ac3ba08",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "1203dc1b-648c-41cc-a67f-454fe7204834",
+              "name": "Documentos Periódicos e Eventuais de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/IPE/DADOS/ipe_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-vlmo",
+          "title": "Cias Abertas: Documentos: Valores Mobiliários Negociados e Detidos",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "74f6a2c7-4c0f-440c-848d-38f8de596b32",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/VLMO/META/meta_vlmo_cia_aberta.zip",
+              "datastore": false
+            },
+            {
+              "id": "a38d5625-d9a8-48b3-b7e4-54747b6801fd",
+              "name": "Valores Mobiliários Negociados e Detidos (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/VLMO/DADOS/vlmo_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "5dc6e54c-4f66-4ffc-bda2-ab7286c5a5c0",
+              "name": "Valores Mobiliários Negociados e Detidos (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/VLMO/DADOS/vlmo_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "06574086-2c68-4de7-bedd-26d6de443349",
+              "name": "Valores Mobiliários Negociados e Detidos (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/VLMO/DADOS/vlmo_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "2beadbf7-1772-4537-865a-b0fb5dee4487",
+              "name": "Valores Mobiliários Negociados e Detidos (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/VLMO/DADOS/vlmo_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "2827214d-2886-4c6a-913d-7cf0bf06620b",
+              "name": "Valores Mobiliários Negociados e Detidos (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/VLMO/DADOS/vlmo_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "8cee4eef-fce3-4031-8def-9b45e71a9c6c",
+              "name": "Valores Mobiliários Negociados e Detidos (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/VLMO/DADOS/vlmo_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-doc-cgvn",
+          "title": "Cias Abertas: Documentos: Informe do Código de Governança (ICBGC)",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "e95444c0-f7d0-4d83-a081-e40d9464765b",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/CGVN/META/meta_cgvn_cia_aberta.zip",
+              "datastore": false
+            },
+            {
+              "id": "e7b2a92b-b9e6-490e-9d4e-e043707f318b",
+              "name": "Informes do Código de Governança de Cias Abertas (2021)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/CGVN/DADOS/cgvn_cia_aberta_2021.zip",
+              "datastore": false
+            },
+            {
+              "id": "140bf556-e78b-4bec-a7a7-4a6f6bdb25a8",
+              "name": "Informes do Código de Governança de Cias Abertas (2022)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/CGVN/DADOS/cgvn_cia_aberta_2022.zip",
+              "datastore": false
+            },
+            {
+              "id": "f23fbcc2-f112-436f-ae27-38958ae8fcfd",
+              "name": "Informes do Código de Governança de Cias Abertas (2023)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/CGVN/DADOS/cgvn_cia_aberta_2023.zip",
+              "datastore": false
+            },
+            {
+              "id": "3fd9846b-61bd-4cb0-b1f2-980ff157ed7a",
+              "name": "Informes do Código de Governança de Cias Abertas (2024)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/CGVN/DADOS/cgvn_cia_aberta_2024.zip",
+              "datastore": false
+            },
+            {
+              "id": "4bdf85d2-342a-4cc2-94d0-984f0c50b00e",
+              "name": "Informes do Código de Governança de Cias Abertas (2025)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/CGVN/DADOS/cgvn_cia_aberta_2025.zip",
+              "datastore": false
+            },
+            {
+              "id": "55ecdd7d-5eae-4bfc-b266-37c6f4c82bef",
+              "name": "Informes do Código de Governança de Cias Abertas (2026)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/CGVN/DADOS/cgvn_cia_aberta_2026.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "cia_aberta-eventos-recompra_acoes",
+          "title": "Cias Abertas: Eventos Societários Especiais: Programa de Recompra de Ações",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "e1caf268-fadb-4087-aed9-0c1261921478",
+              "name": "Dicionários de dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/EVENTOS/RECOMPRA_ACOES/META/meta_cia_aberta_recompra_acoes.zip",
+              "datastore": false
+            },
+            {
+              "id": "9f8c96ca-db73-4382-872d-00f8dc093c22",
+              "name": "Programas de Recompra de Ações",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/CIA_ABERTA/EVENTOS/RECOMPRA_ACOES/DADOS/cia_aberta_recompra_acoes.zip",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "emissores",
+          "title": "Emissores",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "b2ef23f2-0196-48b7-af0b-40d5f3b2ff7c",
+              "name": "Características dos Fundos - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/caracteristicas-dos-fundos-planilha-agregada-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "037f809e-5754-43a0-8cf8-e5651d671615",
+              "name": "Características dos Fundos - ICVM 555 - s FIC",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/caracteristicas-dos-fundos-planilha-agregada-fundos-555-sem-fundos-de-cotas.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "e9336459-8a4f-45a9-82b2-6b2e25018e07",
+              "name": "Informe Diário - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/informe-diario-planilha-agregada-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "535c321a-d2fd-47c2-8eca-2ada327fd0ba",
+              "name": "Ativos em Carteira - ICVM 555 - Total",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/ativos-em-carteira-fundos-555-total.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "e2248afa-f209-4ec8-b1e2-c395691c623e",
+              "name": "Ativos em Carteira - ICVM 555 - s FIC",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/ativos-em-carteira-fundos-555-sem-fundos-de-cotas.ods/view",
+              "datastore": false
+            },
+            {
+              "id": "7d605260-3bfb-4d44-ad52-914d9f0d1a6e",
+              "name": "Companhias Abertas",
+              "format": "ODS",
+              "url": "https://www.gov.br/cvm/pt-br/centrais-de-conteudo/publicacoes/series-historicas/emissores/cias-abertas.ods/view",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fii-doc-dfin",
+          "title": "FII: Documentos: Demonstrações Financeiras",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "fc8e369c-aee5-47ea-877a-3f046af92810",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/DFIN/META/meta_dfin_fii.txt",
+              "datastore": false
+            },
+            {
+              "id": "63326645-96d1-45ec-9c84-1e7626065a93",
+              "name": "Demonstrações Financeiras de Fundos de Investimento Imobiliário (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/DFIN/DADOS/dfin_fii_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "3032f924-c79c-4433-ac56-ab0387c01ddc",
+              "name": "Demonstrações Financeiras de Fundos de Investimento Imobiliário (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/DFIN/DADOS/dfin_fii_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "bedab852-57a1-4b56-9cca-f1115f4b9d6a",
+              "name": "Demonstrações Financeiras de Fundos de Investimento Imobiliário (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/DFIN/DADOS/dfin_fii_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "9172bb77-3469-4f79-a82d-57ae65810877",
+              "name": "Demonstrações Financeiras de Fundos de Investimento Imobiliário (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/DFIN/DADOS/dfin_fii_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "1c8bac3a-7161-4859-96d6-c23b7b7192d3",
+              "name": "Demonstrações Financeiras de Fundos de Investimento Imobiliário (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/DFIN/DADOS/dfin_fii_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "104bf5fc-5182-4df1-b9a3-e580695fed86",
+              "name": "Demonstrações Financeiras de Fundos de Investimento Imobiliário (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FII/DOC/DFIN/DADOS/dfin_fii_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "securit-doc-dfin_cri",
+          "title": "Securitizadoras: Documentos: Demonstrações Financeiras de CRI",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "7afda4e1-8995-41ec-ad23-802272219745",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/META/meta_dfin_cri.txt",
+              "datastore": false
+            },
+            {
+              "id": "2b7bf059-0227-494e-abe7-49d74422f46e",
+              "name": "Demonstrações Financeiras de CRI (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "fa3eb79d-e255-4bff-9a75-429d6f7f8ce5",
+              "name": "Demonstrações Financeiras de CRI (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "59a6c20a-fe4f-478f-8d98-a940cab1626c",
+              "name": "Demonstrações Financeiras de CRI (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "c1744442-1956-4fd1-986c-8c06df1c2fda",
+              "name": "Demonstrações Financeiras de CRI (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "8e328c58-0f88-4da8-a50e-ccc301a6a1f2",
+              "name": "Demonstrações Financeiras de CRI (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "226d4e18-81c0-4b29-885c-c51235b63b96",
+              "name": "Demonstrações Financeiras de CRI (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRI/DADOS/dfin_cri_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "securit-doc-dfin_cra",
+          "title": "Securitizadoras: Documentos: Demonstrações Financeiras de CRA",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "db6c49c3-fbf3-40de-9ea3-201b1ce0232b",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/META/meta_dfin_cra.txt",
+              "datastore": false
+            },
+            {
+              "id": "6fe71c12-1371-4124-8cba-ceee401d1195",
+              "name": "Demonstrações Financeiras de CRA (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "4c655951-8d95-4752-9a1a-d081f3058ba5",
+              "name": "Demonstrações Financeiras de CRA (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "a0873d7f-5579-4c45-9cf9-515e35610a24",
+              "name": "Demonstrações Financeiras de CRA (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "b3cea363-449e-46c5-825c-db948790ff8e",
+              "name": "Demonstrações Financeiras de CRA (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "13f4dc4f-5866-4f9e-a7fa-042684597288",
+              "name": "Demonstrações Financeiras de CRA (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "771aeedd-edc3-4481-a666-280c3ba8058d",
+              "name": "Demonstrações Financeiras de CRA (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/SECURIT/DOC/DFIN_CRA/DADOS/dfin_cra_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-eventual",
+          "title": "Fundos de Investimento: Documentos: Eventuais, DFs e Demonstrativos Trimestrais",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "d3592383-b776-4e69-895d-5ceea233b8eb",
+              "name": "Dicionário de Dados",
+              "format": "TXT",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/META/meta_eventual_fi.txt",
+              "datastore": false
+            },
+            {
+              "id": "0200b0d9-2d98-44ed-9a88-5e8259c1d857",
+              "name": "Documentos Eventuais de Fundos de Investimento (2021)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2021.csv",
+              "datastore": false
+            },
+            {
+              "id": "a70cc7c7-5114-455c-afe1-d45aee9eb7ac",
+              "name": "Documentos Eventuais de Fundos de Investimento (2022)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2022.csv",
+              "datastore": false
+            },
+            {
+              "id": "bd00a19d-ccda-4481-b9d7-525dbec2d7ab",
+              "name": "Documentos Eventuais de Fundos de Investimento (2023)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2023.csv",
+              "datastore": false
+            },
+            {
+              "id": "275dbb24-9089-4d00-bc98-3ce46caeb3d1",
+              "name": "Documentos Eventuais de Fundos de Investimento (2024)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2024.csv",
+              "datastore": false
+            },
+            {
+              "id": "1f7d93fa-bd2a-428a-be00-180d2184e9fc",
+              "name": "Documentos Eventuais de Fundos de Investimento (2025)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2025.csv",
+              "datastore": false
+            },
+            {
+              "id": "bdcc4bdd-ada2-42e8-a73b-83181f825f73",
+              "name": "Documentos Eventuais de Fundos de Investimento (2026)",
+              "format": "CSV",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/EVENTUAL/DADOS/eventual_fi_2026.csv",
+              "datastore": false
+            }
+          ]
+        },
+        {
+          "name": "fi-doc-compl",
+          "title": "Fundos de Investimento: Documentos: Formulário de Informações Complementares",
+          "organizacao": "CVM",
+          "resources": [
+            {
+              "id": "6fa4339e-223c-4f43-b241-983ef0523444",
+              "name": "Dicionário de Dados",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/META/meta_compl_fi_txt.zip",
+              "datastore": false
+            },
+            {
+              "id": "ce13bbca-5fc3-4c8b-acaa-423fc50eae3a",
+              "name": "Informações Complementares de Fundos de Investimento (Janeiro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201801.zip",
+              "datastore": false
+            },
+            {
+              "id": "536c2016-fdab-469e-982f-d959185792db",
+              "name": "Informações Complementares de Fundos de Investimento (Fevereiro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201802.zip",
+              "datastore": false
+            },
+            {
+              "id": "e30f21ef-53bb-4feb-97fe-3dec2dcd80d3",
+              "name": "Informações Complementares de Fundos de Investimento (Março/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201803.zip",
+              "datastore": false
+            },
+            {
+              "id": "1e2ad9b4-5088-4429-b4e7-47471d7ae3d2",
+              "name": "Informações Complementares de Fundos de Investimento (Abril/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201804.zip",
+              "datastore": false
+            },
+            {
+              "id": "61207ddf-864a-416b-b75f-f9dcc95ef7c2",
+              "name": "Informações Complementares de Fundos de Investimento (Maio/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201805.zip",
+              "datastore": false
+            },
+            {
+              "id": "941573f5-a094-4936-9e95-dae0979da8e9",
+              "name": "Informações Complementares de Fundos de Investimento (Junho/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201806.zip",
+              "datastore": false
+            },
+            {
+              "id": "2b5c1b48-baab-4ecf-8f3c-93e6695be52a",
+              "name": "Informações Complementares de Fundos de Investimento (Julho/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201807.zip",
+              "datastore": false
+            },
+            {
+              "id": "8f8db6ce-5fba-4642-aa7b-82e6cf1607c2",
+              "name": "Informações Complementares de Fundos de Investimento (Agosto/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201808.zip",
+              "datastore": false
+            },
+            {
+              "id": "50d2e729-49b7-4814-949e-e9917fa925a6",
+              "name": "Informações Complementares de Fundos de Investimento (Setembro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201809.zip",
+              "datastore": false
+            },
+            {
+              "id": "2d49b2a0-b400-49fc-8f62-48c625752ef9",
+              "name": "Informações Complementares de Fundos de Investimento (Outubro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201810.zip",
+              "datastore": false
+            },
+            {
+              "id": "4f3baf19-ecd7-4997-8985-9814b6404585",
+              "name": "Informações Complementares de Fundos de Investimento (Novembro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201811.zip",
+              "datastore": false
+            },
+            {
+              "id": "96b5f925-9fc1-480f-8116-7d2441718686",
+              "name": "Informações Complementares de Fundos de Investimento (Dezembro/2018)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201812.zip",
+              "datastore": false
+            },
+            {
+              "id": "fb541e6d-d987-4df7-a511-c9f681494bb1",
+              "name": "Informações Complementares de Fundos de Investimento (Janeiro/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201901.zip",
+              "datastore": false
+            },
+            {
+              "id": "2c301331-6077-402e-8fdf-a082fad68c07",
+              "name": "Informações Complementares de Fundos de Investimento (Fevereiro/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201902.zip",
+              "datastore": false
+            },
+            {
+              "id": "4411c139-5c73-4b2f-893b-2933ccac4287",
+              "name": "Informações Complementares de Fundos de Investimento (Março/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201903.zip",
+              "datastore": false
+            },
+            {
+              "id": "61245216-0e24-4c3b-8c2b-cfc9227c8d3c",
+              "name": "Informações Complementares de Fundos de Investimento (Abril/2019)",
+              "format": "ZIP",
+              "url": "https://dados.cvm.gov.br/dados/FI/DOC/COMPL/DADOS/compl_fi_201904.zip",
+              "datastore": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "geradoEm": "2026-06-02T00:57:52.337Z"
+}
