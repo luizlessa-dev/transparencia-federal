@@ -34,8 +34,7 @@ function topLevelStyle(active: boolean): React.CSSProperties {
   };
 }
 
-function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }) {
-  const [open, setOpen] = useState(false);
+function NavDropdown({ item, pathname, open, onOpen, onClose }: { item: SiteNavLink; pathname: string; open: boolean; onOpen: () => void; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
 
   // Click outside fecha
@@ -43,11 +42,11 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
     if (!open) return;
     function handler(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
+        onClose();
       }
     }
     function escHandler(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") onClose();
     }
     document.addEventListener("mousedown", handler);
     document.addEventListener("keydown", escHandler);
@@ -55,7 +54,7 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
       document.removeEventListener("mousedown", handler);
       document.removeEventListener("keydown", escHandler);
     };
-  }, [open]);
+  }, [open, onClose]);
 
   const children = item.children ?? [];
   const hasActive = children.some((c) => isActive(pathname, c.href));
@@ -64,8 +63,8 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
     <div ref={ref} style={{ position: "relative" }}>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        onMouseEnter={() => setOpen(true)}
+        onClick={() => (open ? onClose() : onOpen())}
+        onMouseEnter={() => onOpen()}
         aria-expanded={open}
         aria-haspopup="true"
         style={topLevelStyle(hasActive)}
@@ -87,7 +86,7 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
 
       {open && (
         <div
-          onMouseLeave={() => setOpen(false)}
+          onMouseLeave={() => onClose()}
           style={{
             position: "absolute",
             top: "calc(100% + 0.25rem)",
@@ -112,7 +111,7 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
                   {child.href ? (
                     <Link
                       href={child.href}
-                      onClick={() => setOpen(false)}
+                      onClick={() => onClose()}
                       style={{ display: "block", padding: "0.5rem 0.75rem 0.25rem", fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "hsl(var(--accent))", textDecoration: "none" }}
                     >
                       {child.label}
@@ -125,7 +124,7 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
                       <Link
                         key={g.href}
                         href={g.href}
-                        onClick={() => setOpen(false)}
+                        onClick={() => onClose()}
                         style={{ display: "block", padding: "0.375rem 0.75rem 0.375rem 1.25rem", fontSize: "0.8125rem", fontWeight: isActive(pathname, g.href) ? 700 : 500, color: isActive(pathname, g.href) ? "hsl(var(--text-headline))" : "hsl(var(--text-body))", backgroundColor: isActive(pathname, g.href) ? "hsl(var(--surface))" : "transparent", textDecoration: "none", borderRadius: "2px" }}
                       >
                         {g.label}
@@ -142,7 +141,7 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
                   href={child.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setOpen(false)}
+                  onClick={() => onClose()}
                   style={{
                     padding: "0.5rem 0.75rem",
                     fontSize: "0.8125rem",
@@ -160,7 +159,7 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
               <Link
                 key={child.href}
                 href={child.href}
-                onClick={() => setOpen(false)}
+                onClick={() => onClose()}
                 style={{
                   padding: "0.5rem 0.75rem",
                   fontSize: "0.8125rem",
@@ -183,13 +182,23 @@ function NavDropdown({ item, pathname }: { item: SiteNavLink; pathname: string }
 
 export function NavLinks({ items }: Props) {
   const pathname = usePathname();
+  const [openLabel, setOpenLabel] = useState<string | null>(null);
 
   return (
     <nav style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexWrap: "wrap" }}>
       {items.map((item) => {
         // Dropdown
         if (item.children && item.children.length > 0) {
-          return <NavDropdown key={item.label} item={item} pathname={pathname} />;
+          return (
+            <NavDropdown
+              key={item.label}
+              item={item}
+              pathname={pathname}
+              open={openLabel === item.label}
+              onOpen={() => setOpenLabel(item.label)}
+              onClose={() => setOpenLabel(null)}
+            />
+          );
         }
 
         // External link

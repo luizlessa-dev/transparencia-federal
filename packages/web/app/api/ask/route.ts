@@ -3,22 +3,35 @@
  *
  * Por que existe (em vez de chamar a edge function direto do browser):
  *   - Não expõe a URL/anon key do Supabase no client
- *   - Pode somar cache do Next.js + rate limit do Vercel se necessário
+ *   - Lê o cookie de sessão do usuário (disponível apenas no servidor)
+ *   - Aplica quota diária por plano antes de repassar à edge function
  *   - Header Authorization fica no servidor
  *
- * O backend (validação SQL, cache, telemetria) está todo na edge function.
- * Esta route só repassa a pergunta e devolve a resposta.
+ * Quotas (perguntas/dia):
+ *   anônimo       → 3  (rate-limit por IP, tratado na própria edge function)
+ *   free          → 5
+ *   individual    → 50
+ *   institucional → ilimitado
  */
 
 import { NextResponse } from "next/server";
+import { getUser, getPlano } from "~/lib/supabase-auth";
+import { getSupabase } from "~/lib/supabase-server";
 
-export const runtime = "edge";
+// Node.js runtime (não edge) para poder ler cookies de sessão via next/headers.
 export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 // Falha fechado: usa SOMENTE a anon key (já configurada na Vercel; a edge function
 // `ask` a aceita — testado). Nunca cai para a SERVICE_ROLE key, que ignora RLS.
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
+// Quotas diárias por plano (-1 = ilimitado).
+const QUOTA: Record<"free" | "individual" | "institucional", number> = {
+  free: 5,
+  individual: 50,
+  institucional: -1,
+};
 
 export async function POST(req: Request) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -46,7 +59,46 @@ export async function POST(req: Request) {
     );
   }
 
-  // forward IP real pro edge function (pra rate limit funcionar)
+  // ── Quota de IA por plano ────────────────────────────────────────────────
+  const user = await getUser().catch(() => null);
+
+  if (user) {
+    const plano = await getPlano(user.id).catch(() => "free" as const);
+    const limit = QUOTA[plano];
+
+    // -1 = ilimitado (institucional)
+    if (limit !== -1) {
+      const sb = getSupabase();
+      const { data, error } = await sb.rpc("ask_quota_check_increment", {
+        p_user_id: user.id,
+        p_limit: limit,
+      });
+
+      if (!error && data) {
+        const row = (data as { count: number; allowed: boolean }[])[0];
+        if (row && !row.allowed) {
+          return NextResponse.json(
+            {
+              ok: false,
+              erro:
+                plano === "free"
+                  ? `Você atingiu o limite de ${limit} perguntas por dia no plano gratuito. Assine para continuar pesquisando.`
+                  : `Limite diário de ${limit} perguntas atingido.`,
+              quota_esgotada: true,
+              plano,
+              limite: limit,
+              upgrade: plano === "free",
+            },
+            { status: 429 },
+          );
+        }
+      }
+    }
+  }
+
+  // ── Proxy para a edge function ───────────────────────────────────────────
+
+  // forward IP real pro edge function (pra rate limit de anônimos funcionar)
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
     req.headers.get("cf-connecting-ip") ??

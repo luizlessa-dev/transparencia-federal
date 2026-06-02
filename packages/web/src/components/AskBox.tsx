@@ -25,6 +25,13 @@ interface AskResponse {
   cache_hit?: boolean;
   latencia_ms?: number;
   erro?: string;
+  /** true quando a quota diária foi atingida */
+  quota_esgotada?: boolean;
+  /** plano atual do usuário quando quota esgotada */
+  plano?: "free" | "individual" | "institucional";
+  /** true se o usuário pode fazer upgrade pra ampliar a quota */
+  upgrade?: boolean;
+  limite?: number;
 }
 
 interface CategoriaSugestao {
@@ -553,15 +560,46 @@ export function AskBox() {
                 borderRadius: "0.125rem",
               }}
             >
-              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "hsl(var(--foreground))", marginBottom: "0.25rem" }}>
-                Não consegui responder essa pergunta.
-              </p>
-              <p style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground, var(--foreground)))" }}>
-                {resp.erro}
-              </p>
-              <p style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground, var(--foreground)))", marginTop: "0.5rem" }}>
-                Tente reformular ou usar uma das sugestões.
-              </p>
+              {resp.quota_esgotada ? (
+                <>
+                  <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "hsl(var(--foreground))", marginBottom: "0.25rem" }}>
+                    Limite diário atingido
+                  </p>
+                  <p style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground, var(--foreground)))" }}>
+                    {resp.erro}
+                  </p>
+                  {resp.upgrade && (
+                    <a
+                      href="/planos"
+                      style={{
+                        display: "inline-block",
+                        marginTop: "0.75rem",
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        padding: "0.375rem 0.875rem",
+                        background: "hsl(var(--primary))",
+                        color: "hsl(var(--primary-foreground))",
+                        borderRadius: "2px",
+                        textDecoration: "none",
+                      }}
+                    >
+                      Ver planos →
+                    </a>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "hsl(var(--foreground))", marginBottom: "0.25rem" }}>
+                    Não consegui responder essa pergunta.
+                  </p>
+                  <p style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground, var(--foreground)))" }}>
+                    {resp.erro}
+                  </p>
+                  <p style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground, var(--foreground)))", marginTop: "0.5rem" }}>
+                    Tente reformular ou usar uma das sugestões.
+                  </p>
+                </>
+              )}
             </div>
           )}
 
