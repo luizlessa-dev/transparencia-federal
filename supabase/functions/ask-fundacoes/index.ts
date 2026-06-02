@@ -75,7 +75,8 @@ Colunas relevantes:
 
 ### fundacoes_resumo (VIEW)
 Agregado por fundação por exercício — USE ESTA PARA TOTAIS E RANKINGS.
-Colunas:
+NÃO tem colunas de endereço (municipio, uf, logradouro) — use fundacoes_ranking_publico para isso.
+Colunas disponíveis APENAS:
   cnpj_fundacao, nome_popular, razao_social, sg_partido, aa_exercicio
   qtd_repasses int             — Nº de transferências no ano
   total_repassado numeric      — Total em R$
