@@ -8,7 +8,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabase } from "~/lib/supabase-server";
-import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
+import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
 export const dynamic = "force-dynamic";
@@ -36,8 +36,7 @@ const fmtCompact = (v: number) => new Intl.NumberFormat("pt-BR", { style: "curre
 const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 
 export default async function MgPagamentosSancionadosPage() {
-  const user = await getUser();
-  const pago = user ? await hasPaidAccess(user.id) : false;
+  const { pago } = await getViewer();
 
   const sb = getSupabase();
   const { data, error } = await sb

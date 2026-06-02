@@ -7,7 +7,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabase } from "~/lib/supabase-server";
-import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
+import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
 export const dynamic = "force-dynamic";
@@ -41,8 +41,7 @@ export default async function MgConveniosPage({ searchParams }: { searchParams: 
   const sp = await searchParams;
   const recorte = (["maiores", "emenda", "sancionadas"].includes(sp.recorte ?? "") ? sp.recorte : "maiores") as Recorte;
 
-  const user = await getUser();
-  const pago = user ? await hasPaidAccess(user.id) : false;
+  const { pago } = await getViewer();
 
   const sb = getSupabase();
   const [total, comEmenda, maiores, comEmendaRows, sancRows] = await Promise.all([

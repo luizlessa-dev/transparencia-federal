@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getRiscoRanking, getPartidosRisco, getUfsRisco, getRiscoLastUpdate } from "~/services/risco";
-import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
+import { getViewer } from "~/lib/dal";
 
 function formatLastUpdate(iso: string | null): string | null {
   if (!iso) return null;
@@ -98,8 +98,8 @@ export default async function RiscoPage({ searchParams }: Props) {
   const uf = sp.uf;
 
   // Verifica acesso
-  const user = await getUser();
-  const pago = user ? await hasPaidAccess(user.id) : false;
+  const viewer = await getViewer();
+  const pago = viewer.pago;
 
   // Usuários sem acesso pago veem apenas página 1 sem filtros
   const paginaEfetiva = pago ? page : 1;
@@ -364,7 +364,7 @@ export default async function RiscoPage({ searchParams }: Props) {
               >
                 Ver planos
               </Link>
-              {!user && (
+              {!viewer.liberado && (
                 <Link
                   href="/cadastro"
                   style={{

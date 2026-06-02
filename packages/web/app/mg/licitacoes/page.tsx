@@ -7,7 +7,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabase } from "~/lib/supabase-server";
-import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
+import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 
 export const dynamic = "force-dynamic";
@@ -42,8 +42,7 @@ export default async function MgLicitacoesPage({ searchParams }: { searchParams:
   const sp = await searchParams;
   const anoSel = ANOS.includes(Number(sp.ano)) ? Number(sp.ano) : null;
 
-  const user = await getUser();
-  const pago = user ? await hasPaidAccess(user.id) : false;
+  const { pago } = await getViewer();
 
   const sb = getSupabase();
   let detalheQ = sb.from("mg_licitacao_sobrepreco_rel")

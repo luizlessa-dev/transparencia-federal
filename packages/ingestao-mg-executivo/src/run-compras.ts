@@ -47,7 +47,13 @@ if (!uC) { console.error("dm_contratado ausente"); process.exit(1); }
 }
 console.log(`  contratados: ${contratado.size}`);
 
-// 2. ft_compras_contrato → melhor linha por contrato (maior ano; desempate maior vr_atualizado)
+// Teto de plausibilidade POR CONTRATO. A fonte traz valores corrompidos
+// esporádicos (ex.: TICKET/CEMIG em vr_atualizado, GLOBAL EAGLE em homologado —
+// R$68bi/R$1,47tri). Maiores contratos REAIS de MG são concessões ~R$2,7bi
+// (Rodoanel). Acima de R$3bi por contrato = corrupção → descartado e logado.
+const CEIL = 3_000_000_000;
+
+// 2. ft_compras_contrato → melhor linha por contrato (maior ano; desempate maior vr_homologado)
 type Best = { idCont: string; ano: number; vrH: number; vrA: number };
 const best = new Map<string, Best>();
 const uF = urlOf(RID.fatoContrato);
@@ -58,25 +64,32 @@ const totalLinhas = eachRow(await fetchResourceText(uF, "utf-8"),
   (l) => {
     const idc = at(l, iContrato); if (!idc) return;
     const ano = toInt(at(l, iAno)) ?? 0;
-    const vrA = parseValorBR(at(l, iVA)) ?? 0;
+    const vrH = parseValorBR(at(l, iVH)) ?? 0;
     const cur = best.get(idc);
-    if (!cur || ano > cur.ano || (ano === cur.ano && vrA > cur.vrA)) {
-      best.set(idc, { idCont: at(l, iContratado), ano, vrH: parseValorBR(at(l, iVH)) ?? 0, vrA });
+    if (!cur || ano > cur.ano || (ano === cur.ano && vrH > cur.vrH)) {
+      best.set(idc, { idCont: at(l, iContratado), ano, vrH, vrA: parseValorBR(at(l, iVA)) ?? 0 });
     }
   });
 
-// 3. agrega por cnpj+ano
+// 3. agrega por cnpj+ano (valor canônico = vr_homologado; teto por contrato)
 type Ag = { nome: string; ano: number; n: number; vrH: number; vrA: number };
 const agg = new Map<string, Ag>();
-let semCnpj = 0;
+let semCnpj = 0, corrompidos = 0, vrCorrompido = 0;
 for (const b of best.values()) {
+  if (b.vrH > CEIL) { corrompidos++; vrCorrompido += b.vrH; continue; } // descarta valor corrompido
   const c = contratado.get(b.idCont);
   const cnpj = c?.cnpj || "";
   if (!cnpj) { semCnpj++; continue; } // pula PF/anonimizado sem CNPJ
   const k = `${cnpj}|${b.ano}`;
   const a = agg.get(k) ?? { nome: c?.nome ?? "", ano: b.ano, n: 0, vrH: 0, vrA: 0 };
-  a.n++; a.vrH += b.vrH; a.vrA += b.vrA; agg.set(k, a);
+  // vr_atualizado também limitado ao teto (evita propagar corrupção da coluna)
+  a.n++; a.vrH += b.vrH; a.vrA += Math.min(b.vrA, CEIL); agg.set(k, a);
 }
+console.log(`  contratos descartados por valor corrompido (> R$3bi): ${corrompidos} (somavam R$ ${Math.round(vrCorrompido / 1e9)} bi)`);
+
+// rebuild: limpa a tabela antes (o valor canônico mudou p/ homologado)
+const del = await client.from("mg_compras_fornecedor").delete().not("id", "is", null);
+if (del.error) console.log(`  ⚠ delete: ${del.error.message}`);
 
 const r2 = (n: number) => Math.round(n * 100) / 100;
 const erros: string[] = [];

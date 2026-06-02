@@ -6,7 +6,7 @@ import { ConfiancaBadge } from "~/components/ConfiancaBadge";
 import { FonteNota } from "~/components/FonteNota";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 import { DatasetSection } from "~/components/DatasetSection";
-import { getUser, hasPaidAccess } from "~/lib/supabase-auth";
+import { getViewer } from "~/lib/dal";
 import { getParlamentarRisco } from "~/services/risco";
 import { getFolhaGabinete, getFolhaLeads } from "~/services/folha";
 import { getCeapsSenadorHistorico } from "~/services/ceaps-senado";
@@ -104,8 +104,8 @@ export default async function ParlamentarPage({ params }: Props) {
 
   // Freemium-SEO: anônimo (inclui Googlebot) vê o teaser indexável — KPIs e
   // agregados públicos + uma prévia da tabela; a lista completa exige login.
-  const user = await getUser();
-  const liberado = user != null;
+  const viewer = await getViewer();
+  const liberado = viewer.liberado;
   const emendasTabela = liberado ? emendas : emendas.slice(0, 5);
 
   // Indicadores agregados (score G5) — Câmara apenas. Funde a riqueza do dossiê
@@ -133,7 +133,7 @@ export default async function ParlamentarPage({ params }: Props) {
     senadorNome: p.casa_legislativa === "senado" ? nomeExibido : null,
   }).catch(() => null);
   const leadsFolha = p.id_camara ? await getFolhaLeads(p.id_camara).catch(() => null) : null;
-  const pago = user ? await hasPaidAccess(user.id).catch(() => false) : false;
+  const pago = viewer.pago;
 
   // ── Agregações ────────────────────────────────────────────────────
   const totalEmpenhado = emendas.reduce((s, e) => s + (Number(e.valor_empenhado) || 0), 0);
