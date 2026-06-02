@@ -25,7 +25,10 @@
     "ipsemg:ts": "tsx src/run-ipsemg.ts",
     "compras:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-compras.ts",
     "emendas-estaduais:ts": "tsx src/run-emendas-estaduais.ts",
-    "os:ts": "tsx src/run-os.ts"
+    "os:ts": "tsx src/run-os.ts",
+    "notas:ts": "NODE_OPTIONS=--max-old-space-size=4096 tsx src/run-notas.ts",
+    "voos:ts": "tsx src/run-voos.ts",
+    "vale-pessoal:ts": "tsx src/run-vale-pessoal.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

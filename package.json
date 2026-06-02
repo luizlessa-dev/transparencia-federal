@@ -55,7 +55,10 @@
     "ingestao-mg:ipsemg": "npm run ipsemg:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:compras": "npm run compras:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:emendas-estaduais": "npm run emendas-estaduais:ts -w @transparencia/ingestao-mg-executivo",
-    "ingestao-mg:os": "npm run os:ts -w @transparencia/ingestao-mg-executivo"
+    "ingestao-mg:os": "npm run os:ts -w @transparencia/ingestao-mg-executivo",
+    "ingestao-mg:notas": "npm run notas:ts -w @transparencia/ingestao-mg-executivo",
+    "ingestao-mg:voos": "npm run voos:ts -w @transparencia/ingestao-mg-executivo",
+    "ingestao-mg:vale-pessoal": "npm run vale-pessoal:ts -w @transparencia/ingestao-mg-executivo"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
