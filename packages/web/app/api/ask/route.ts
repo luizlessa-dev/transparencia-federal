@@ -16,10 +16,9 @@ export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-// TODO(Passo 3 — RLS): voltar a falhar fechado (sem fallback para SERVICE_ROLE).
-// Hoje a anon key não está configurada na Vercel e a edge function `ask` não está
-// versionada aqui, então o hardening fica para quando o caminho anon+RLS existir.
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Falha fechado: usa SOMENTE a anon key (já configurada na Vercel; a edge function
+// `ask` a aceita — testado). Nunca cai para a SERVICE_ROLE key, que ignora RLS.
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 export async function POST(req: Request) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {

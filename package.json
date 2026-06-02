@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "workspaces": [
+    "packages/ingestao-tse-fundacoes",
     "packages/ingestao-portal",
     "packages/ingestao-camara",
     "packages/ingestao-almg",
@@ -20,6 +21,9 @@
     "typecheck": "npm run typecheck -w @transparencia/ingestao-portal -w @transparencia/ingestao-camara -w @transparencia/ingestao-almg -w @transparencia/ingestao-alesp -w @transparencia/ingestao-alepe -w @transparencia/ingestao-folha -w @transparencia/ingestao-mg-executivo -w @transparencia/ingestao-cvm -w @transparencia/enriquecimento -w @transparencia/analytics -w @transparencia/api -w @transparencia/web",
     "ingestao-cvm:discover": "npm run discover:ts -w @transparencia/ingestao-cvm",
     "ingestao-cvm:cadastro": "npm run cadastro:ts -w @transparencia/ingestao-cvm",
+    "ingestao-cvm:fip": "npm run fip:ts -w @transparencia/ingestao-cvm",
+    "ingestao-cvm:cda": "npm run cda:ts -w @transparencia/ingestao-cvm",
+    "ingestao-cvm:oferta": "npm run oferta:ts -w @transparencia/ingestao-cvm",
     "ingestao-portal": "npm run ingestao-portal:ts -w @transparencia/ingestao-portal",
     "ingestao-camara": "npm run ingestao-camara:ts -w @transparencia/ingestao-camara",
     "ingestao-almg": "npm run verba:ts -w @transparencia/ingestao-almg",
@@ -59,7 +63,9 @@
     "ingestao-mg:os": "npm run os:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:notas": "npm run notas:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:voos": "npm run voos:ts -w @transparencia/ingestao-mg-executivo",
-    "ingestao-mg:vale-pessoal": "npm run vale-pessoal:ts -w @transparencia/ingestao-mg-executivo"
+    "ingestao-mg:vale-pessoal": "npm run vale-pessoal:ts -w @transparencia/ingestao-mg-executivo",
+    "fundacoes:seed": "npm run seed:ts -w @transparencia/ingestao-tse-fundacoes",
+    "fundacoes:repasses": "npm run repasses:ts -w @transparencia/ingestao-tse-fundacoes"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
