@@ -132,7 +132,8 @@ export default async function ParlamentarPage({ params }: Props) {
     idCamara: p.id_camara,
     senadorNome: p.casa_legislativa === "senado" ? nomeExibido : null,
   }).catch(() => null);
-  const leadsFolha = p.id_camara ? await getFolhaLeads(p.id_camara).catch(() => null) : null;
+  const idLeads = p.id_camara ?? p.id_senado ?? null;
+  const leadsFolha = idLeads ? await getFolhaLeads(idLeads).catch(() => null) : null;
   const pago = viewer.pago;
 
   // ── Agregações ────────────────────────────────────────────────────
@@ -494,7 +495,7 @@ export default async function ParlamentarPage({ params }: Props) {
               <ParedeDeAcesso
                 tipo="pago"
                 titulo="Cruzamentos de investigação (plano pago)"
-                descricao={`Este gabinete tem ${leadsFolha.doadores.length} funcionário(s)-doador(es) e ${leadsFolha.nepotismo.length} sinal(is) de nepotismo cruzado. Assine para ver os nomes, valores e o cruzamento.`}
+                descricao={`Este gabinete tem ${leadsFolha.doadores.length} funcionário(s)-doador(es)${leadsFolha.nepotismo.length > 0 ? ` e ${leadsFolha.nepotismo.length} sinal(is) de nepotismo cruzado` : ""}. Assine para ver os nomes, valores e o cruzamento.`}
                 next={`/parlamentares/${id}`}
               />
             )}
