@@ -48,7 +48,9 @@
     "ingestao-mg:lrf": "npm run lrf:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:agregados": "npm run agregados:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:licitacoes": "npm run licitacoes:ts -w @transparencia/ingestao-mg-executivo",
-    "ingestao-mg:emendas-federais": "npm run emendas-federais:ts -w @transparencia/ingestao-mg-executivo"
+    "ingestao-mg:emendas-federais": "npm run emendas-federais:ts -w @transparencia/ingestao-mg-executivo",
+    "ingestao-mg:convenios-entrada": "npm run convenios-entrada:ts -w @transparencia/ingestao-mg-executivo",
+    "ingestao-mg:ipsemg": "npm run ipsemg:ts -w @transparencia/ingestao-mg-executivo"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

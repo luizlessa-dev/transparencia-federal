@@ -119,6 +119,30 @@ export function normNome(s: string | null | undefined): string {
     .trim();
 }
 
+/**
+ * Itera as linhas de um CSV (separador `;`) sem materializar todo o array —
+ * economia de heap em arquivos grandes. Chama onHeader na 1ª linha e onRow nas
+ * demais. Devolve o nº de linhas de dados. Mesma semântica do parseCSV.
+ */
+export function eachRow(
+  texto: string,
+  onHeader: (h: string[]) => void,
+  onRow: (cols: string[]) => void,
+): number {
+  const clean = stripBOM(texto).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  let start = 0, first = true, n = 0;
+  for (let i = 0; i <= clean.length; i++) {
+    if (i === clean.length || clean[i] === "\n") {
+      const line = clean.slice(start, i);
+      start = i + 1;
+      if (line.trim().length === 0) continue;
+      const cols = parseLinha(line, ";");
+      if (first) { onHeader(cols); first = false; } else { onRow(cols); n++; }
+    }
+  }
+  return n;
+}
+
 /** 1º dia do mês informado (ou corrente) em ISO (YYYY-MM-01) — chave do snapshot. */
 export function snapshotMesISO(d = new Date()): string {
   const ano = d.getFullYear();
