@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "seed:ts":     "tsx src/seed-fundacoes.ts",
     "repasses:ts": "tsx src/run-repasses-local.ts",
+    "enrich:ts":   "tsx src/enrich-brasilapi.ts",
     "typecheck":   "tsc --noEmit"
   },
   "dependencies": {

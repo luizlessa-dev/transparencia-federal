@@ -1,12 +1,19 @@
 /**
  * run-repasses-local.ts
- * Processa o CSV TSE já baixado e insere repasses partido→fundação no Supabase.
+ * Descobre as fundações partidárias a partir do dataset TSE (fonte autoritativa)
+ * e ingere todos os repasses partido→fundação no Supabase.
+ *
+ * Estratégia em 2 passadas sobre o CSV:
+ *   Passada 1 (descoberta): identifica CNPJs classificados como "FUNDAÇÃO PARTIDÁRIA"
+ *                           e popula cadastro mínimo em fundacoes_partidarias.
+ *   Passada 2 (repasses):   captura TODA linha cujo fornecedor é uma fundação
+ *                           descoberta — inclusive aluguel/serviço (caixa circular).
+ *
+ * Os CNPJs NUNCA são hardcoded — vêm sempre da fonte. O enriquecimento de
+ * endereço/QSA fica a cargo de enrich-brasilapi.ts (passo separado).
  *
  * Uso:
  *   CSV_PATH=/Users/luizlessa/tf-spike-fundacoes/despesa_anual_2024_BR.csv \
- *   npm run repasses:ts -w @transparencia/ingestao-tse-fundacoes
- *
- * Também baixa o CSV se CSV_PATH não estiver definido:
  *   ANO=2024 npm run repasses:ts -w @transparencia/ingestao-tse-fundacoes
  */
 import dotenv from "dotenv";
@@ -18,9 +25,9 @@ dotenv.config();
 dotenv.config({ path: resolve(__dirname, "../../../.env") });
 
 import { createClient } from "@supabase/supabase-js";
-import { createReadStream, existsSync } from "fs";
+import { existsSync } from "fs";
 import { createInterface } from "readline";
-import { execSync } from "child_process";
+import { execSync, spawn } from "child_process";
 import { join } from "path";
 import { tmpdir } from "os";
 
@@ -38,19 +45,7 @@ const CSV_URL    = `https://cdn.tse.jus.br/estatistica/sead/odsele/prestacao_con
 const ARQUIVO_BR = `despesa_anual_${ANO}_BR.csv`;
 
 // ─────────────────────────────────────────────────────────
-// CNPJs das 26 fundações conhecidas (para filtro rápido)
-// ─────────────────────────────────────────────────────────
-async function carregarCNPJsFundacoes(): Promise<Set<string>> {
-  const { data, error } = await sb.from("fundacoes_partidarias").select("cnpj");
-  if (error || !data?.length) {
-    console.warn("⚠️  Tabela fundacoes_partidarias vazia — rode seed-fundacoes primeiro.");
-    process.exit(1);
-  }
-  return new Set(data.map(r => (r.cnpj as string).replace(/\D/g, "")));
-}
-
-// ─────────────────────────────────────────────────────────
-// CSV parser (semicolon, ISO-8859-1 → via iconv)
+// CSV: colunas, parsing
 // ─────────────────────────────────────────────────────────
 const COLUNAS = [
   "DT_GERACAO","HH_GERACAO","AA_EXERCICIO","TP_DESPESA",
@@ -61,170 +56,178 @@ const COLUNAS = [
   "DS_GASTO","DT_PAGAMENTO","VR_GASTO","VR_PAGAMENTO","VR_DOCUMENTO",
   "CD_FONTE_DESPESA","DS_FONTE_DESPESA","SQ_DESPESA",
 ];
+const COL = Object.fromEntries(COLUNAS.map((c, i) => [c, i]));
 
 function parseLine(line: string): string[] {
   const fields: string[] = [];
-  let cur = "";
-  let inQuote = false;
+  let cur = "", inQuote = false;
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
-    if (ch === '"') { inQuote = !inQuote; }
+    if (ch === '"') inQuote = !inQuote;
     else if (ch === ";" && !inQuote) { fields.push(cur); cur = ""; }
-    else { cur += ch; }
+    else cur += ch;
   }
   fields.push(cur);
-  return fields;
+  return fields.map(f => f.replace(/^"|"$/g, ""));
 }
 
 function sanitize(v: string): string | null {
   if (!v || v === "#NULO" || v === "#NULO#") return null;
   return v.trim() || null;
 }
-
 function parseBRL(v: string): number {
-  const s = (v ?? "0").replace(/\./g, "").replace(",", ".");
-  const n = parseFloat(s);
+  const n = parseFloat((v ?? "0").replace(/\./g, "").replace(",", "."));
   return isNaN(n) ? 0 : n;
 }
-
 function parseDate(v: string): string | null {
   const m = (v ?? "").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (!m) return null;
-  return `${m[3]}-${m[2]}-${m[1]}`;
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : null;
 }
-
+function ehFundacaoPartidaria(dsGasto: string): boolean {
+  const u = (dsGasto ?? "").toUpperCase();
+  return u.includes("FUNDAÇÃO PARTIDÁRIA") || u.includes("FUNDACAO PARTIDARIA") ||
+         u.includes("DOUTRINAÇÃO E EDUCAÇÃO POLÍTICA") || u.includes("DOUTRINACAO E EDUCACAO POLITICA");
+}
 function classificarTipo(ds: string): string {
-  const upper = (ds ?? "").toUpperCase();
-  if (upper.includes("FUNDAÇÃO PARTIDÁRIA") || upper.includes("FUNDACAO PARTIDARIA")) return "fundacao_partidaria";
-  if (upper.includes("ALUGUEL") || upper.includes("LOCAÇÃO") || upper.includes("LOCACAO") || upper.includes("CONDOMÍNIO")) return "aluguel";
-  if (upper.includes("SERVIÇO") || upper.includes("SERVICO") || upper.includes("CONTRAT")) return "servico";
+  const u = (ds ?? "").toUpperCase();
+  if (ehFundacaoPartidaria(ds)) return "fundacao_partidaria";
+  if (u.includes("ALUGU") || u.includes("LOCAÇÃO") || u.includes("LOCACAO") || u.includes("CONDOMÍNIO") || u.includes("CONDOMINIO")) return "aluguel";
+  if (u.includes("SERVIÇO") || u.includes("SERVICO") || u.includes("CONTRAT")) return "servico";
   return "outros";
 }
 
-function mapRow(
-  fields: string[],
-  cnpjsFundacoes: Set<string>
-): Record<string, unknown> | null {
-  const row: Record<string, string> = {};
-  COLUNAS.forEach((col, i) => { row[col] = fields[i] ?? ""; });
-
-  const cnpjFornecedor = (row.NR_CPF_CNPJ_FORNECEDOR ?? "").replace(/\D/g, "");
-  if (!cnpjsFundacoes.has(cnpjFornecedor)) return null; // não é fundação conhecida
-
-  const sqStr = (row.SQ_DESPESA ?? "").trim();
-  const sq = parseInt(sqStr, 10);
-  if (isNaN(sq)) return null;
-
-  return {
-    sq_despesa:       sq,
-    aa_exercicio:     ANO,
-    sg_partido:       sanitize(row.SG_PARTIDO) ?? "",
-    nm_partido:       sanitize(row.NM_PARTIDO),
-    cnpj_partido:     (row.NR_CNPJ_PRESTADOR_CONTA ?? "").replace(/\D/g, "") || null,
-    cnpj_fundacao:    cnpjFornecedor,
-    nm_fundacao:      sanitize(row.NM_FORNECEDOR),
-    ds_gasto:         sanitize(row.DS_GASTO),
-    tipo_repasse:     classificarTipo(row.DS_GASTO ?? ""),
-    dt_pagamento:     parseDate(row.DT_PAGAMENTO),
-    vr_pagamento:     parseBRL(row.VR_PAGAMENTO),
-    cd_fonte_despesa: parseInt(row.CD_FONTE_DESPESA ?? "", 10) || null,
-    ds_fonte_despesa: sanitize(row.DS_FONTE_DESPESA),
-    dados: {
-      ds_tp_fornecedor:    sanitize(row.DS_TP_FORNECEDOR),
-      cd_tp_documento:     sanitize(row.CD_TP_DOCUMENTO),
-      ds_tp_documento:     sanitize(row.DS_TP_DOCUMENTO),
-      nr_documento:        sanitize(row.NR_DOCUMENTO),
-      vr_gasto:            parseBRL(row.VR_GASTO),
-      vr_documento:        parseBRL(row.VR_DOCUMENTO),
-    },
-  };
+// ─────────────────────────────────────────────────────────
+// Leitura do CSV em stream (iconv LATIN1→UTF-8), callback por linha
+// ─────────────────────────────────────────────────────────
+async function lerCSV(csvPath: string, onRow: (f: string[]) => void): Promise<number> {
+  const iconv = spawn("iconv", ["-f", "LATIN1", "-t", "UTF-8", csvPath]);
+  const rl = createInterface({ input: iconv.stdout, crlfDelay: Infinity });
+  let n = 0, header = true;
+  for await (const line of rl) {
+    n++;
+    if (header) { header = false; continue; }
+    if (!line.trim()) continue;
+    onRow(parseLine(line));
+  }
+  return n;
 }
 
 // ─────────────────────────────────────────────────────────
-// Obter CSV (local ou download)
+// Resolver CSV (local ou download)
 // ─────────────────────────────────────────────────────────
-async function resolverCSV(): Promise<string> {
-  const csvPath = process.env.CSV_PATH;
-  if (csvPath && existsSync(csvPath)) {
-    console.log(`Usando CSV local: ${csvPath}`);
-    return csvPath;
-  }
+function resolverCSV(): string {
+  const local = process.env.CSV_PATH;
+  if (local && existsSync(local)) { console.log(`CSV local: ${local}`); return local; }
 
-  // Baixar e extrair
-  const tmpDir  = join(tmpdir(), "tf-fundacoes");
-  const zipPath = join(tmpDir, `fundacoes_${ANO}.zip`);
-  const csvOut  = join(tmpDir, ARQUIVO_BR);
-
-  if (existsSync(csvOut)) {
-    console.log(`Usando CSV já extraído: ${csvOut}`);
-    return csvOut;
-  }
+  const tmp = join(tmpdir(), "tf-fundacoes");
+  const zip = join(tmp, `fundacoes_${ANO}.zip`);
+  const out = join(tmp, ARQUIVO_BR);
+  if (existsSync(out)) { console.log(`CSV já extraído: ${out}`); return out; }
 
   console.log(`Baixando ${CSV_URL}...`);
-  execSync(`mkdir -p ${tmpDir} && curl -sL -o ${zipPath} "${CSV_URL}"`);
+  execSync(`mkdir -p ${tmp} && curl -sL -o ${zip} "${CSV_URL}"`);
   console.log(`Extraindo ${ARQUIVO_BR}...`);
-  execSync(`cd ${tmpDir} && unzip -o ${zipPath} ${ARQUIVO_BR}`);
-  return csvOut;
+  execSync(`cd ${tmp} && unzip -o ${zip} ${ARQUIVO_BR}`);
+  return out;
 }
 
 // ─────────────────────────────────────────────────────────
 // Main
 // ─────────────────────────────────────────────────────────
+type FundacaoDescoberta = {
+  cnpj: string; nome: string; partido: string; cnpj_partido: string | null; total: number;
+};
+
 async function main() {
-  console.log(`\n🏛️  Ingestão de repasses partido→fundação — exercício ${ANO}\n`);
+  console.log(`\n🏛️  Repasses partido→fundação — exercício ${ANO}\n`);
+  const csvPath = resolverCSV();
 
-  const [csvPath, cnpjsFundacoes] = await Promise.all([
-    resolverCSV(),
-    carregarCNPJsFundacoes(),
-  ]);
+  // ── Passada 1: DESCOBERTA ──────────────────────────────
+  console.log("Passada 1/2 — descobrindo fundações na fonte TSE...");
+  const fundacoes = new Map<string, FundacaoDescoberta>();
 
-  console.log(`Filtrando por ${cnpjsFundacoes.size} CNPJs de fundações conhecidas...`);
-  console.log(`CSV: ${csvPath}\n`);
-
-  // Converter ISO-8859-1 → UTF-8 via iconv (Node)
-  const { spawn } = await import("child_process");
-  const iconv = spawn("iconv", ["-f", "LATIN1", "-t", "UTF-8", csvPath]);
-  const rl = createInterface({ input: iconv.stdout, crlfDelay: Infinity });
-
-  let linhaNr = 0;
-  let lote: ReturnType<typeof mapRow>[] = [];
-  let totalInseridos = 0;
-  let totalFiltrados = 0;
-  let primeiraLinha  = true;
-
-  async function flushLote() {
-    const rows = lote.filter(Boolean) as Record<string, unknown>[];
-    if (!rows.length) return;
-    const { error } = await sb.from("fundacoes_repasses").upsert(rows, {
-      onConflict: "sq_despesa,aa_exercicio",
+  await lerCSV(csvPath, (f) => {
+    if (!ehFundacaoPartidaria(f[COL.DS_GASTO])) return;
+    const cnpj = (f[COL.NR_CPF_CNPJ_FORNECEDOR] ?? "").replace(/\D/g, "");
+    if (cnpj.length !== 14) return; // só PJ
+    const valor = parseBRL(f[COL.VR_PAGAMENTO]);
+    const ex = fundacoes.get(cnpj);
+    if (ex) { ex.total += valor; }
+    else fundacoes.set(cnpj, {
+      cnpj,
+      nome: sanitize(f[COL.NM_FORNECEDOR]) ?? "",
+      partido: sanitize(f[COL.SG_PARTIDO]) ?? "",
+      cnpj_partido: (f[COL.NR_CNPJ_PRESTADOR_CONTA] ?? "").replace(/\D/g, "") || null,
+      total: valor,
     });
-    if (error) console.error("  ❌ upsert erro:", error.message);
-    else {
-      totalInseridos += rows.length;
-      process.stdout.write(`\r  Inseridos: ${totalInseridos} repasses`);
-    }
-    lote = [];
+  });
+
+  console.log(`  Descobertas: ${fundacoes.size} fundações.\n`);
+
+  // Popular cadastro mínimo (sem sobrescrever enriquecimento BrasilAPI prévio)
+  for (const fd of fundacoes.values()) {
+    await sb.from("fundacoes_partidarias").upsert({
+      cnpj:          fd.cnpj,
+      razao_social:  fd.nome,
+      nome_popular:  fd.nome,
+      partido_sigla: fd.partido,
+      partido_cnpj:  fd.cnpj_partido,
+      atualizado_em: new Date().toISOString(),
+    }, { onConflict: "cnpj", ignoreDuplicates: false });
+  }
+  console.log(`  Cadastro mínimo gravado.\n`);
+
+  const cnpjsFundacoes = new Set(fundacoes.keys());
+
+  // ── Passada 2: REPASSES (todos os tipos para esses CNPJs) ──
+  console.log("Passada 2/2 — capturando todos os repasses (inclui aluguel/serviço)...");
+  let lote: Record<string, unknown>[] = [];
+  let totalInseridos = 0;
+
+  async function uploadBatch(batch: Record<string, unknown>[]) {
+    const { error } = await sb.from("fundacoes_repasses")
+      .upsert(batch, { onConflict: "sq_despesa,aa_exercicio" });
+    if (error) console.error("\n  ❌ upsert:", error.message);
+    else { totalInseridos += batch.length; process.stdout.write(`\r  Inseridos: ${totalInseridos}`); }
   }
 
-  for await (const line of rl) {
-    linhaNr++;
-    if (primeiraLinha) { primeiraLinha = false; continue; } // skip header
+  const pendentes: Promise<void>[] = [];
+  await lerCSV(csvPath, (f) => {
+    const cnpj = (f[COL.NR_CPF_CNPJ_FORNECEDOR] ?? "").replace(/\D/g, "");
+    if (!cnpjsFundacoes.has(cnpj)) return;
+    const sq = parseInt((f[COL.SQ_DESPESA] ?? "").trim(), 10);
+    if (isNaN(sq)) return;
 
-    const fields = parseLine(line);
-    const row = mapRow(fields, cnpjsFundacoes);
-
-    if (!row) { totalFiltrados++; continue; }
-
-    lote.push(row);
-    if (lote.length >= LOTE) await flushLote();
-  }
-
-  await flushLote();
+    lote.push({
+      sq_despesa:       sq,
+      aa_exercicio:     ANO,
+      sg_partido:       sanitize(f[COL.SG_PARTIDO]) ?? "",
+      nm_partido:       sanitize(f[COL.NM_PARTIDO]),
+      cnpj_partido:     (f[COL.NR_CNPJ_PRESTADOR_CONTA] ?? "").replace(/\D/g, "") || null,
+      cnpj_fundacao:    cnpj,
+      nm_fundacao:      sanitize(f[COL.NM_FORNECEDOR]),
+      ds_gasto:         sanitize(f[COL.DS_GASTO]),
+      tipo_repasse:     classificarTipo(f[COL.DS_GASTO] ?? ""),
+      dt_pagamento:     parseDate(f[COL.DT_PAGAMENTO]),
+      vr_pagamento:     parseBRL(f[COL.VR_PAGAMENTO]),
+      cd_fonte_despesa: parseInt(f[COL.CD_FONTE_DESPESA] ?? "", 10) || null,
+      ds_fonte_despesa: sanitize(f[COL.DS_FONTE_DESPESA]),
+      dados: {
+        ds_tp_fornecedor: sanitize(f[COL.DS_TP_FORNECEDOR]),
+        nr_documento:     sanitize(f[COL.NR_DOCUMENTO]),
+        vr_gasto:         parseBRL(f[COL.VR_GASTO]),
+        vr_documento:     parseBRL(f[COL.VR_DOCUMENTO]),
+      },
+    });
+    if (lote.length >= LOTE) { const batch = lote; lote = []; pendentes.push(uploadBatch(batch)); }
+  });
+  if (lote.length) pendentes.push(uploadBatch(lote));
+  await Promise.all(pendentes);
 
   console.log(`\n\n✅ Concluído.`);
-  console.log(`   Linhas processadas : ${linhaNr.toLocaleString("pt-BR")}`);
-  console.log(`   Filtradas (fora)   : ${totalFiltrados.toLocaleString("pt-BR")}`);
-  console.log(`   Repasses inseridos : ${totalInseridos.toLocaleString("pt-BR")}`);
+  console.log(`   Fundações descobertas : ${fundacoes.size}`);
+  console.log(`   Repasses inseridos    : ${totalInseridos.toLocaleString("pt-BR")}`);
+  console.log(`\n   Próximo passo: enrich-brasilapi para QSA + endereço.`);
 }
 
 main().catch(console.error);

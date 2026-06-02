@@ -64,8 +64,8 @@
     "ingestao-mg:notas": "npm run notas:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:voos": "npm run voos:ts -w @transparencia/ingestao-mg-executivo",
     "ingestao-mg:vale-pessoal": "npm run vale-pessoal:ts -w @transparencia/ingestao-mg-executivo",
-    "fundacoes:seed": "npm run seed:ts -w @transparencia/ingestao-tse-fundacoes",
-    "fundacoes:repasses": "npm run repasses:ts -w @transparencia/ingestao-tse-fundacoes"
+    "fundacoes:repasses": "npm run repasses:ts -w @transparencia/ingestao-tse-fundacoes",
+    "fundacoes:enrich": "npm run enrich:ts -w @transparencia/ingestao-tse-fundacoes"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
