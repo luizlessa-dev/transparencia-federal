@@ -19,19 +19,25 @@ const BRAND_STEEL = "#4188B5";   // azul-aço
 // ── Monograma circular (SVG inline, fiel ao componente Logo) ──────
 function Monograma({ size: s = 140, color = FG }: { size?: number; color?: string }) {
   return (
-    <svg width={s} height={s} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="47" stroke={color} strokeWidth="1.2" fill="none" />
-      <circle cx="50" cy="50" r="44" stroke={color} strokeWidth="0.6" fill="none" />
-      <text x="50" y="27" textAnchor="middle" fill={color} fontFamily="serif" fontStyle="italic" fontWeight={400} fontSize="11">
-        the
-      </text>
-      <text x="50" y="60" textAnchor="middle" fill={color} fontFamily="serif" fontWeight={700} fontSize="34" letterSpacing="-1">
-        BR
-      </text>
-      <text x="50" y="78" textAnchor="middle" fill={color} fontFamily="serif" fontWeight={400} fontSize="11">
-        insider
-      </text>
-    </svg>
+    <div
+      style={{
+        width: s,
+        height: s,
+        borderRadius: "50%",
+        border: `${Math.max(1, s / 90)}px solid ${color}`,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "serif",
+        color,
+        lineHeight: 1,
+      }}
+    >
+      <span style={{ fontSize: s * 0.1, fontStyle: "italic" }}>the</span>
+      <span style={{ fontSize: s * 0.28, fontWeight: 700, letterSpacing: -1 }}>BR</span>
+      <span style={{ fontSize: s * 0.1 }}>insider</span>
+    </div>
   );
 }
 
