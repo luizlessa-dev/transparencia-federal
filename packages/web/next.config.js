@@ -40,24 +40,30 @@ const nextConfig = {
         destination: "https://www.transparenciafederal.com/:path*",
         permanent: true,
       },
-      // radar.org → radar.com (canônico)
+      // radar legados → radar.thebrinsider.com (canônico)
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "radar.transparenciafederal.com" }],
+        destination: "https://radar.thebrinsider.com/:path*",
+        permanent: true,
+      },
       {
         source: "/:path*",
         has: [{ type: "host", value: "radar.transparenciafederal.org" }],
-        destination: "https://radar.transparenciafederal.com/:path*",
+        destination: "https://radar.thebrinsider.com/:path*",
         permanent: true,
       },
       // /radar/* no domínio principal → subdomínio canônico
       {
         source: "/radar",
-        missing: [{ type: "host", value: "radar.transparenciafederal.com" }],
-        destination: "https://radar.transparenciafederal.com/",
+        missing: [{ type: "host", value: "radar.thebrinsider.com" }],
+        destination: "https://radar.thebrinsider.com/",
         permanent: false,
       },
       {
         source: "/radar/:path*",
-        missing: [{ type: "host", value: "radar.transparenciafederal.com" }],
-        destination: "https://radar.transparenciafederal.com/:path*",
+        missing: [{ type: "host", value: "radar.thebrinsider.com" }],
+        destination: "https://radar.thebrinsider.com/:path*",
         permanent: false,
       },
     ];
