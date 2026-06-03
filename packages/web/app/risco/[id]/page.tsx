@@ -4,6 +4,7 @@ import { getParlamentarRisco } from "~/services/risco";
 import { getFrentesDeDeputado, getComissoesDeDeputado } from "~/services/frentes";
 import { getViewer } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
+import { PaywallSchema } from "~/components/PaywallSchema";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +112,12 @@ export default async function ParlamentarRiscoPage({ params }: Props) {
 
   return (
     <>
+      <PaywallSchema
+        url={`https://www.thebrinsider.com/risco/${deputadoId}`}
+        headline={`${dep.nome} — Score de Risco | The BR Insider`}
+        type="ProfilePage"
+        paywallSelector=".bloomberg-card"
+      />
       {/* ── Cabeçalho ─────────────────────────────────────────────────── */}
       <section style={{ borderBottom: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--background))" }}>
         <div className="container" style={{ padding: "1.5rem 1.5rem 1.5rem" }}>

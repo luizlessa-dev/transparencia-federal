@@ -7,6 +7,7 @@ import { FonteNota } from "~/components/FonteNota";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
 import { DatasetSection } from "~/components/DatasetSection";
 import { getViewer } from "~/lib/dal";
+import { PaywallSchema } from "~/components/PaywallSchema";
 import { getParlamentarRisco } from "~/services/risco";
 import { getFolhaGabinete, getFolhaLeads } from "~/services/folha";
 import { getCeapsSenadorHistorico } from "~/services/ceaps-senado";
@@ -218,6 +219,12 @@ export default async function ParlamentarPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PaywallSchema
+        url={`https://www.thebrinsider.com/parlamentares/${id}`}
+        headline={`${nomeExibido} — The BR Insider`}
+        type="ProfilePage"
+        paywallSelector=".bloomberg-card"
       />
       {/* ── Cabeçalho ─────────────────────────────────────────────── */}
       <section

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.thebrinsider.folha-cruzamentos-mensal</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/luizlessa/transparencia-federal/scripts/folha-cruzamentos-cron.sh</string>
+  </array>
+
+  <!-- Dia 10 de cada mês às 10:00 BRT (após ingestão da folha no dia 5) -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Day</key>
+    <integer>10</integer>
+    <key>Hour</key>
+    <integer>10</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/luizlessa/Library/Logs/folha-cruzamentos-cron.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/luizlessa/Library/Logs/folha-cruzamentos-cron.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+    <key>HOME</key>
+    <string>/Users/luizlessa</string>
+  </dict>
+</dict>
+</plist>

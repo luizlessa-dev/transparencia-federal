@@ -15,6 +15,7 @@ import { getFrentesDeDeputado, getComissoesDeDeputado } from "~/services/frentes
 import { getDeputadoProposicaoAgg } from "~/services/proposicoes";
 import { getViewer, getReceitasDossie, getBensDossie } from "~/lib/dal";
 import { ParedeDeAcesso } from "~/components/ParedeDeAcesso";
+import { PaywallSchema } from "~/components/PaywallSchema";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +92,12 @@ export default async function DossiePage({ params }: Props) {
 
   return (
     <>
+      <PaywallSchema
+        url={`https://www.thebrinsider.com/dossie/${deputadoId}`}
+        headline={`${dep.nome} — Dossiê | The BR Insider`}
+        type="ProfilePage"
+        paywallSelector=".bloomberg-card"
+      />
       <div className="container" style={{ paddingTop: "2rem", paddingBottom: "3rem", maxWidth: "1100px" }}>
 
         {/* ── Breadcrumb ──────────────────────────────────────── */}
