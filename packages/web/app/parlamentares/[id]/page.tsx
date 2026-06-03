@@ -358,7 +358,7 @@ export default async function ParlamentarPage({ params }: Props) {
           </DatasetSection>
         )}
 
-        {doadores && doadores.doadores.length > 0 && (
+        {doadores && (
           <DatasetSection
             titulo={`Top doadores de campanha (${doadores.ano})`}
             fonte="TSE"
@@ -366,22 +366,31 @@ export default async function ParlamentarPage({ params }: Props) {
             verDetalheLabel="Financiamento eleitoral →"
             style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
           >
-            <table className="bloomberg-table" style={{ width: "100%" }}>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: "left" }}>Doador</th>
-                  <th style={{ textAlign: "right" }}>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {doadores.doadores.slice(0, 8).map((d, i) => (
-                  <tr key={i}>
-                    <td>{d.nome}</td>
-                    <td style={{ textAlign: "right" }}>{fmtBRL(Number(d.total) || 0)}</td>
+            {pago && doadores.doadores.length > 0 ? (
+              <table className="bloomberg-table" style={{ width: "100%" }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: "left" }}>Doador</th>
+                    <th style={{ textAlign: "right" }}>Total</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {doadores.doadores.slice(0, 8).map((d, i) => (
+                    <tr key={i}>
+                      <td>{d.nome}</td>
+                      <td style={{ textAlign: "right" }}>{fmtBRL(Number(d.total) || 0)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <ParedeDeAcesso
+                tipo="pago"
+                titulo="Quem financiou esta campanha (plano pago)"
+                descricao={`${doadores.doadores.length} doador(es) principal(is) identificado(s) no TSE em ${doadores.ano}. Assine para ver os nomes e os valores.`}
+                next={`/parlamentares/${id}`}
+              />
+            )}
           </DatasetSection>
         )}
 
