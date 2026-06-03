@@ -10,7 +10,7 @@
  * `server-only` garante erro de build se algo aqui for importado num client.
  */
 import "server-only";
-import { getUser, hasPaidAccess } from "./supabase-auth";
+import { getUser, hasPaidAccess, getPlano } from "./supabase-auth";
 import { getSupabase } from "./supabase-server";
 
 export type Plano = "free" | "individual" | "institucional";
@@ -125,5 +125,55 @@ export async function getBensDossie(cpf: string | null, viewer: Viewer): Promise
     maiorTotal: result.reduce((m, b) => Math.max(m, b.valor), 0),
     // corte server-side: o detalhe só entra no payload quando há plano pago.
     detalhe: viewer.pago ? result : null,
+  };
+}
+
+// ── Quota de IA (/api/ask) ─────────────────────────────────────────────────
+
+/** Quotas diárias por plano (-1 = ilimitado). */
+export const ASK_QUOTA: Record<Plano, number> = {
+  free: 5,
+  individual: 50,
+  institucional: -1,
+};
+
+export interface QuotaResult {
+  allowed: boolean;
+  count: number;
+  limit: number;
+  plano: Plano;
+}
+
+/**
+ * Verifica e incrementa atomicamente a quota diária de IA do usuário.
+ * Retorna `allowed: false` (com HTTP 429) se o limite foi atingido.
+ * Para plano institucional (limit = -1) retorna always allowed sem tocar o DB.
+ */
+export async function checkAskQuota(userId: string): Promise<QuotaResult> {
+  const plano = await getPlano(userId);
+  const limit = ASK_QUOTA[plano];
+
+  // Institucional: sem limite, não precisa tocar o banco.
+  if (limit === -1) {
+    return { allowed: true, count: 0, limit: -1, plano };
+  }
+
+  const sb = getSupabase();
+  const { data, error } = await sb.rpc("ask_quota_check_increment", {
+    p_user_id: userId,
+    p_limit: limit,
+  });
+
+  if (error || !data) {
+    // Falha silenciosa: deixa passar (não bloqueia por falha de contagem).
+    return { allowed: true, count: 0, limit, plano };
+  }
+
+  const row = (data as { count: number; allowed: boolean }[])[0];
+  return {
+    allowed: row?.allowed ?? true,
+    count: row?.count ?? 0,
+    limit,
+    plano,
   };
 }

@@ -309,3 +309,28 @@ export async function getMgDashboardStats() {
     sb.from("mg_fornecedor_perfil_resumo").select("fornecedores,condenadas_faturando,pago_a_condenadas").maybeSingle(),
   ]);
 }
+
+// ── Matéria NUTRIDORES / lookups por CNPJ ────────────────────────────────
+
+export async function getMgEmpenhosPorCnpj(cnpjNorm: string) {
+  return getSupabase()
+    .from("mg_empenhos_sancionados")
+    .select("cnpj_norm,valor_pago,valor_empenhado,valor_liquidado,unidade_orcamentaria_nome,razao_social_credor")
+    .eq("cnpj_norm", cnpjNorm);
+}
+
+export async function getMgContratosPorCnpj(cnpjNorm: string) {
+  return getSupabase()
+    .from("mg_contratos")
+    .select("numero_contrato,orgao,objeto,valor_total,situacao,data_assinatura")
+    .eq("cnpj_norm", cnpjNorm)
+    .order("data_assinatura", { ascending: false });
+}
+
+export async function getMgEmpresaSancionadaPorCnpj(cnpjNorm: string) {
+  return getSupabase()
+    .from("mg_empresas_sancionadas")
+    .select("empresa,conduta,decisao,fase,valor_multa,orgao_lesado,sei,data_publicacao_decisao")
+    .eq("cnpj_norm", cnpjNorm)
+    .single();
+}

@@ -12,7 +12,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSupabase } from "~/lib/supabase-server";
+import { getMgEmpenhosPorCnpj, getMgContratosPorCnpj, getMgEmpresaSancionadaPorCnpj } from "~/services/mg";
 
 export const dynamic = "force-dynamic";
 
@@ -45,20 +45,10 @@ const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 type EmpenhoAno = { ano: number; n: number; pago: number };
 
 export default async function NutrMGPage() {
-  const sb = getSupabase();
-
   const [pagamentos, contratos, sancao] = await Promise.all([
-    sb.from("mg_empenhos_sancionados")
-      .select("cnpj_norm,valor_pago,valor_empenhado,valor_liquidado,unidade_orcamentaria_nome,razao_social_credor")
-      .eq("cnpj_norm", CNPJ_NUTRIDORES),
-    sb.from("mg_contratos")
-      .select("numero_contrato,orgao,objeto,valor_total,situacao,data_assinatura")
-      .eq("cnpj_norm", CNPJ_NUTRIDORES)
-      .order("data_assinatura", { ascending: false }),
-    sb.from("mg_empresas_sancionadas")
-      .select("empresa,conduta,decisao,fase,valor_multa,orgao_lesado,sei,data_publicacao_decisao")
-      .eq("cnpj_norm", CNPJ_NUTRIDORES)
-      .single(),
+    getMgEmpenhosPorCnpj(CNPJ_NUTRIDORES),
+    getMgContratosPorCnpj(CNPJ_NUTRIDORES),
+    getMgEmpresaSancionadaPorCnpj(CNPJ_NUTRIDORES),
   ]);
 
   const empenhos = (pagamentos.data ?? []) as { cnpj_norm: string; valor_pago: number | null; valor_empenhado: number | null; valor_liquidado: number | null; unidade_orcamentaria_nome: string | null; razao_social_credor: string | null }[];

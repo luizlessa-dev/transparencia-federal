@@ -15,8 +15,8 @@
  */
 
 import { NextResponse } from "next/server";
-import { getUser, getPlano } from "~/lib/supabase-auth";
-import { getSupabase } from "~/lib/supabase-server";
+import { getUser } from "~/lib/supabase-auth";
+import { checkAskQuota } from "~/lib/dal";
 
 // Node.js runtime (não edge) para poder ler cookies de sessão via next/headers.
 export const dynamic = "force-dynamic";
@@ -25,13 +25,6 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 // Falha fechado: usa SOMENTE a anon key (já configurada na Vercel; a edge function
 // `ask` a aceita — testado). Nunca cai para a SERVICE_ROLE key, que ignora RLS.
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
-
-// Quotas diárias por plano (-1 = ilimitado).
-const QUOTA: Record<"free" | "individual" | "institucional", number> = {
-  free: 5,
-  individual: 50,
-  institucional: -1,
-};
 
 export async function POST(req: Request) {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -59,40 +52,27 @@ export async function POST(req: Request) {
     );
   }
 
-  // ── Quota de IA por plano ────────────────────────────────────────────────
+  // ── Quota de IA por plano (via DAL) ─────────────────────────────────────
   const user = await getUser().catch(() => null);
 
   if (user) {
-    const plano = await getPlano(user.id).catch(() => "free" as const);
-    const limit = QUOTA[plano];
+    const quota = await checkAskQuota(user.id).catch(() => null);
 
-    // -1 = ilimitado (institucional)
-    if (limit !== -1) {
-      const sb = getSupabase();
-      const { data, error } = await sb.rpc("ask_quota_check_increment", {
-        p_user_id: user.id,
-        p_limit: limit,
-      });
-
-      if (!error && data) {
-        const row = (data as { count: number; allowed: boolean }[])[0];
-        if (row && !row.allowed) {
-          return NextResponse.json(
-            {
-              ok: false,
-              erro:
-                plano === "free"
-                  ? `Você atingiu o limite de ${limit} perguntas por dia no plano gratuito. Assine para continuar pesquisando.`
-                  : `Limite diário de ${limit} perguntas atingido.`,
-              quota_esgotada: true,
-              plano,
-              limite: limit,
-              upgrade: plano === "free",
-            },
-            { status: 429 },
-          );
-        }
-      }
+    if (quota && !quota.allowed) {
+      return NextResponse.json(
+        {
+          ok: false,
+          erro:
+            quota.plano === "free"
+              ? `Você atingiu o limite de ${quota.limit} perguntas/dia no plano gratuito. Assine para continuar pesquisando.`
+              : `Limite diário de ${quota.limit} perguntas atingido.`,
+          quota_esgotada: true,
+          plano: quota.plano,
+          limite: quota.limit,
+          upgrade: quota.plano === "free",
+        },
+        { status: 429 },
+      );
     }
   }
 
