@@ -57,6 +57,10 @@ export async function montarUniverso(client: SupabaseClient): Promise<Set<string
     .select("cpf_cnpj").not("cpf_cnpj", "is", null);
   for (const r of (sanFed ?? []) as { cpf_cnpj: string }[]) add(r.cpf_cnpj);
 
+  // ── Eixo SAF ─────────────────────────────────────────────────────────────
+  // Lista-semente das Sociedades Anônimas do Futebol brasileiras constituídas.
+  await paginado("cvm_saf", "cnpj_norm");
+
   // ── Contratantes do Estado MG ────────────────────────────────────────────
   // Aqui está o cross jornalístico: se um político é sócio de empresa
   // que tem contrato/empenho/convênio com o governo, o QSA vai revelar.

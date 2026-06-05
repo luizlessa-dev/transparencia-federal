@@ -39,3 +39,60 @@ export async function getCvmEmissoresSancionadosCount() {
     .from("cvm_emissor_sancionado")
     .select("cnpj_emissor", { count: "exact", head: true });
 }
+
+// ─── FIPs monopolizados (padrão Galo Forte) ──────────────────────────────────
+
+export async function getCvmFipMonopolioCount() {
+  return getSupabase()
+    .from("cvm_fip_monopolio")
+    .select("cnpj_norm", { count: "exact", head: true });
+}
+
+export async function getCvmFipMonopolioLista() {
+  return getSupabase()
+    .from("cvm_fip_monopolio")
+    .select(
+      "cnpj_norm,denom,tipo,situacao,dt_comptc,vl_patrim_liq,vl_cap_integr,vl_cap_compr," +
+      "nr_cotst,pr_pf,admin,gestor,controlador,tem_aresta_grafo,tem_oferta,tem_politico"
+    )
+    .order("vl_cap_integr", { ascending: false });
+}
+
+export async function getCvmFipMonopolioDetalhe(cnpjNorm: string) {
+  return getSupabase()
+    .from("cvm_fip_monopolio")
+    .select("*")
+    .eq("cnpj_norm", cnpjNorm)
+    .single();
+}
+
+export async function getCvmFipMonopolioHistorico(cnpjNorm: string) {
+  return getSupabase().rpc("cvm_fip_monopolio_historico", { p_cnpj: cnpjNorm });
+}
+
+// ─── Sócios políticos (Receita × parlamentares) ───────────────────────────────
+
+export async function getCvmSociosPoliticos() {
+  return getSupabase()
+    .from("cvm_socio_politico")
+    .select(
+      "deputado_id,politico,sigla_partido,sigla_uf,score_total," +
+      "cnpj_basico,empresa,capital_social,papel_societario,cpf_socio_mascarado,cpf_confirma"
+    )
+    .order("score_total", { ascending: false });
+}
+
+export async function getCvmSociosPoliticosCount() {
+  return getSupabase()
+    .from("cvm_socio_politico")
+    .select("cnpj_basico", { count: "exact", head: true });
+}
+
+// ─── Motor de grafo ───────────────────────────────────────────────────────────
+
+export async function getCvmGrafoVizinhanca(cnpj: string, profundidade = 3) {
+  return getSupabase().rpc("cvm_grafo_vizinhanca", {
+    p_cnpj: cnpj.replace(/\D/g, ""),
+    p_prof: profundidade,
+  });
+}
