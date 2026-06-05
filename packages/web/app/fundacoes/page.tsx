@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getFundacoesRanking, getFundacoesStats } from "~/services/fundacoes";
 import { FundacoesAskBox } from "~/components/FundacoesAskBox";
 
@@ -132,9 +133,12 @@ export default async function FundacoesPage() {
                       {i + 1}
                     </td>
                     <td>
-                      <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                      <Link
+                        href={`/fundacoes/${f.cnpj}`}
+                        style={{ fontWeight: 600, fontSize: "0.875rem", color: "hsl(var(--primary))", textDecoration: "none" }}
+                      >
                         {f.nome_popular ?? f.cnpj}
-                      </div>
+                      </Link>
                       {(f.mesmo_endereco_partido || f.mesmo_telefone_partido) && (
                         <div style={{ fontSize: "0.6875rem", color: "hsl(var(--danger))", marginTop: "0.125rem" }}>
                           {f.mesmo_endereco_partido ? "📍 Sede = partido" : ""}
