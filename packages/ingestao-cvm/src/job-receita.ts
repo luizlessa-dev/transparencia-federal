@@ -58,8 +58,9 @@ export async function montarUniverso(client: SupabaseClient): Promise<Set<string
   for (const r of (sanFed ?? []) as { cpf_cnpj: string }[]) add(r.cpf_cnpj);
 
   // ── Eixo SAF ─────────────────────────────────────────────────────────────
-  // Lista-semente das Sociedades Anônimas do Futebol brasileiras constituídas.
+  // SAFs diretas + holdings, FIDCs e fundos intermediários do ecossistema.
   await paginado("cvm_saf", "cnpj_norm");
+  await paginado("cvm_saf_entidade_relacionada", "cnpj_norm");
 
   // ── Contratantes do Estado MG ────────────────────────────────────────────
   // Aqui está o cross jornalístico: se um político é sócio de empresa
