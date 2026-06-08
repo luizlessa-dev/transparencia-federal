@@ -132,6 +132,37 @@ export async function getFrotaPublica(): Promise<FrotaPub | null> {
   } catch { return null; }
 }
 
+// ──────────────────────── ranking ────────────────────────
+
+export interface RankAutoridade {
+  autoridade: string;
+  voos: number;
+  custo_estimado: number;
+  fds: number;
+  fds_pct: number;
+  noturnos: number;
+  internacionais: number;
+  a_disposicao: number;
+  top_destinos: Array<{ destino: string; n: number }>;
+  bolsonaro: number;
+  lula: number;
+}
+
+export interface Ranking {
+  _meta: {
+    gerado: string; periodo: string; total_voos: number;
+    total_custo_estimado: number; total_autoridades: number; nota_custo: string;
+  };
+  ranking: RankAutoridade[];
+}
+
+export async function getRanking(): Promise<Ranking | null> {
+  try {
+    const res = await fetch(`${RAW}/dados/ranking.json`, FETCH_OPTS);
+    return res.ok ? res.json() : null;
+  } catch { return null; }
+}
+
 // ──────────────────────── CSVs para busca ────────────────────────
 
 function parseCsv(text: string, ano: number, mes: number): VooRow[] {
