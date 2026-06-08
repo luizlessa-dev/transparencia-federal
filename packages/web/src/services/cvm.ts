@@ -1,7 +1,7 @@
 import "server-only";
 import { getSupabase } from "~/lib/supabase-server";
 
-const GALO_FORTE_CNPJ = "40.908.937/0001-97";
+const GALO_FORTE_CNPJ = "51.856.050/0001-06";
 
 export async function getCvmFundos() {
   return getSupabase().from("cvm_fundo").select("*");
