@@ -54,6 +54,7 @@ export const FEDERAL_CONFIG: SiteConfig = {
   nav: [
     { label: "Parlamentares", href: "/parlamentares" },
     { label: "Ranking", href: "/ranking" },
+    { label: "Agenda", href: "/agenda" },
     {
       label: "Despesas",
       children: [
