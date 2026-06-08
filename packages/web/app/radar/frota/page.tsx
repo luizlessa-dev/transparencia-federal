@@ -196,6 +196,67 @@ export default async function FrotaPage() {
         )}
       </div>
 
+      {/* Frota dos órgãos públicos (RAB) */}
+      {pub && (
+        <section style={{ borderTop: "1px solid hsl(var(--border))" }}>
+          <div className="container" style={{ padding: "2.5rem 1.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.375rem" }}>
+              <div style={{ height: "1.75rem", width: "3px", flexShrink: 0, backgroundColor: ACCENT }} />
+              <h2 style={{ fontSize: "1.25rem", margin: 0 }}>Frota dos órgãos públicos</h2>
+              <span style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))" }}>
+                {pub._meta.total_aeronaves} aeronaves
+              </span>
+            </div>
+            <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-caption))", margin: "0 0 1.25rem 1rem", maxWidth: "44rem" }}>
+              Além da FAB, o Estado brasileiro opera aeronaves por meio de polícias,
+              bombeiros, governos estaduais e agências federais civis. Mapeadas via
+              Registro Aeronáutico Brasileiro (RAB/ANAC) — dados de {pub._meta.data_rab}.
+            </p>
+
+            <div style={{ overflowX: "auto" }}>
+              <table className="bloomberg-table">
+                <thead>
+                  <tr>
+                    <th>Categoria</th>
+                    <th style={{ textAlign: "right" }}>Aeronaves</th>
+                    <th style={{ textAlign: "right" }}>Órgãos</th>
+                    <th>Modelos mais comuns</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(pub.frotas)
+                    .map(([cat, orgs]) => {
+                      const aeronaves = Object.values(orgs).flat();
+                      const modelos = new Map<string, number>();
+                      for (const a of aeronaves) {
+                        const m = a.modelo || "—";
+                        modelos.set(m, (modelos.get(m) ?? 0) + 1);
+                      }
+                      const top = [...modelos.entries()].sort((x, y) => y[1] - x[1]).slice(0, 3);
+                      return { cat, n: aeronaves.length, orgs: Object.keys(orgs).length, top };
+                    })
+                    .sort((a, b) => b.n - a.n)
+                    .map(row => (
+                      <tr key={row.cat}>
+                        <td style={{ fontWeight: 600 }}>{row.cat}</td>
+                        <td style={{ textAlign: "right", fontFamily: "var(--font-mono)" }}>{row.n}</td>
+                        <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", color: "hsl(var(--text-caption))" }}>{row.orgs}</td>
+                        <td style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))" }}>
+                          {row.top.map(([m, c]) => `${m} (${c})`).join(" · ")}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+            <p style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))", marginTop: "0.75rem", fontStyle: "italic" }}>
+              Aeronaves militares da FAB não constam no RAB (registro civil) — por isso
+              aparecem só no catálogo acima. Esta tabela cobre os demais órgãos.
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* Tabela comparativa */}
       <section style={{ borderTop: "1px solid hsl(var(--border))", backgroundColor: "hsl(var(--surface))" }}>
         <div className="container" style={{ padding: "2.5rem 1.5rem" }}>
