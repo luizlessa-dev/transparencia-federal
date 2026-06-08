@@ -4,7 +4,7 @@
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getCvmFundos, getCvmCarteira, getCvmOfertas, getCvmFips, getCvmEmissoresSancionadosCount, getCvmGaloForteHistorico, getCvmFipMonopolioCount, getCvmSociosPoliticosCount } from "~/services/cvm";
+import { getCvmFundos, getCvmCarteira, getCvmOfertas, getCvmFips, getCvmEmissoresSancionadosCount, getCvmGaloForteHistorico, getCvmFipMonopolioCount, getCvmSociosPoliticosCount, getSafCount } from "~/services/cvm";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ const fmtNum = (v: number) => new Intl.NumberFormat("pt-BR").format(v);
 const fmtMi = (v: number) => `R$ ${(v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
 
 export default async function MercadoCapitaisPage() {
-  const [fundos, arestas, ofertas, fips, emissoresUnicos, galoHistorico, fipsMonopolio, sociosPoliticos] = await Promise.all([
+  const [fundos, arestas, ofertas, fips, emissoresUnicos, galoHistorico, fipsMonopolio, sociosPoliticos, safCount] = await Promise.all([
     getCvmFundos(),
     getCvmCarteira(),
     getCvmOfertas(),
@@ -30,6 +30,7 @@ export default async function MercadoCapitaisPage() {
     getCvmGaloForteHistorico(),
     getCvmFipMonopolioCount(),
     getCvmSociosPoliticosCount(),
+    getSafCount(),
   ]);
 
   const galoSerie = ((galoHistorico.data ?? []) as { vl_patrim_liq: number | null; dt_comptc: string }[])
@@ -41,6 +42,7 @@ export default async function MercadoCapitaisPage() {
     { href: "/mercado-de-capitais/galo-forte", titulo: "Caso Galo Forte", num: galoPl ? fmtMi(galoPl) : "—", sub: "FIP que controla parte da SAF do Atlético-MG", tom: "danger" },
     { href: "/mercado-de-capitais/fips-monopolio", titulo: "FIPs monopolizados", num: fmtNum(fipsMonopolio.count ?? 0), sub: "1 cotista PF com 100% das cotas (padrão Galo Forte)", tom: "danger" },
     { href: "/mercado-de-capitais/socios-politicos", titulo: "Sócios políticos", num: fmtNum(sociosPoliticos.count ?? 0), sub: "parlamentares com sociedade no mercado de capitais", tom: "danger" },
+    { href: "/mercado-de-capitais/safs", titulo: "SAFs brasileiras", num: fmtNum(safCount.count ?? 0), sub: "clubes S.A. — QSA, captações CVM e FIPs do ecossistema", tom: "warn" },
     { href: "/mercado-de-capitais/emissores-sancionados", titulo: "Emissores sancionados", num: fmtNum(emissoresUnicos.count ?? 0), sub: "captaram no mercado e estão em lista de sanção", tom: "warn" },
     { href: "/mercado-de-capitais/grafo", titulo: "Grafo de fundos", num: fmtNum(arestas.count ?? 0), sub: "arestas fundo→fundo (quem investe em quem)", tom: "" },
     { href: "/mercado-de-capitais/galo-forte", titulo: "FIPs monitorados", num: fmtNum(fips.count ?? 0), sub: "fundos de participação com informes na CVM", tom: "" },

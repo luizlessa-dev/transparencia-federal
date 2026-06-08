@@ -88,6 +88,43 @@ export async function getCvmSociosPoliticosCount() {
     .select("cnpj_basico", { count: "exact", head: true });
 }
 
+// ─── Eixo SAF ─────────────────────────────────────────────────────────────────
+
+export async function getSafLista() {
+  return getSupabase()
+    .from("cvm_saf")
+    .select("cnpj_norm,clube,razao_social,serie,investidor,data_constituicao,status,obs")
+    .order("serie")
+    .order("clube");
+}
+
+export async function getSafCount() {
+  return getSupabase()
+    .from("cvm_saf")
+    .select("cnpj_norm", { count: "exact", head: true });
+}
+
+export async function getSafEcossistemaCvm() {
+  return getSupabase()
+    .from("saf_ecossistema_cvm")
+    .select("clube,nome_emissor,tipo_ativo,valor,data_oferta,situacao,relacao,papel_entidade")
+    .order("valor", { ascending: false });
+}
+
+export async function getFipSafResumo() {
+  return getSupabase()
+    .from("fip_saf_resumo")
+    .select("clube,papel,confirmado,nome_fip,cnpj_fip,ultimo_informe,pl,cap_integralizado,cotistas,pct_pf,vinculo,obs");
+}
+
+export async function getSafQuadroSocietario() {
+  return getSupabase()
+    .from("saf_quadro_societario")
+    .select("clube,serie,status,nome_socio,identificador,qualificacao,data_entrada,razao_social_saf,capital_social_saf,razao_social_socio")
+    .order("clube")
+    .order("data_entrada", { ascending: false });
+}
+
 // ─── Motor de grafo ───────────────────────────────────────────────────────────
 
 export async function getCvmGrafoVizinhanca(cnpj: string, profundidade = 3) {
