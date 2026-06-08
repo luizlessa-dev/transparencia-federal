@@ -78,6 +78,58 @@ export async function getHistorico(): Promise<string | null> {
   } catch { return null; }
 }
 
+// ──────────────────────── frota ────────────────────────
+
+export interface Aeronave {
+  designacao: string;
+  modelo: string;
+  fabricante: string;
+  categoria: string;
+  quantidade: number;
+  quantidade_prevista?: number;
+  matriculas?: string[];
+  capacidade: string;
+  velocidade_kmh?: number | null;
+  alcance_km?: number | null;
+  autonomia_h?: number;
+  entrada_servico: number;
+  custo_hora: string;
+  curiosidade: string;
+  destaque?: boolean;
+}
+
+export interface CategoriaFrota {
+  id: string;
+  nome: string;
+  descricao: string;
+  aeronaves: Aeronave[];
+}
+
+export interface FrotaFAB {
+  _meta: { atualizado: string; total_aproximado_fab: number; avisos: string[] };
+  categorias: CategoriaFrota[];
+  aposentadas: Array<{ designacao: string; modelo: string; status: string; curiosidade: string }>;
+}
+
+export async function getFrotaFAB(): Promise<FrotaFAB | null> {
+  try {
+    const res = await fetch(`${RAW}/dados/frota_fab.json`, FETCH_OPTS);
+    return res.ok ? res.json() : null;
+  } catch { return null; }
+}
+
+export interface FrotaPub {
+  _meta: { total_aeronaves: number; data_rab: string };
+  frotas: Record<string, Record<string, Array<{ marca: string; modelo: string; fabricante: string; uf: string }>>>;
+}
+
+export async function getFrotaPublica(): Promise<FrotaPub | null> {
+  try {
+    const res = await fetch(`${RAW}/dados/frotas_pub.json`, FETCH_OPTS);
+    return res.ok ? res.json() : null;
+  } catch { return null; }
+}
+
 // ──────────────────────── CSVs para busca ────────────────────────
 
 function parseCsv(text: string, ano: number, mes: number): VooRow[] {
