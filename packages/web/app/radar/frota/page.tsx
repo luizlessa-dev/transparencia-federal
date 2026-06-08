@@ -6,7 +6,7 @@ export const revalidate = 86400; // 24h — catálogo muda pouco
 export const metadata = {
   title: "Frota Aérea Federal",
   description:
-    "Catálogo da frota aérea da Força Aérea Brasileira e de órgãos públicos: aeronave presidencial, caças, transporte, helicópteros. Modelos, custos e curiosidades.",
+    "Catálogo da frota aérea das Forças Armadas (FAB, Marinha, Exército) e de órgãos públicos brasileiros: aeronave presidencial, caças, helicópteros. Modelos, custos e curiosidades.",
   alternates: { canonical: "/frota" },
 };
 
@@ -33,11 +33,34 @@ function CardAeronave({ a }: { a: Aeronave }) {
     >
       {a.destaque && (
         <span style={{
-          position: "absolute", top: "-9px", left: "1rem",
+          position: "absolute", top: "-9px", left: "1rem", zIndex: 1,
           backgroundColor: ACCENT, color: "#fff", fontSize: "0.5625rem",
           fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em",
           padding: "0.125rem 0.5rem", borderRadius: "2px",
         }}>Destaque</span>
+      )}
+
+      {/* Foto (quando disponível) */}
+      {a.imagem && (
+        <div style={{ margin: "-1.25rem -1.25rem 0", position: "relative", overflow: "hidden", borderRadius: "3px 3px 0 0" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={a.imagem}
+            alt={`${a.designacao} — ${a.modelo}`}
+            loading="lazy"
+            style={{ width: "100%", height: "160px", objectFit: "cover", display: "block" }}
+          />
+          {a.imagem_credito && (
+            <span style={{
+              position: "absolute", bottom: 0, right: 0,
+              backgroundColor: "rgba(0,0,0,0.6)", color: "#fff",
+              fontSize: "0.5625rem", padding: "0.125rem 0.375rem",
+              borderTopLeftRadius: "3px",
+            }}>
+              📷 {a.imagem_credito}
+            </span>
+          )}
+        </div>
       )}
 
       {/* Header: designação + modelo */}
@@ -125,9 +148,10 @@ export default async function FrotaPage() {
             <em style={{ fontStyle: "normal", color: ACCENT }}>com dinheiro público</em>
           </h1>
           <p style={{ fontSize: "1rem", color: "hsl(var(--text-body))", maxWidth: "40rem", lineHeight: 1.6 }}>
-            Do avião presidencial ao caça mais moderno do país — conheça as aeronaves
-            da Força Aérea Brasileira e dos órgãos públicos federais. Modelos, capacidade,
-            custo e as curiosidades por trás de cada uma.
+            Do avião presidencial ao último caça A-4 Skyhawk em operação no mundo —
+            conheça as aeronaves das três Forças Armadas (FAB, Marinha e Exército)
+            e dos órgãos públicos brasileiros. Modelos, capacidade, custo e as
+            curiosidades por trás de cada uma.
           </p>
         </div>
       </section>

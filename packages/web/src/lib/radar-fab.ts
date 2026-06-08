@@ -96,6 +96,8 @@ export interface Aeronave {
   custo_hora: string;
   curiosidade: string;
   destaque?: boolean;
+  imagem?: string;
+  imagem_credito?: string;
 }
 
 export interface CategoriaFrota {
