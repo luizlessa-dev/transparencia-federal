@@ -4,6 +4,7 @@
  * Rota: /voos
  */
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   getVoosParlamentarAgg,
   getVoosCompanhiaAgg,
@@ -11,6 +12,7 @@ import {
   getVoosCamaraDeputado,
   getVoosCamaraCompanhia,
   ehAereaConhecida,
+  companhiaSlug,
 } from "~/services/voos";
 
 export const dynamic = "force-dynamic";
@@ -274,7 +276,18 @@ export default async function VoosPage() {
                 const aerea = ehAereaConhecida(c.companhia);
                 return (
                   <tr key={c.companhia}>
-                    <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-headline))" }}>{c.companhia}</td>
+                    <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-headline))" }}>
+                      {aerea ? (
+                        <Link
+                          href={`/voos/companhia/${companhiaSlug(c.companhia)}`}
+                          style={{ color: "hsl(var(--primary))", textDecoration: "none" }}
+                        >
+                          {c.companhia}
+                        </Link>
+                      ) : (
+                        c.companhia
+                      )}
+                    </td>
                     <td>
                       <span className={aerea ? "badge-success" : "badge-neutral"}>
                         {aerea ? "Aérea" : "Agência"}
@@ -367,7 +380,18 @@ export default async function VoosPage() {
                 const aerea = ehAereaConhecida(c.companhia);
                 return (
                   <tr key={c.companhia}>
-                    <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-headline))" }}>{c.companhia}</td>
+                    <td style={{ fontSize: "0.8125rem", color: "hsl(var(--text-headline))" }}>
+                      {aerea ? (
+                        <Link
+                          href={`/voos/companhia/${companhiaSlug(c.companhia)}`}
+                          style={{ color: "hsl(var(--primary))", textDecoration: "none" }}
+                        >
+                          {c.companhia}
+                        </Link>
+                      ) : (
+                        c.companhia
+                      )}
+                    </td>
                     <td>
                       <span className={aerea ? "badge-success" : "badge-neutral"}>
                         {aerea ? "Aérea" : "Agência"}

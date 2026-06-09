@@ -116,3 +116,69 @@ const AEREAS = new Set([
 export function ehAereaConhecida(companhia: string): boolean {
   return AEREAS.has(companhia.toUpperCase().trim());
 }
+
+// ── Página por companhia (/voos/companhia/[slug], entity-first) ──
+
+export function companhiaSlug(canon: string): string {
+  return canon
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Lista de companhias aéreas conhecidas que têm página de detalhe. */
+export async function getCompanhiasComPagina(): Promise<string[]> {
+  const sb = getSupabase();
+  const [{ data: sen }, { data: cam }] = await Promise.all([
+    sb.from("voos_senado_companhia_agg").select("companhia"),
+    sb.from("voos_camara_companhia_agg").select("companhia"),
+  ]);
+  const set = new Set<string>();
+  for (const r of [...(sen ?? []), ...(cam ?? [])]) {
+    if (r.companhia && ehAereaConhecida(r.companhia)) set.add(r.companhia.toUpperCase().trim());
+  }
+  return [...set].sort();
+}
+
+export interface CompanhiaResumo {
+  canon: string;
+  senadoGasto: number;
+  senadoTrechos: number;
+  camaraGasto: number;
+  camaraDocs: number;
+}
+
+export async function getCompanhiaResumo(canon: string): Promise<CompanhiaResumo> {
+  const sb = getSupabase();
+  const [{ data: sen }, { data: cam }] = await Promise.all([
+    sb.from("voos_senado_companhia_agg").select("total_gasto,n_trechos").eq("companhia", canon),
+    sb.from("voos_camara_companhia_agg").select("total_gasto,n_documentos").eq("companhia", canon),
+  ]);
+  return {
+    canon,
+    senadoGasto: (sen ?? []).reduce((s, r) => s + Number(r.total_gasto ?? 0), 0),
+    senadoTrechos: (sen ?? []).reduce((s, r) => s + Number(r.n_trechos ?? 0), 0),
+    camaraGasto: (cam ?? []).reduce((s, r) => s + Number(r.total_gasto ?? 0), 0),
+    camaraDocs: (cam ?? []).reduce((s, r) => s + Number(r.n_documentos ?? 0), 0),
+  };
+}
+
+export async function getCompanhiaSenadores(canon: string) {
+  return getSupabase()
+    .from("voos_senado_companhia_senador_agg")
+    .select("senador_normalizado,n_trechos,n_documentos")
+    .eq("companhia", canon)
+    .order("n_trechos", { ascending: false })
+    .limit(20);
+}
+
+export async function getCompanhiaRotas(canon: string) {
+  return getSupabase()
+    .from("voos_senado_rota_agg")
+    .select("origem,destino,n_trechos")
+    .eq("companhia", canon)
+    .order("n_trechos", { ascending: false })
+    .limit(15);
+}

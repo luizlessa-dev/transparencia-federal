@@ -527,6 +527,53 @@ async function persistir(sb: SupabaseClient, rows: VooRowPersist[]): Promise<voi
       atualizado_em: new Date().toISOString(),
     }));
   await regravar(sb, "voos_senado_terceiros_agg", terRows);
+
+  // ---- Agg companhia × senador (quem mais usa cada companhia) ----
+  const compSenMap = new Map<
+    string,
+    { companhia: string; senador: string | null; trechos: number; docs: Set<string> }
+  >();
+  for (const r of rows) {
+    const key = `${r.companhia}|${r.senador_normalizado}`;
+    if (!compSenMap.has(key))
+      compSenMap.set(key, { companhia: r.companhia, senador: r.senador_normalizado, trechos: 0, docs: new Set() });
+    const a = compSenMap.get(key)!;
+    a.trechos += 1;
+    a.docs.add(r.cod_documento);
+  }
+  const compSenRows = [...compSenMap.values()]
+    .sort((a, b) => b.trechos - a.trechos)
+    .map((v) => ({
+      companhia: v.companhia,
+      senador_normalizado: v.senador,
+      n_trechos: v.trechos,
+      n_documentos: v.docs.size,
+      atualizado_em: new Date().toISOString(),
+    }));
+  await regravar(sb, "voos_senado_companhia_senador_agg", compSenRows);
+
+  // ---- Agg companhia × rota (trechos com origem e destino) ----
+  const rotaMap = new Map<
+    string,
+    { companhia: string; origem: string; destino: string; trechos: number }
+  >();
+  for (const r of rows) {
+    if (!r.origem || !r.destino) continue;
+    const key = `${r.companhia}|${r.origem}|${r.destino}`;
+    if (!rotaMap.has(key))
+      rotaMap.set(key, { companhia: r.companhia, origem: r.origem, destino: r.destino, trechos: 0 });
+    rotaMap.get(key)!.trechos += 1;
+  }
+  const rotaRows = [...rotaMap.values()]
+    .sort((a, b) => b.trechos - a.trechos)
+    .map((v) => ({
+      companhia: v.companhia,
+      origem: v.origem,
+      destino: v.destino,
+      n_trechos: v.trechos,
+      atualizado_em: new Date().toISOString(),
+    }));
+  await regravar(sb, "voos_senado_rota_agg", rotaRows);
 }
 
 async function regravar(sb: SupabaseClient, tabela: string, rows: object[]): Promise<void> {
