@@ -162,6 +162,11 @@ async function ingerirAno(ano: number): Promise<{ lidas: number; inseridas: numb
     let inseridas = 0;
     let lidas = 0;
     let batch: object[] = [];
+    // Deduplica por (ano, cod_documento): o CSV repete o mesmo documento em
+    // várias linhas (parcelas). Mantém a 1ª ocorrência — mesmo comportamento do
+    // ignoreDuplicates antigo — e evita o erro "ON CONFLICT ... cannot affect
+    // row a second time" que ocorre quando a mesma chave cai no mesmo lote.
+    const vistos = new Set<string>();
 
     for (let i = 1; i < linhas.length; i++) {
       const campos = parseLinha(linhas[i]);
@@ -172,6 +177,10 @@ async function ingerirAno(ano: number): Promise<{ lidas: number; inseridas: numb
       if (!codDoc || codDoc === "" || codDoc === "0") continue;
 
       const anoLinha = parseInt(campos[iAno] ?? String(ano), 10) || ano;
+
+      const chave = `${anoLinha}|${codDoc}`;
+      if (vistos.has(chave)) continue;
+      vistos.add(chave);
 
       batch.push({
         ano:                    anoLinha,
