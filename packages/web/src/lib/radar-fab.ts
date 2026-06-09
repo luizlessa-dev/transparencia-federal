@@ -170,6 +170,28 @@ export async function getDestinos(): Promise<Destinos | null> {
   } catch { return null; }
 }
 
+// ──────────────────────── comitiva ────────────────────────
+
+export interface ComitivaVoo {
+  data: string;
+  mes: string;
+  destino: string;
+  pax: number;
+  servidores: Array<{ nome: string; cargo: string; diaria: string; passagem: string; motivo: string }>;
+}
+
+export interface ComitivaData {
+  _meta: { cobertura: string; nota: string; total_voos: number; total_servidores: number };
+  comitivas: Record<string, ComitivaVoo[]>;
+}
+
+export async function getComitiva(): Promise<ComitivaData | null> {
+  try {
+    const res = await fetch(`${RAW}/dados/comitiva.json`, FETCH_OPTS);
+    return res.ok ? res.json() : null;
+  } catch { return null; }
+}
+
 // ──────────────────────── ranking ────────────────────────
 
 export interface RankAutoridade {

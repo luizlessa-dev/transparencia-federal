@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAutoridade } from "~/lib/radar-fab";
+import { getAutoridade, getComitiva } from "~/lib/radar-fab";
 
 export const revalidate = 3600;
 
@@ -23,8 +23,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function AutoridadePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const a = await getAutoridade(slug);
+  const [a, comitivaData] = await Promise.all([getAutoridade(slug), getComitiva()]);
   if (!a) notFound();
+  const comitiva = comitivaData?.comitivas[slug] ?? [];
 
   const maxTl = Math.max(...a.timeline.map(t => t.n), 1);
   const maxDest = Math.max(...a.top_destinos.map(d => d.n), 1);
@@ -121,6 +122,45 @@ export default async function AutoridadePage({ params }: { params: Promise<{ slu
             ))}
           </div>
         </div>
+
+        {/* Comitiva identificada (Portal da Transparência) */}
+        {comitiva.length > 0 && (
+          <div style={{ marginBottom: "2rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+              <div style={{ fontSize: "0.6875rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--text-caption))" }}>
+                Comitiva identificada
+              </div>
+              <span style={{ fontSize: "0.625rem", backgroundColor: ACCENT, color: "#fff", padding: "0.0625rem 0.375rem", borderRadius: "2px", fontWeight: 600 }}>
+                {comitiva.reduce((s, v) => s + v.servidores.length, 0)} servidores
+              </span>
+            </div>
+            <p style={{ fontSize: "0.75rem", color: "hsl(var(--text-caption))", lineHeight: 1.5, marginBottom: "0.875rem" }}>
+              Servidores do mesmo órgão que viajaram ao destino do voo nas mesmas datas
+              (Portal da Transparência, jan–abr/2026). Indício de comitiva — <strong style={{ color: "hsl(var(--text-body))" }}>não
+              prova</strong> presença na aeronave da FAB.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
+              {comitiva.map((v, i) => (
+                <div key={i} style={{ border: "1px solid hsl(var(--border))", borderRadius: "3px", overflow: "hidden" }}>
+                  <div style={{ padding: "0.5rem 0.75rem", backgroundColor: "hsl(var(--surface))", fontSize: "0.8125rem", fontWeight: 600, color: "hsl(var(--text-headline))", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <span>{v.data} · {v.destino}</span>
+                    <span style={{ fontWeight: 400, color: "hsl(var(--text-caption))", fontSize: "0.75rem" }}>{v.pax} passageiros no GABAER · {v.servidores.length} identificados</span>
+                  </div>
+                  <table className="bloomberg-table" style={{ margin: 0 }}>
+                    <tbody>
+                      {v.servidores.map((s, j) => (
+                        <tr key={j}>
+                          <td style={{ fontSize: "0.75rem", fontWeight: 500, whiteSpace: "nowrap" }}>{s.nome}</td>
+                          <td style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))" }}>{s.motivo}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Lista de voos */}
         <div>
