@@ -11,6 +11,8 @@
     "ceaps:ts": "tsx src/run-ceaps.ts",
     "tse-agg:ts": "tsx src/run-tse-receitas-agg.ts",
     "ceaps-senado:ts": "tsx src/run-ceaps-senado.ts",
+    "voos-senado:ts": "tsx src/run-voos-senado.ts",
+    "voos-camara:ts": "tsx src/run-voos-camara.ts",
     "votacoes-agg:ts": "tsx src/run-votacoes-agg.ts",
     "risco:ts": "tsx src/run-risco.ts",
     "cpf-enrich:ts": "tsx src/run-cpf-enrich.ts",

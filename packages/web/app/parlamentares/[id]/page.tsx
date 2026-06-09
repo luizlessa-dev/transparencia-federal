@@ -11,6 +11,7 @@ import { PaywallSchema } from "~/components/PaywallSchema";
 import { getParlamentarRisco } from "~/services/risco";
 import { getFolhaGabinete, getFolhaLeads } from "~/services/folha";
 import { getCeapsSenadorHistorico } from "~/services/ceaps-senado";
+import { getVoosSenadorFicha, getVoosDeputadoFicha } from "~/services/voos";
 import { getFrentesDeDeputado } from "~/services/frentes";
 import { getTopDoadoresPorCpf } from "~/services/tse";
 import { normalizarNome } from "~/lib/texto";
@@ -123,6 +124,14 @@ export default async function ParlamentarPage({ params }: Props) {
     : [];
   const ceapsTotal = ceapsSenado.reduce((s, r) => s + (Number(r.total_reembolsado) || 0), 0);
   const ceapsDocs = ceapsSenado.reduce((s, r) => s + (Number(r.total_documentos) || 0), 0);
+
+  // Voos da cota: Senado por nome normalizado (rico); Câmara por id (2023+).
+  const voos =
+    p.casa_legislativa === "senado" && senadorNorm
+      ? await getVoosSenadorFicha(senadorNorm).catch(() => null)
+      : p.id_camara
+        ? await getVoosDeputadoFicha(p.id_camara).catch(() => null)
+        : null;
 
   // Paridade com o dossiê (Câmara): frentes + top doadores de campanha.
   const frentes = p.id_camara && risco ? await getFrentesDeDeputado(p.id_camara).catch(() => []) : [];
@@ -440,6 +449,45 @@ export default async function ParlamentarPage({ params }: Props) {
             <div className="bloomberg-kpi-grid">
               <Kpi label="Total reembolsado" value={fmtBRL(ceapsTotal)} sub={`${ceapsSenado.length} ano(s)`} />
               <Kpi label="Notas fiscais" value={fmtNum(ceapsDocs)} />
+            </div>
+          </DatasetSection>
+        )}
+
+        {voos && voos.gasto !== 0 && (
+          <DatasetSection
+            titulo="Passagens aéreas da cota"
+            confianca="revisar"
+            fonte={
+              voos.temTrechoTerceiros
+                ? "Senado Federal (CEAPS) — companhia e passageiro do detalhamento"
+                : "Câmara dos Deputados (CEAP) — fornecedor e valor, 2023+"
+            }
+            verDetalheHref="/voos"
+            verDetalheLabel="Ver ranking de voos →"
+            style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}
+          >
+            <div className="bloomberg-kpi-grid">
+              <Kpi
+                label="Gasto com voo"
+                value={fmtBRL(voos.gasto)}
+                sub={`${voos.anos} ano(s)`}
+              />
+              {voos.temTrechoTerceiros ? (
+                <>
+                  <Kpi label="Trechos voados" value={fmtNum(voos.trechos)} />
+                  <Kpi
+                    label="Trechos de terceiros"
+                    value={
+                      voos.trechos > 0
+                        ? `${((voos.terceiros / voos.trechos) * 100).toFixed(0)}%`
+                        : "—"
+                    }
+                    sub={voos.terceiros > 0 ? "não-parlamentar" : undefined}
+                  />
+                </>
+              ) : (
+                <Kpi label="Bilhetes" value={fmtNum(voos.documentos)} />
+              )}
             </div>
           </DatasetSection>
         )}
