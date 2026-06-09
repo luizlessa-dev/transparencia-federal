@@ -62,8 +62,13 @@ function parseLinha(linha: string): string[] {
 
 function parseFloat2(v: string): number {
   if (!v || v === "" || v === "0") return 0;
-  // Formato brasileiro: 1.234,56
-  const clean = v.replace(/\./g, "").replace(",", ".");
+  const s = v.trim();
+  // O CSV da Câmara usa PONTO como separador decimal (ex.: "8792.37"). Versões
+  // antigas/algumas colunas vêm em formato brasileiro ("1.234,56"). Detecta pela
+  // presença de vírgula: com vírgula → BR (remove pontos de milhar, vírgula→ponto);
+  // sem vírgula → já é decimal com ponto, parseFloat direto.
+  // (O bug histórico: tratar "8792.37" como BR removia o ponto → 879237, 100× inflado.)
+  const clean = s.includes(",") ? s.replace(/\./g, "").replace(",", ".") : s;
   return parseFloat(clean) || 0;
 }
 
@@ -109,7 +114,9 @@ async function upsertBatch(rows: object[]): Promise<number> {
   if (rows.length === 0) return 0;
   const { data, error } = await supabase
     .from("ceaps_brutas")
-    .upsert(rows, { onConflict: "ano,cod_documento", ignoreDuplicates: true })
+    // ignoreDuplicates:false → re-execuções ATUALIZAM o registro existente.
+    // Necessário para o reprocessamento que corrige valores (bug do parseFloat2).
+    .upsert(rows, { onConflict: "ano,cod_documento", ignoreDuplicates: false })
     .select("id");
   if (error) throw new Error(`Upsert ceaps_brutas: ${error.message}`);
   return Array.isArray(data) ? data.length : 0;
