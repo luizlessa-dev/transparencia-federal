@@ -15,10 +15,10 @@ const JOB_NOME = "job_voos_camara";
 // Câmara: todas as categorias com "AÉRE" são voo (SIGEPA, REEMBOLSO, RPA, EMISSÃO).
 // ilike é case-insensitive; o acento é literal e casa AÉREA/AÉREAS.
 const FILTRO_VOO = "%aére%";
-// O CSV histórico da Câmara (2019–2022) tem valor_liquido corrompido (~100× por
-// erro de parsing de decimal BR no ingestion). Os anos via API (2023+) estão
-// corretos. Restringimos a 2023+ para não exibir valores inflados.
-const ANO_MIN = 2023;
+// Cobre 2019+ (todo o histórico ingerido). O bug de parsing de decimal do CSV
+// histórico (2019–2022) foi corrigido em fix(ceap) — valores agora corretos.
+const ANO_MIN = 2019;
+const ANO_MAX = 2026;
 
 export interface JobVoosCamaraConfig {
   supabaseUrl: string;
@@ -92,44 +92,48 @@ export async function jobVoosCamara(
     >();
     const totalAno = new Map<number, number>();
 
-    // Varre ceaps_brutas (voo) paginado
+    // Varre ceaps_brutas (voo) ANO A ANO e paginado. Um ilike "%aére%" sobre a
+    // tabela inteira (curinga à esquerda, sem índice) estoura o statement timeout;
+    // escopar por ano mantém cada query leve.
     const PAGE = 1000;
-    let offset = 0;
     let registros = 0;
-    while (true) {
-      const { data, error } = await sb
-        .from("ceaps_brutas")
-        .select("deputado_id_externo, ano, nome_fornecedor, valor_liquido")
-        .ilike("tipo_despesa", FILTRO_VOO)
-        .gte("ano", ANO_MIN)
-        .range(offset, offset + PAGE - 1);
-      if (error) throw new Error(`Ler ceaps_brutas: ${error.message}`);
-      if (!data || data.length === 0) break;
+    for (let ano = ANO_MIN; ano <= ANO_MAX; ano++) {
+      let offset = 0;
+      while (true) {
+        const { data, error } = await sb
+          .from("ceaps_brutas")
+          .select("deputado_id_externo, ano, nome_fornecedor, valor_liquido")
+          .eq("ano", ano)
+          .ilike("tipo_despesa", FILTRO_VOO)
+          .range(offset, offset + PAGE - 1);
+        if (error) throw new Error(`Ler ceaps_brutas ano=${ano}: ${error.message}`);
+        if (!data || data.length === 0) break;
 
-      for (const r of data) {
-        const ano = Number(r.ano);
-        const valor = Number(r.valor_liquido ?? 0);
-        const depId = String(r.deputado_id_externo);
-        const [companhia, ehAerea] = normalizarCompanhia(r.nome_fornecedor ?? "(não informado)");
+        for (const r of data) {
+          const anoR = Number(r.ano);
+          const valor = Number(r.valor_liquido ?? 0);
+          const depId = String(r.deputado_id_externo);
+          const [companhia, ehAerea] = normalizarCompanhia(r.nome_fornecedor ?? "(não informado)");
 
-        const dk = `${depId}|${ano}`;
-        const da = depAgg.get(dk) ?? { dep: depId, ano, gasto: 0, docs: 0 };
-        da.gasto += valor;
-        da.docs += 1;
-        depAgg.set(dk, da);
+          const dk = `${depId}|${anoR}`;
+          const da = depAgg.get(dk) ?? { dep: depId, ano: anoR, gasto: 0, docs: 0 };
+          da.gasto += valor;
+          da.docs += 1;
+          depAgg.set(dk, da);
 
-        const ck = `${companhia}|${ano}`;
-        const ca = compAgg.get(ck) ?? { companhia, ehAerea, ano, gasto: 0, docs: 0 };
-        ca.gasto += valor;
-        ca.docs += 1;
-        compAgg.set(ck, ca);
+          const ck = `${companhia}|${anoR}`;
+          const ca = compAgg.get(ck) ?? { companhia, ehAerea, ano: anoR, gasto: 0, docs: 0 };
+          ca.gasto += valor;
+          ca.docs += 1;
+          compAgg.set(ck, ca);
 
-        totalAno.set(ano, (totalAno.get(ano) ?? 0) + valor);
-        registros++;
+          totalAno.set(anoR, (totalAno.get(anoR) ?? 0) + valor);
+          registros++;
+        }
+
+        offset += data.length;
+        if (data.length < PAGE) break;
       }
-
-      offset += data.length;
-      if (data.length < PAGE) break;
     }
 
     // Monta linhas deputado

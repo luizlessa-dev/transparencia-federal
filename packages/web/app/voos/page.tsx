@@ -308,7 +308,7 @@ export default async function VoosPage() {
         <div style={{ marginTop: "2.5rem" }}>
           <HouseHeader
             nome="Câmara dos Deputados"
-            sub="A Câmara não publica trecho nem passageiro — só gasto e companhia (2023–2025)"
+            sub="A Câmara não publica trecho nem passageiro — só gasto e companhia (2019–2025)"
           />
         </div>
 
@@ -420,8 +420,8 @@ export default async function VoosPage() {
           <strong>Fonte:</strong> CEAP/CEAPS — Cota para o Exercício da Atividade Parlamentar
           (Câmara dos Deputados e Senado Federal, dados abertos). No Senado, companhia, trecho e
           passageiro são extraídos do detalhamento de cada documento (valores líquidos; estornos
-          aparecem como negativos). Na Câmara, há apenas fornecedor e valor; os anos de 2019 a 2022
-          foram omitidos por inconsistência de valores na base histórica da fonte. Projeto independente.
+          aparecem como negativos). Na Câmara, há apenas fornecedor e valor (2019–2025).
+          Projeto independente.
         </p>
       </div>
     </>
