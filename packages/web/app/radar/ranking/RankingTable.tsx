@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { RankAutoridade } from "~/lib/radar-fab";
 
 const ACCENT = "hsl(350 73% 44%)";
@@ -71,7 +72,11 @@ export function RankingTable({ dados }: { dados: RankAutoridade[] }) {
             {filtrado.map((r, i) => (
               <tr key={r.autoridade}>
                 <td style={{ color: "hsl(var(--text-caption))", fontFamily: "var(--font-mono)" }}>{i + 1}</td>
-                <td style={{ fontWeight: 500, maxWidth: "18rem" }}>{r.autoridade}</td>
+                <td style={{ fontWeight: 500, maxWidth: "18rem" }}>
+                  {r.slug
+                    ? <Link href={`/autoridade/${r.slug}`} style={{ color: "hsl(var(--text-headline))", textDecoration: "none", borderBottom: `1px dotted ${ACCENT}` }}>{r.autoridade}</Link>
+                    : r.autoridade}
+                </td>
                 <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: 600 }}>{r.voos}</td>
                 <td style={{ textAlign: "right", fontFamily: "var(--font-mono)" }}>{brl(r.custo_estimado)}</td>
                 <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", color: r.fds_pct >= 25 ? ACCENT : undefined }}>{r.fds_pct}%</td>

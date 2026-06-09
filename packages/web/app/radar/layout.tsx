@@ -20,9 +20,11 @@ export const metadata = {
 const NAV = [
   { label: "Análises",   href: "/" },
   { label: "Ranking",    href: "/ranking" },
+  { label: "Destinos",   href: "/destinos" },
   { label: "Frota",      href: "/frota" },
   { label: "Busca",      href: "/busca" },
   { label: "Histórico",  href: "/historico" },
+  { label: "Metodologia",href: "/metodologia" },
 ];
 
 export default async function RadarLayout({ children }: { children: ReactNode }) {

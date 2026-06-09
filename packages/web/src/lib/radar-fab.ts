@@ -132,6 +132,44 @@ export async function getFrotaPublica(): Promise<FrotaPub | null> {
   } catch { return null; }
 }
 
+// ──────────────────────── autoridade (detalhe) ────────────────────────
+
+export interface AutoridadeDetalhe {
+  autoridade: string;
+  slug: string;
+  voos: number;
+  custo_estimado: number;
+  fds: number;
+  fds_pct: number;
+  noturnos: number;
+  internacionais: number;
+  a_disposicao: number;
+  bolsonaro: number;
+  lula: number;
+  top_destinos: Array<{ destino: string; n: number }>;
+  timeline: Array<{ mes: string; n: number }>;
+  voos_lista: Array<{ data: string; origem: string; destino: string; custo: number; fds: boolean }>;
+}
+
+export async function getAutoridade(slug: string): Promise<AutoridadeDetalhe | null> {
+  try {
+    const res = await fetch(`${RAW}/dados/autoridades/${slug}.json`, FETCH_OPTS);
+    return res.ok ? res.json() : null;
+  } catch { return null; }
+}
+
+export interface Destinos {
+  _meta: { total_destinos_mapeados: number; voos_sem_coordenada: number };
+  destinos: Array<{ cidade: string; n: number; lat: number; lng: number }>;
+}
+
+export async function getDestinos(): Promise<Destinos | null> {
+  try {
+    const res = await fetch(`${RAW}/dados/destinos.json`, FETCH_OPTS);
+    return res.ok ? res.json() : null;
+  } catch { return null; }
+}
+
 // ──────────────────────── ranking ────────────────────────
 
 export interface RankAutoridade {
@@ -146,6 +184,7 @@ export interface RankAutoridade {
   top_destinos: Array<{ destino: string; n: number }>;
   bolsonaro: number;
   lula: number;
+  slug?: string | null;
 }
 
 export interface Ranking {
