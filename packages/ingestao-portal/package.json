@@ -15,7 +15,8 @@
     "tse-bens:ts": "tsx src/run-tse-bens.ts",
     "sancionados:ts": "tsx src/run-sancionados.ts",
     "emendas-csv:ts": "tsx src/run-emendas-csv.ts",
-    "convenios:ts": "tsx src/run-convenios.ts"
+    "convenios:ts": "tsx src/run-convenios.ts",
+    "viagens:ts": "tsx src/run-viagens.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"

@@ -74,11 +74,10 @@ async function main(): Promise<void> {
       supabaseServiceRoleKey: supabaseKey,
       portalApiKey,
       portalBaseUrl: portalBaseUrl || undefined,
-      anos: [2023, 2024, 2025, 2026],
     });
     console.log(`  Execução: ${r.execucao_id} | Status: ${r.status}`);
-    for (const a of r.resultados_por_ano) {
-      console.log(`  ${a.ano}: total=${a.total} inseridos=${a.inseridos}`);
+    for (const a of r.resultados_por_uf) {
+      console.log(`  ${a.uf}: total=${a.total} inseridos=${a.inseridos}`);
     }
     if (r.status === "erro") statusGeral = 1;
     console.log();
