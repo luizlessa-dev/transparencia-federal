@@ -91,3 +91,36 @@ export async function getAlepeFornecedoresIntersetados() {
     .gt("n_casas", 1)
     .order("total_geral", { ascending: false });
 }
+
+// ── ALESC ────────────────────────────────────────────────────────────────
+
+export async function getAlescDeputados() {
+  return getSupabase()
+    .from("alesc_deputados")
+    .select("id_alesc,nome")
+    .order("nome", { ascending: true });
+}
+
+export async function getAlescDespesasResumo() {
+  return getSupabase()
+    .from("alesc_despesas")
+    .select("nome_deputado,ano,valor")
+    .order("valor", { ascending: false });
+}
+
+export async function getAlescDespesas(page = 1, perPage = 50, filtros?: { q?: string; ano?: string }) {
+  let query = getSupabase()
+    .from("alesc_despesas")
+    .select("id,nome_deputado,ano,mes,verba,descricao,favorecido,valor", { count: "exact" });
+
+  if (filtros?.q) {
+    query = query.or(`nome_deputado.ilike.%${filtros.q}%,favorecido.ilike.%${filtros.q}%`);
+  }
+  if (filtros?.ano) {
+    query = query.eq("ano", parseInt(filtros.ano));
+  }
+
+  return query
+    .order("valor", { ascending: false })
+    .range((page - 1) * perPage, page * perPage - 1);
+}
