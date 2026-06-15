@@ -52,8 +52,12 @@ export async function login(email: string, password: string): Promise<void> {
     redirect: "manual",
   });
 
-  // Inlabs retorna três cookies (PHPSESSID, inlabs_session_cookie, TS*) — todos necessários
-  const cookies = res.headers.getSetCookie?.() ?? [res.headers.get("set-cookie") ?? ""];
+  // Inlabs retorna três cookies (PHPSESSID, inlabs_session_cookie, TS*) — todos necessários.
+  // getSetCookie() pode retornar [] em respostas 302 com redirect:manual; usar get() como fallback.
+  const rawCookies = res.headers.getSetCookie?.() ?? [];
+  const cookies = rawCookies.length
+    ? rawCookies
+    : (res.headers.get("set-cookie") ?? "").split(/,(?=[^ ].*?=)/).filter(Boolean);
   if (!cookies.length) throw new Error("Login Inlabs falhou — sem cookie de sessão");
   sessionCookie = cookies.map((c) => c.split(";")[0]).join("; ");
   sessionExpiresAt = Date.now() + 25 * 60 * 1000; // renova antes dos 30min de expiração

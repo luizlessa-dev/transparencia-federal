@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "workspaces": [
+    "packages/ingestao-dou",
+    "packages/ingestao-pncp",
     "packages/ingestao-tse-fundacoes",
     "packages/ingestao-portal",
     "packages/ingestao-camara",
