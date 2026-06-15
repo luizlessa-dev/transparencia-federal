@@ -20,7 +20,10 @@ const get = (flag: string) => args.find((a) => a.startsWith(`--${flag}=`))?.spli
 const anosArg = get("anos") ?? "2024,2025,2026";
 const anos = anosArg.split(",").map(Number);
 const modArg = get("modalidades");
-const modalidades = modArg ? modArg.split(",").map(Number) : undefined;
+// Default: só as modalidades mais comuns para reduzir carga no API
+const modalidades = modArg
+  ? modArg.split(",").map(Number)
+  : [1, 3, 4, 6, 8]; // pregão elet, dispensa elet, concorrência elet, leilão, concurso
 
 console.log("▶ Backfill PNCP");
 console.log(`  Anos: ${anos.join(", ")}`);
@@ -43,6 +46,9 @@ for (const ano of anos) {
     const df = fmt(fim);
 
     process.stdout.write(`  ${ano}-${String(mes).padStart(2, "0")} (${di}→${df})... `);
+
+    // Pausa entre meses para não sobrecarregar o PNCP
+    await new Promise((r) => setTimeout(r, 3000));
 
     const t0 = Date.now();
     const { resultados } = await jobIngestaoPncp({
