@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCobertura, getTopParlamentares } from "~/services/ranking";
 import { AskBox } from "~/components/AskBox";
+import { getNoticiasDestaque } from "~/services/noticias";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +26,10 @@ function fmtBRLCompact(valor: number): string {
 }
 
 export default async function HomePage() {
-  const [stats, destaques] = await Promise.all([
+  const [stats, destaques, noticiasDestaque] = await Promise.all([
     getCobertura().catch(() => null),
     getTopParlamentares(2025, 8).catch(() => ({ ano: 2025, data: [] })),
+    getNoticiasDestaque(3).catch(() => []),
   ]);
 
   const totalParl = stats?.total_parlamentares ?? 594;
@@ -135,6 +137,45 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* ── ÚLTIMAS INVESTIGAÇÕES ───────────────────────────────── */}
+      {noticiasDestaque.length > 0 && (
+        <section style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+          <div className="container" style={{ padding: "3rem 1.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
+                <h2 style={{ fontSize: "1.375rem", margin: 0 }}>Últimas Notícias</h2>
+              </div>
+              <Link href="/noticias" style={{ fontSize: "0.8125rem", fontWeight: 600, color: "hsl(var(--primary))", textDecoration: "none" }}>
+                Ver todas →
+              </Link>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "1px", backgroundColor: "hsl(var(--border))" }}>
+              {noticiasDestaque.map((m) => (
+                <Link
+                  key={m.slug}
+                  href={`/noticias/${m.slug}`}
+                  className="bloomberg-card"
+                  style={{ padding: "1.25rem 1.5rem", textDecoration: "none", display: "block", borderRadius: 0, border: "none" }}
+                >
+                  <div style={{ display: "flex", gap: "0.625rem", alignItems: "center", marginBottom: "0.5rem" }}>
+                    <span className="badge-neutral" style={{ fontSize: "0.6875rem" }}>{m.tag}</span>
+                    <span style={{ fontSize: "0.6875rem", color: "hsl(var(--text-caption))" }}>{m.data_pub}</span>
+                  </div>
+                  <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "0 0 0.375rem", color: "hsl(var(--text-headline))", lineHeight: 1.35 }}>
+                    {m.titulo}
+                  </h3>
+                  <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-body))", margin: 0, lineHeight: 1.55 }}>
+                    {m.resumo}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── PARLAMENTARES EM DESTAQUE ───────────────────────────── */}
       {destaques.data.length > 0 && (
@@ -272,6 +313,53 @@ export default async function HomePage() {
               </div>
             ))}
 
+          </div>
+        </div>
+      </section>
+
+      {/* ── NÓS ESTADUAIS ──────────────────────────────────────── */}
+      <section style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+        <div className="container" style={{ padding: "3rem 1.5rem" }}>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+            <div style={{ height: "2rem", width: "3px", flexShrink: 0, backgroundColor: "hsl(var(--primary))" }} />
+            <h2 style={{ fontSize: "1.375rem", margin: 0 }}>Assembleias Legislativas</h2>
+          </div>
+          <p style={{ fontSize: "0.875rem", color: "hsl(var(--text-body))", marginBottom: "1.5rem", maxWidth: "40rem" }}>
+            Dados de gastos e atividade legislativa dos principais estados, com o mesmo padrão do módulo federal.
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "1px", backgroundColor: "hsl(var(--border))" }}>
+            {[
+              { sigla: "ALMG", nome: "Minas Gerais", href: "https://almg.thebrinsider.com" },
+              { sigla: "ALESP", nome: "São Paulo", href: "https://alesp.thebrinsider.com" },
+              { sigla: "ALERJ", nome: "Rio de Janeiro", href: "https://alerj.thebrinsider.com" },
+              { sigla: "ALEPE", nome: "Pernambuco", href: "https://alepe.thebrinsider.com" },
+              { sigla: "CLDF", nome: "Distrito Federal", href: "https://cldf.thebrinsider.com" },
+              { sigla: "Radar", nome: "Agenda do Executivo", href: "https://radar.thebrinsider.com" },
+            ].map((no) => (
+              <a
+                key={no.sigla}
+                href={no.href}
+                style={{
+                  display: "block",
+                  padding: "1.25rem 1.5rem",
+                  backgroundColor: "hsl(var(--card))",
+                  textDecoration: "none",
+                  transition: "background-color 0.15s",
+                }}
+              >
+                <div style={{ fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "hsl(var(--primary))", marginBottom: "0.375rem", fontFamily: "var(--font-sans)" }}>
+                  {no.sigla}
+                </div>
+                <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "hsl(var(--text-headline))", marginBottom: "0.75rem" }}>
+                  {no.nome}
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "hsl(var(--primary))", fontWeight: 600 }}>
+                  Acessar →
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </section>
