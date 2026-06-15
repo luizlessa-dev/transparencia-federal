@@ -90,54 +90,78 @@ function parseLinha(linha: string): string[] {
 // 24: NOME_PARLAMENTAR, 25: OBJETO_PROPOSTA, 26: TIPO_COMARCA ...
 
 let HEADER: string[] = [];
+// Índice normalizado: sem acento, maiúsculo → posição
+const HEADER_IDX: Record<string, number> = {};
+
+function norm(s: string): string {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().trim();
+}
+
+function col(nome: string, fallback: number): string | undefined {
+  const idx = HEADER_IDX[norm(nome)] ?? fallback;
+  return HEADER.length > 0 ? f_current[idx] : f_current[fallback];
+}
+
+// Variável de contexto por linha (hack para evitar passar f por toda parte)
+let f_current: string[] = [];
 
 function mapearLinha(f: string[], anosAlvo: Set<number> | null): Record<string, unknown> | null {
   if (f.length < 10) return null;
+  f_current = f;
 
-  // Se temos o cabeçalho mapeado, usamos por nome; senão, por posição fixa
-  const get = (nome: string, fallbackIdx: number): string | undefined => {
-    const idx = HEADER.length > 0 ? HEADER.indexOf(nome) : fallbackIdx;
-    return idx >= 0 ? f[idx] : f[fallbackIdx];
-  };
+  // Colunas reais do arquivo (índice base-0):
+  // 0: NÚMERO CONVÊNIO, 1: UF, 2: CÓDIGO SIAFI MUNICÍPIO, 3: NOME MUNICÍPIO
+  // 4: SITUAÇÃO CONVÊNIO, 5: NÚMERO ORIGINAL, 6: NÚMERO PROCESSO
+  // 7: OBJETO, 8: CÓDIGO ÓRGÃO SUPERIOR, 9: NOME ÓRGÃO SUPERIOR
+  // 10: CÓDIGO ÓRGÃO CONCEDENTE, 11: NOME ÓRGÃO CONCEDENTE
+  // 12: CÓDIGO UG CONCEDENTE, 13: NOME UG CONCEDENTE
+  // 14: CÓDIGO CONVENENTE, 15: TIPO CONVENENTE, 16: NOME CONVENENTE
+  // 17: TIPO ENTE CONVENENTE, 18: TIPO INSTRUMENTO
+  // 19: VALOR CONVÊNIO, 20: VALOR LIBERADO
+  // 21: DATA PUBLICAÇÃO, 22: DATA INÍCIO VIGÊNCIA, 23: DATA FINAL VIGÊNCIA
+  // 24: VALOR CONTRAPARTIDA, 25: DATA ÚLTIMA LIBERAÇÃO, 26: VALOR ÚLTIMA LIBERAÇÃO
 
-  const nr_convenio = limpar(get("NR_CONVENIO", 0));
-  if (!nr_convenio) return null;
+  const numero = limpar(col("NUMERO CONVENIO", 0));
+  if (!numero) return null;
 
-  // Extrai ano da data de assinatura para filtro
-  const data_assinatura = parseData(get("DIA_ASSIN_CONV", 1));
-  const ano = data_assinatura ? parseInt(data_assinatura.slice(0, 4), 10) : null;
+  const data_publicacao = parseData(col("DATA PUBLICACAO", 21));
+  const ano = data_publicacao ? parseInt(data_publicacao.slice(0, 4), 10) : null;
   if (anosAlvo && ano && !anosAlvo.has(ano)) return null;
 
   return {
-    numero: nr_convenio,
-    situacao: limpar(get("SIT_CONVENIO", 2)),
-    ativo: limpar(get("INSTRUMENTO_ATIVO", 3)) === "SIM",
+    numero,
+    situacao: limpar(col("SITUACAO CONVENIO", 4)),
+    tipo_instrumento: limpar(col("TIPO INSTRUMENTO", 18)),
+    numero_processo: limpar(col("NUMERO PROCESSO DO CONVENIO", 6)),
 
-    data_publicacao: parseData(get("DIA_PUBL_CONV", 4)),
-    data_inicio_vigencia: parseData(get("DIA_INIC_VIGENC_CONV", 5)),
-    data_final_vigencia: parseData(get("DIA_FIM_VIGENC_CONV", 6)),
-    data_limite_prestacao: parseData(get("DIA_LIMITE_PREST_CONTAS", 7)),
+    data_publicacao,
+    data_inicio_vigencia: parseData(col("DATA INICIO VIGENCIA", 22)),
+    data_final_vigencia: parseData(col("DATA FINAL VIGENCIA", 23)),
+    data_ultima_liberacao: parseData(col("DATA ULTIMA LIBERACAO", 25)),
 
-    valor: parseBRL(get("VL_GLOBAL_CONV", 8)),
-    valor_liberado: parseBRL(get("VL_REPASSE_CONV", 9)),
-    valor_contrapartida: parseBRL(get("VL_CONTRAPARTIDA_CONV", 10)),
-    valor_empenhado: parseBRL(get("VL_EMPENHADO_CONV", 11)),
-    valor_desembolsado: parseBRL(get("VL_DESEMBOLSADO_CONV", 12)),
+    uf: limpar(col("UF", 1)),
+    municipio_ibge: limpar(col("CODIGO SIAFI MUNICIPIO", 2)),
+    municipio_nome: limpar(col("NOME MUNICIPIO", 3)),
 
-    orgao_maximo_nome: limpar(get("NOME_ORGAO_SUP_CONV", 15)),
-    orgao_maximo_sigla: limpar(get("SIGLA_ORGAO_SUP_CONV", 16)),
-    orgao_nome: limpar(get("NOME_ORGAO_CONV", 17)),
-    orgao_sigla: limpar(get("SIGLA_ORGAO_CONV", 18)),
+    orgao_maximo_codigo: limpar(col("CODIGO ORGAO SUPERIOR", 8)),
+    orgao_maximo_nome: limpar(col("NOME ORGAO SUPERIOR", 9)),
+    orgao_siafi: limpar(col("CODIGO ORGAO CONCEDENTE", 10)),
+    orgao_nome: limpar(col("NOME ORGAO CONCEDENTE", 11)),
+    ug_codigo: limpar(col("CODIGO UG CONCEDENTE", 12)),
+    ug_nome: limpar(col("NOME UG CONCEDENTE", 13)),
 
-    convenente_tipo: limpar(get("NATUREZA_JURIDICA", 19)),
-    convenente_cnpj: limpar(get("NR_CGCCPF", 20)),
-    convenente_nome: limpar(get("NOME_CONVENENTE", 21)),
-    municipio_nome: limpar(get("MUNICIPIO_PROPONENTE", 22)),
-    uf: limpar(get("UF_PROPONENTE", 23)),
+    convenente_cnpj: limpar(col("CODIGO CONVENENTE", 14)),
+    convenente_tipo: limpar(col("TIPO CONVENENTE", 15)),
+    convenente_nome: limpar(col("NOME CONVENENTE", 16)),
 
-    objeto: limpar(get("OBJETO_PROPOSTA", 25)),
+    objeto: limpar(col("OBJETO DO CONVENIO", 7)),
 
-    dados: { campos_raw: f.slice(0, 30) },
+    valor: parseBRL(col("VALOR CONVENIO", 19)),
+    valor_liberado: parseBRL(col("VALOR LIBERADO", 20)),
+    valor_contrapartida: parseBRL(col("VALOR CONTRAPARTIDA", 24)),
+    valor_ultima_liberacao: parseBRL(col("VALOR ULTIMA LIBERACAO", 26)),
+
+    dados: {},
     atualizado_em: new Date().toISOString(),
   };
 }
@@ -186,7 +210,8 @@ for await (const rawLine of rl) {
   if (!linha) continue;
 
   if (isHeader) {
-    HEADER = parseLinha(linha).map((h) => h.replace(/^"|"$/g, "").trim().toUpperCase());
+    HEADER = parseLinha(linha).map((h) => h.replace(/^"|"$/g, "").trim());
+    HEADER.forEach((h, i) => { HEADER_IDX[norm(h)] = i; });
     console.log(`  Colunas detectadas: ${HEADER.length} (${HEADER.slice(0, 5).join(", ")}...)`);
     isHeader = false;
     continue;
