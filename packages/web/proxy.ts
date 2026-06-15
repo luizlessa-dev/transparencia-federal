@@ -21,6 +21,7 @@ const AUTH_REQUIRED = [
   "/fundacoes/",      // fundações individuais
   "/mercado-de-capitais/socios-politicos",
   "/mercado-de-capitais/fips-monopolio",
+  "/convenios/fornecedores",
   "/almg",
   "/alesp",
   "/alerj",
