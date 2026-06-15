@@ -3,8 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Rotas que exigem login (qualquer plano)
 const AUTH_REQUIRED = [
-  "/risco/",        // perfis individuais (listing /risco é livre, truncado)
-  "/frentes/",      // detalhe de frente (listing /frentes é livre)
+  "/parlamentares/",  // perfis individuais (listing /parlamentares é livre)
+  "/risco",           // listing + perfis individuais
+  "/frentes",         // listing + detalhes
   "/ranking",
   "/patrimonios",
   "/amendments",
@@ -15,12 +16,22 @@ const AUTH_REQUIRED = [
   "/voting",
   "/sancionados",
   "/rp9",
+  "/voos",
+  "/dossie/",         // dossiês individuais
+  "/fundacoes/",      // fundações individuais
+  "/mercado-de-capitais/socios-politicos",
+  "/mercado-de-capitais/fips-monopolio",
+  "/almg",
+  "/alesp",
+  "/alerj",
+  "/alepe",
+  "/cldf",
+  "/radar",
   "/conta",
   "/ativar",
 ];
 
-// Exceções: sub-rotas que casariam com AUTH_REQUIRED mas devem ficar públicas
-// (páginas institucionais, metodologia, etc.).
+// Exceções: sub-rotas que casariam com AUTH_REQUIRED mas devem ficar públicas.
 const AUTH_BYPASS = [
   "/risco/metodologia",
 ];
@@ -81,48 +92,54 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const segment = segmentForHost(request.headers.get("host"));
 
-  // Subdomínio estadual → rewrite pra /<segmento>/<path>. Mantém a URL na barra.
+  const url = process.env.SUPABASE_URL!;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  // Helper: verifica sessão e redireciona para /login se não autenticado.
+  async function requireAuth(redirectPath: string): Promise<NextResponse | null> {
+    let response = NextResponse.next({ request });
+    const supabase = createServerClient(url, key, {
+      auth: { persistSession: true },
+      cookies: {
+        getAll() { return request.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    });
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.searchParams.set("next", redirectPath);
+      return NextResponse.redirect(loginUrl);
+    }
+    return null; // autenticado — prosseguir
+  }
+
+  // Subdomínio estadual → exige login, depois rewrite pra /<segmento>/<path>.
   if (segment) {
+    const authRedirect = await requireAuth(request.headers.get("host") + pathname);
+    if (authRedirect) return authRedirect;
+
     if (!pathname.startsWith(segment)) {
       const rewriteUrl = request.nextUrl.clone();
       rewriteUrl.pathname = pathname === "/" ? segment : `${segment}${pathname}`;
       return NextResponse.rewrite(rewriteUrl);
     }
-    // Já está no segmento certo — nós estaduais são públicos por enquanto.
     return NextResponse.next();
   }
 
   if (!needsAuth(pathname)) return NextResponse.next();
 
-  const url = process.env.SUPABASE_URL!;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const authRedirect = await requireAuth(pathname);
+  if (authRedirect) return authRedirect;
 
-  let response = NextResponse.next({ request });
-
-  const supabase = createServerClient(url, key, {
-    auth: { persistSession: true },
-    cookies: {
-      getAll() { return request.cookies.getAll(); },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        response = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options)
-        );
-      },
-    },
-  });
-
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return response;
+  return NextResponse.next({ request });
 }
 
 export const config = {
