@@ -1,0 +1,18 @@
+{
+  "name": "@transparencia/ingestao-alesc",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deputados:ts": "tsx src/run-deputados.ts",
+    "despesas:ts": "tsx src/run-despesas.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "typescript": "^5.0.0",
+    "tsx": "^4.19.0"
+  }
+}
