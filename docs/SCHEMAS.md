@@ -56,18 +56,27 @@ Para resolver: `parlamentares.id` (uuid) ↔ `parlamentares.id_camara` (int) ↔
 
 ## Views cruzadas com emendas
 
-### `tse_v_doador_emenda` — VIEW
+### `tse_v_doador_emenda` — VIEW (reescrita 2026-06-17)
 
-**Não tem `cpf_candidato` no SELECT** (apenas no JOIN interno). Para filtrar por
-deputado, use `parlamentar` (text com nome do candidato no TSE).
+**Definição anterior está obsoleta** — antes filtrava por `tipo_doador ILIKE
+'%jurídica%'` e exigia mesmo parlamentar como autor da emenda e recebedor da
+doação. Resultado: 0 linhas. Doação PJ→candidato direto foi banida pela
+reforma eleitoral de 2015.
 
-Colunas: `parlamentar`, `sigla_partido`, `uf`, `ano_eleicao`, `empresa_doadora`,
-`cnpj_doador`, `setor_economico_doador`, `valor_doacao`, `valor_emenda`,
-`ano_emenda`, `municipio_favorecido`, `uf_favorecido`, `tipo_emenda`, `subtipo`.
+Reescrita em `20260618010000_rewrite_tse_v_doador_emenda.sql` para abordagem
+ampla: agrega `tse_receitas` por CNPJ e junta com `emendas_favorecidos` só
+pelo CNPJ favorecido, sem exigir mesmo parlamentar. ~94 linhas hoje, top
+dominado por entes públicos (Estado do AM, MG, etc.).
 
-JOINs internos: `tse_receitas r` × `tse_candidatos c` (por `cpf` + `ano_eleicao`) ×
-`parlamentares p` (por `cpf`) × `emendas_favorecidos ef` (por `codigo_autor::int =
-p.id_camara`).
+Colunas: `autor_codigo`, `autor_nome`, `ano_emenda`, `tipo_emenda`, `subtipo`,
+`cnpj_favorecido`, `nome_favorecido`, `natureza_juridica_favorecido`,
+`municipio_favorecido`, `uf_favorecido`, `valor_emenda`, `qtd_doacoes`,
+`valor_total_doado`, `candidatos_distintos`, `eleicoes_doadas`,
+`nome_doador_sample`, `setor_doador_sample`.
+
+**Atenção:** o "doador" agora é o **CNPJ que recebeu emenda E aparece como
+doador em alguma eleição** — não significa que doou pro autor da emenda nem
+pro partido dele. Cruzamento informativo amplo, não direto.
 
 ### `v_sancao_emenda` — VIEW
 

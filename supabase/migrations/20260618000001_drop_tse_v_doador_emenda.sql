@@ -1,0 +1,23 @@
+-- Aposenta tse_v_doador_emenda.
+--
+-- A view tentava cruzar "PJ doadora a candidato + candidato vira deputado +
+-- deputado faz emenda pra essa PJ" via tse_receitas WHERE tipo_doador ILIKE
+-- '%jurídica%'. Duas falhas estruturais:
+--
+-- 1. tse_receitas.tipo_doador não tem "Pessoa Jurídica" — só categorias de
+--    origem (Recursos de partido político, pessoas físicas, próprios, etc.).
+-- 2. Doação PJ→candidato direto foi banida pela reforma eleitoral de 2015.
+--    Toda doação PJ atual é PJ→partido (via tse_conta_receita), e a
+--    distribuição partido→deputado não vincula a emenda à doadora original.
+--
+-- Validado: a interseção {PJ doadora a partido} × {favorecida por emenda
+-- de deputado do mesmo partido} = 0 em 2023-2026. O cruzamento direto não
+-- existe mais no fluxo legal.
+--
+-- Para investigação real de "favorecimento de doador":
+--   - usar v_sancao_emenda (sancionados favorecidos por emenda)
+--   - usar tse_v_fornecedor_emenda (fornecedor TSE × emenda)
+--   - mapear afinidade setorial (PJ doa pro partido X + emendas de X no mesmo
+--     setor) requer view nova com agregação por CNAE — fora de escopo aqui.
+
+DROP VIEW IF EXISTS public.tse_v_doador_emenda;
