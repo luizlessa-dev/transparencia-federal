@@ -90,15 +90,18 @@ Colunas: `nome_apoiador`, `cargo_apoiador`, `ano_emenda`, `numero_emenda`,
 
 ---
 
-## Tabelas candidatas a deprecação (NÃO DELETAR — só listar)
+## Objetos legacy droppados em 2026-06-18
 
-Confirmar uso externo (BI, ad-hoc no Studio) antes de dropar. Nenhuma é referenciada
-em código TypeScript/JS/SQL do repo, nem em outras migrations.
+Migration `20260618000000_drop_legacy_voto_proposicoes.sql`. Todos sem uso em
+código (zero grep hits em TS/SQL/JS) e substituídos pelo cluster `plen_*`:
 
-| Tabela | Linhas | Por quê deprecar | Substituta |
-|---|---:|---|---|
-| `proposicoes_autores` | 0 | tabela vazia, sem ingestor ativo | `cam_proposicoes` (237 k linhas) |
-| `camara_voto` | 43 k | sem grep hit no repo; coluna `voto` em texto | `plen_votos` (60 k linhas, em uso) |
+- `proposicoes_autores` (TABLE, 0 linhas) — função coberta por `cam_proposicoes`.
+- `camara_voto` (TABLE, 43 k) → `plen_votos`.
+- `camara_orientacao` (TABLE, 1.1 k) — sem equivalente em `plen_*` ainda.
+- `camara_votacao` (TABLE, 5.4 k) → `plen_votacoes`.
+- `camara_dissidencia` (VIEW) — derivada das 3 tabelas acima.
+- `camara_ranking_dissidencia` (VIEW) — agregação da view acima.
 
-Para confirmar antes de dropar, checar Studio → Logs → Postgres pra ver se queries
-ad-hoc batem nelas nos últimos 30d.
+Se precisar reconstruir lógica de dissidência (voto real ≠ orientação do
+partido), o caminho é: criar view sobre `plen_votos` + uma nova tabela de
+orientações (não existe equivalente da extinta `camara_orientacao`).

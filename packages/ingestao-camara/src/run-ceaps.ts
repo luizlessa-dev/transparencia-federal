@@ -14,6 +14,7 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: resolve(__dirname, "../../../.env") });
 
+import { createClient } from "@supabase/supabase-js";
 import { jobIngestaoCeaps } from "./job-ingestao-ceaps.js";
 
 const url  = process.env.SUPABASE_URL ?? "";
@@ -46,3 +47,9 @@ for (const a of resultado.resultados_por_ano) {
 }
 
 if (resultado.status === "erro") process.exit(1);
+
+console.log("\n▶ Atualizando cota_cnpj_ranking (MV)...");
+const sb = createClient(url, key);
+const { error: refreshErr } = await sb.rpc("refresh_cota_cnpj_ranking");
+if (refreshErr) console.warn(`  ⚠ refresh falhou: ${refreshErr.message}`);
+else            console.log("  ✓ cota_cnpj_ranking atualizada");

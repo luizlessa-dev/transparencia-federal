@@ -246,3 +246,8 @@ for (const ano of anos) {
 }
 
 console.log(`▶ Concluído — total: lidas=${totalLidas} inseridas=${totalInseridas}`);
+
+console.log("\n▶ Atualizando cota_cnpj_ranking (MV)...");
+const { error: refreshErr } = await supabase.rpc("refresh_cota_cnpj_ranking");
+if (refreshErr) console.warn(`  ⚠ refresh falhou: ${refreshErr.message}`);
+else            console.log("  ✓ cota_cnpj_ranking atualizada");
