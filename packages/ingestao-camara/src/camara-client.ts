@@ -298,7 +298,18 @@ export class CamaraClient {
     const todas: VotacaoResumo[] = [];
 
     for (const ano of anos) {
-      const dataInicio = ano === 2023 ? "2023-02-01" : `${ano}-01-01`;
+      // No primeiro ano, respeita o dia de início se foi passado (ex: 2026-04-01).
+      // Caso contrário, default é 1º de fev pra 2023 (início legislatura) ou 1º de janeiro.
+      // Motivo: a API /votacoes trunca em ~21 páginas (~2.100 votações de TODOS os órgãos
+      // combinados) — janelas grandes perdem o final do período. Filtrar a janela inicial
+      // empurra o resultado para depois do bug de paginação.
+      const isPrimeiroAno = ano === anos[0];
+      let dataInicio: string;
+      if (isPrimeiroAno && opts?.dataInicio && opts.dataInicio.slice(0, 4) === String(ano)) {
+        dataInicio = opts.dataInicio;
+      } else {
+        dataInicio = ano === 2023 ? "2023-02-01" : `${ano}-01-01`;
+      }
       const proxAno    = `${ano + 1}-01-01`;
 
       const params: Record<string, string> = {
