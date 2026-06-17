@@ -143,21 +143,37 @@ export class CamaraClient {
     }
 
     for (let tentativa = 1; tentativa <= retries; tentativa++) {
-      const res = await fetch(url.toString(), {
-        headers: { Accept: "application/json" },
-        signal: AbortSignal.timeout(45_000), // 45s timeout por request
-      });
+      // AbortController explícito (em vez de AbortSignal.timeout) para que o
+      // erro tenha name="AbortError" — o catch do job-ingestao-votacoes trata
+      // como erro recuperável (skip da votação). API da Câmara ocasionalmente
+      // pendura a conexão; sem isso, o job já travou 2h num único fetch.
+      const controller = new AbortController();
+      const timeoutId  = setTimeout(() => controller.abort(), 30_000);
 
-      if (res.ok) return res.json() as Promise<RespostaCamara<T>>;
+      try {
+        const res = await fetch(url.toString(), {
+          headers: { Accept: "application/json" },
+          signal:  controller.signal,
+        });
 
-      // Retry em 5xx (instabilidade do servidor da Câmara)
-      if (res.status >= 500 && tentativa < retries) {
-        const espera = tentativa * 2000; // 2s, 4s
-        await new Promise((r) => setTimeout(r, espera));
-        continue;
+        if (res.ok) return await (res.json() as Promise<RespostaCamara<T>>);
+
+        // Retry em 5xx (instabilidade do servidor da Câmara)
+        if (res.status >= 500 && tentativa < retries) {
+          const espera = tentativa * 2000; // 2s, 4s
+          await new Promise((r) => setTimeout(r, espera));
+          continue;
+        }
+
+        throw new Error(`Câmara API erro ${res.status} em ${path}: ${res.statusText}`);
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          throw new Error(`Câmara API timeout (30s) em ${path}`);
+        }
+        throw err;
+      } finally {
+        clearTimeout(timeoutId);
       }
-
-      throw new Error(`Câmara API erro ${res.status} em ${path}: ${res.statusText}`);
     }
 
     throw new Error(`Câmara API: esgotadas ${retries} tentativas em ${path}`);
