@@ -89,6 +89,16 @@ Colunas: `cadastro`, `cpf_cnpj`, `nome_sancionado`, `tipo_sancao`, `sancao_inici
 
 Filtra por `length(s.cpf_cnpj) = 14` (só PJ sancionada).
 
+### Views aposentadas em 2026-06-18
+
+- `ele26_v_doador_emenda_hist` (0 linhas) — tabela base `ele2026_financiamento`
+  vazia. Recriar quando ingestão rodar.
+- `tse_v_fornecedor_emenda` (0 linhas) — mesma doença que `tse_v_doador_emenda`
+  tinha (exigia mesmo parlamentar). Universo bruto existe (583 CNPJs comuns
+  tse_despesas 2022 × emendas_favorecidos), mas a amarração zera. Se for
+  útil depois, recriar como cruzamento amplo seguindo padrão da rewrite
+  20260618010000. Migration `20260618030000_drop_views_doador_fornecedor.sql`.
+
 ### `vw_rp9_favorecidos_sancionados` — VIEW
 
 Usa `nome_apoiador` (de `emendas_rp9_apoiamento`), **não** `autor_nome`.
