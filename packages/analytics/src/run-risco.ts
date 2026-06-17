@@ -91,7 +91,7 @@ interface RiscoUpsert {
   financiamento_fefc: number | null;
   patrimonio_2022: number | null;
   fornecedores_sancionados: number;
-  doadores_sancionados: number;
+  doadores_sancionados?: number; // owner = run-doadores-sancionados.ts
   atualizado_em: string;
 }
 
@@ -177,9 +177,10 @@ async function loadCeapPercentis(): Promise<Map<number, CeapRow>> {
   return map;
 }
 
-async function loadTsePercentis(): Promise<{ byCpf: Map<string, TseRow>; byNome: Map<string, TseRow> }> {
+async function loadTsePercentis(): Promise<{ byCpf: Map<string, TseRow>; byNome: Map<string, TseRow>; byCpfToSq: Map<string, string> }> {
   // Busca todos candidatos a deputado federal 2022 (paginado — pode ter >1000 registros)
   type TseRaw = {
+    sq_candidato: string;
     nm_candidato: string;
     nr_cpf_candidato: string;
     total_receitas: number;
@@ -195,7 +196,7 @@ async function loadTsePercentis(): Promise<{ byCpf: Map<string, TseRow>; byNome:
   while (true) {
     const { data, error } = await sb
       .from("tse_candidatos_receitas_agg")
-      .select("nm_candidato, nr_cpf_candidato, total_receitas, fefc, fundo_partidario, recursos_proprios")
+      .select("sq_candidato, nm_candidato, nr_cpf_candidato, total_receitas, fefc, fundo_partidario, recursos_proprios")
       .eq("cd_cargo", 6)
       .eq("ano_eleicao", 2022)
       .order("total_receitas", { ascending: true })
@@ -211,6 +212,7 @@ async function loadTsePercentis(): Promise<{ byCpf: Map<string, TseRow>; byNome:
   const n = all.length;
   const byCpf = new Map<string, TseRow>();
   const byNome = new Map<string, TseRow>();
+  const byCpfToSq = new Map<string, string>();
 
   all.forEach((r, idx) => {
     const percentil = n > 1 ? Math.round((idx / (n - 1)) * 100 * 10) / 10 : 0;
@@ -224,11 +226,37 @@ async function loadTsePercentis(): Promise<{ byCpf: Map<string, TseRow>; byNome:
     };
     // Indexa por CPF (prioridade) e por nome normalizado (fallback)
     const cpf = String(r.nr_cpf_candidato ?? "").replace(/\D/g, "").trim();
-    if (cpf && cpf.length === 11) byCpf.set(cpf, row);
+    if (cpf && cpf.length === 11) {
+      byCpf.set(cpf, row);
+      if (r.sq_candidato) byCpfToSq.set(cpf, String(r.sq_candidato));
+    }
     byNome.set(normNome(r.nm_candidato), row);
   });
 
-  return { byCpf, byNome };
+  return { byCpf, byNome, byCpfToSq };
+}
+
+async function loadPatrimonio2022(): Promise<Map<string, number>> {
+  const PAGE = 1000;
+  const map = new Map<string, number>();
+  let from = 0;
+  while (true) {
+    const { data, error } = await sb
+      .from("tse_bens_agg")
+      .select("sq_candidato, total_patrimonio")
+      .eq("ano_eleicao", 2022)
+      .range(from, from + PAGE - 1);
+    if (error) throw new Error(`loadPatrimonio2022: ${error.message}`);
+    const rows = (data ?? []) as Array<{ sq_candidato: string; total_patrimonio: number | null }>;
+    for (const r of rows) {
+      if (r.sq_candidato != null && r.total_patrimonio != null) {
+        map.set(String(r.sq_candidato), Number(r.total_patrimonio));
+      }
+    }
+    if (rows.length < PAGE) break;
+    from += PAGE;
+  }
+  return map;
 }
 
 async function loadProducao(): Promise<Map<number, ProducaoRow>> {
@@ -312,10 +340,11 @@ async function upsertLote(rows: RiscoUpsert[]): Promise<void> {
 const inicio = Date.now();
 console.log("▶ G5 — Score de Risco Composto");
 
-const [deputados, ceapMap, tseResult, producaoMap, emendasMap] = await Promise.all([
+const [deputados, ceapMap, tseResult, patrimSqMap, producaoMap, emendasMap] = await Promise.all([
   loadDeputados(),
   loadCeapPercentis(),
   loadTsePercentis(),
+  loadPatrimonio2022(),
   loadProducao(),
   loadEmendas(),
 ]);
@@ -323,15 +352,23 @@ const [deputados, ceapMap, tseResult, producaoMap, emendasMap] = await Promise.a
 const tseByCpf = tseResult.byCpf;
 const tseByNome = tseResult.byNome;
 
+// Combina sq_candidato→cpf (tse_candidatos_receitas_agg) com sq_candidato→patrimonio (tse_bens_agg)
+const cpfToPatrim = new Map<string, number>();
+for (const [cpf, sq] of tseResult.byCpfToSq) {
+  const v = patrimSqMap.get(sq);
+  if (v != null) cpfToPatrim.set(cpf, v);
+}
+
 console.log(`  Deputados: ${deputados.length}`);
 console.log(`  CEAP 2024: ${ceapMap.size} registros`);
 console.log(`  TSE 2022:  ${tseByCpf.size} candidatos (por CPF) / ${tseByNome.size} (por nome)`);
+console.log(`  Patrimônios 2022: ${patrimSqMap.size} candidatos (TSE) / ${cpfToPatrim.size} com CPF`);
 console.log(`  Proposicoes: ${producaoMap.size} registros`);
 console.log(`  Emendas individuais: ${emendasMap.size} autores`);
 
 const agora = new Date().toISOString();
 const batch: RiscoUpsert[] = [];
-let matchCeap = 0, matchTse = 0, matchEmendas = 0;
+let matchCeap = 0, matchTse = 0, matchEmendas = 0, matchPatrim = 0;
 
 for (const dep of deputados) {
   // — CEAP
@@ -369,6 +406,9 @@ for (const dep of deputados) {
   const dims = { dim_ceap, dim_presenca, dim_producao, dim_financiamento, dim_rp9 };
   const score_total = calcScore(dims);
 
+  const patrimonio_2022 = dep.cpf ? (cpfToPatrim.get(dep.cpf) ?? null) : null;
+  if (patrimonio_2022 != null) matchPatrim++;
+
   batch.push({
     deputado_id: dep.deputado_id,
     nome: dep.nome,
@@ -386,9 +426,8 @@ for (const dep of deputados) {
     total_substantivo: prod?.total_substantivo ?? null,
     financiamento_total: tse?.total_receitas ?? null,
     financiamento_fefc: tse?.fefc ?? null,
-    patrimonio_2022: null, // populado em etapa separada via tse_bens_agg
+    patrimonio_2022,
     fornecedores_sancionados: 0,
-    doadores_sancionados: 0,
     atualizado_em: agora,
   });
 }
@@ -407,4 +446,5 @@ console.log(`\n✅ Score de Risco calculado em ${duracao}ms`);
 console.log(`   Deputados processados: ${batch.length}`);
 console.log(`   Match CEAP:       ${matchCeap}/${batch.length} (${Math.round(matchCeap / batch.length * 100)}%)`);
 console.log(`   Match TSE:        ${matchTse}/${batch.length} (${Math.round(matchTse / batch.length * 100)}%)`);
+console.log(`   Match Patrimônio: ${matchPatrim}/${batch.length} (${Math.round(matchPatrim / batch.length * 100)}%)`);
 console.log(`   Match Emendas:    ${matchEmendas}/${batch.length} (${Math.round(matchEmendas / batch.length * 100)}%)`);
