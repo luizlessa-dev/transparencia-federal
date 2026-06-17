@@ -145,18 +145,28 @@ export async function jobIngestaoProposicoes(
   }
 }
 
-async function computarAggregate(
+export async function computarAggregate(
   sb: SupabaseClient,
   deputados: Array<{ deputado_id: number; nome: string; sigla_partido: string; sigla_uf: string; url_foto: string }>
 ) {
-  // Lê todas as proposições
-  const { data: todas, error } = await sb
-    .from("cam_proposicoes")
-    .select("deputado_id, sigla_tipo, ano");
-
-  if (error || !todas) {
-    console.error("Erro ao ler cam_proposicoes para aggregate:", error?.message);
-    return;
+  // Lê TODAS as proposições paginado (PostgREST limita a 1000 por query).
+  const PAGE = 1000;
+  const todas: Array<{ deputado_id: number; sigla_tipo: string; ano: number | null }> = [];
+  let fromIdx = 0;
+  while (true) {
+    const { data, error } = await sb
+      .from("cam_proposicoes")
+      .select("deputado_id, sigla_tipo, ano")
+      .order("id", { ascending: true })
+      .range(fromIdx, fromIdx + PAGE - 1);
+    if (error) {
+      console.error("Erro ao ler cam_proposicoes para aggregate:", error.message);
+      return;
+    }
+    const rows = (data ?? []) as Array<{ deputado_id: number; sigla_tipo: string; ano: number | null }>;
+    todas.push(...rows);
+    if (rows.length < PAGE) break;
+    fromIdx += PAGE;
   }
 
   // Agrupa por deputado

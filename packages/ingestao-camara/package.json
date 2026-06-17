@@ -11,6 +11,7 @@
     "ceaps:ts": "tsx src/run-ceaps.ts",
     "votacoes:ts": "tsx src/run-votacoes.ts",
     "proposicoes:ts": "tsx src/run-proposicoes.ts",
+    "proposicoes-agg:ts": "tsx src/run-proposicoes-agg.ts",
     "frentes-comissoes:ts": "tsx src/run-frentes-comissoes.ts",
     "mandatos:ts": "tsx src/run-mandatos.ts",
     "ceaps-historico:ts": "tsx src/run-ceaps-historico.ts"
