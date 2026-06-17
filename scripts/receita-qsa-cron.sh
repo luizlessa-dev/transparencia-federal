@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+export PATH="/opt/homebrew/opt/node@22/bin:/opt/homebrew/bin:/usr/bin:/bin"
 # scripts/receita-qsa-cron.sh
 #
 # Atualização mensal do QSA da Receita Federal (cnpj_socios + cnpj_empresa).
