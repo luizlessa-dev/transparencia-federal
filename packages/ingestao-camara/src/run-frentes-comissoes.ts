@@ -143,16 +143,21 @@ for (let i = 0; i < comissoes.length; i++) {
   const com = comissoes[i];
   await sleep(THROTTLE);
 
-  const membros = await fetchJSON<Array<{
+  // Pagina todos os papéis: a API default retorna 15 (só Titulares).
+  // Com paginação vêm Titular(101), Suplente(102), Presidente(1), Vice-Presidentes(2-4).
+  const membros = await paginarCamara<{
     id: number; nome: string; siglaPartido: string; siglaUf: string;
     titulo: string; codTitulo: number; dataInicio: string; dataFim: string;
-  }>>(`${CAMARA}/orgaos/${com.id}/membros`);
+  }>(`/orgaos/${com.id}/membros`);
 
-  if (!membros || !Array.isArray(membros) || membros.length === 0) continue;
+  if (!Array.isArray(membros) || membros.length === 0) continue;
 
-  // Deduplica por deputado_id (mantém o primeiro, geralmente o titular)
+  // Ordena por codTitulo ASC pra hierarquia (Presidente=1, Vice=2-4, Titular=101, Suplente=102)
+  // — assim o dedup que mantém o primeiro grava o papel de maior precedência.
+  const membrosOrdenados = [...membros].sort((a, b) => (a.codTitulo ?? 999) - (b.codTitulo ?? 999));
+
   const seen = new Set<number>();
-  const rows = membros
+  const rows = membrosOrdenados
     .filter((m) => m.id != null && !seen.has(m.id) && seen.add(m.id))
     .map((m) => ({
       comissao_id: com.id,
