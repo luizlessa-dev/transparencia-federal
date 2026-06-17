@@ -17,6 +17,7 @@
     "risco:ts": "tsx src/run-risco.ts",
     "cpf-enrich:ts": "tsx src/run-cpf-enrich.ts",
     "doadores-sancionados:ts": "tsx src/run-doadores-sancionados.ts",
+    "fornecedores-sancionados:ts": "tsx src/run-fornecedores-sancionados.ts",
     "folha-cruzamento:ts": "tsx src/run-folha-cruzamento.ts",
     "folha-custo:ts": "tsx src/run-folha-custo.ts",
     "folha-doador-senado:ts": "tsx src/run-folha-doador-senado.ts",

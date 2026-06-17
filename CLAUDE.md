@@ -45,6 +45,7 @@ npm run ceaps:ts -w @transparencia/analytics                     # agrega ceaps_
 npm run risco:ts -w @transparencia/analytics                     # recalcula score G5 de risco composto
 npm run cpf-enrich:ts -w @transparencia/analytics                # enriquece cam_parlamentar_risco com CPF (Câmara API)
 npm run doadores-sancionados:ts -w @transparencia/analytics      # cruza top_doadores TSE × portal_sancionados
+npm run fornecedores-sancionados:ts -w @transparencia/analytics  # cruza ceaps_brutas (CNPJ fornecedor) × portal_sancionados
 ```
 
 ## Variáveis de ambiente
