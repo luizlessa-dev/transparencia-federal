@@ -5,6 +5,7 @@
   "workspaces": [
     "packages/ingestao-dou",
     "packages/ingestao-pncp",
+    "packages/ingestao-transferegov",
     "packages/ingestao-tse-fundacoes",
     "packages/ingestao-portal",
     "packages/ingestao-camara",

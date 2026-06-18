@@ -2,7 +2,10 @@
  * Backfill completo: ingere TED e FAF sequencialmente.
  * Uso: tsx src/backfill.ts [--apenas-ted] [--apenas-faf]
  */
-import "dotenv/config";
+import dotenv from "dotenv";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+dotenv.config({ path: resolve(dirname(fileURLToPath(import.meta.url)), "../../../.env") });
 import { jobIngestaoTed } from "./job-ingestao-ted.js";
 import { jobIngestaoFaf } from "./job-ingestao-faf.js";
 import { resumoVolumes } from "./transferegov-client.js";
