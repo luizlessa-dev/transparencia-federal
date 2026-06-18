@@ -1,42 +1,42 @@
 import { createClient } from "@supabase/supabase-js";
 import { iterarLicitacoes, MODALIDADES, type PncpLicitacao } from "./pncp-client.js";
 
-const LOTE = 100;
+const LOTE = 500;
 
 function mapear(item: PncpLicitacao): Record<string, unknown> {
   return {
     numero_controle_pncp: item.numeroControlePNCP,
-    orgao_cnpj: item.orgaoEntidade?.cnpj ?? null,
-    orgao_nome: item.orgaoEntidade?.razaoSocial ?? null,
-    poder_id: item.orgaoEntidade?.poderId ?? null,
-    esfera_id: item.orgaoEntidade?.esferaId ?? null,
-    ano_compra: item.anoCompra ?? null,
-    sequencial_compra: item.sequencialCompra ?? null,
+    orgao_cnpj: item.orgaoEntidadeCnpj ?? null,
+    orgao_nome: item.orgaoEntidadeRazaoSocial ?? null,
+    poder_id: item.orgaoEntidadePoderId ?? null,
+    esfera_id: item.orgaoEntidadeEsferaId ?? null,
+    ano_compra: item.anoCompraPncp ?? null,
+    sequencial_compra: item.sequencialCompraPncp ?? null,
     numero_compra: item.numeroCompra ?? null,
     processo: item.processo ?? null,
-    modalidade_id: item.modalidadeId ?? null,
+    modalidade_id: item.modalidadeIdPncp ?? null,
     modalidade_nome: item.modalidadeNome ?? null,
-    modo_disputa_id: item.modoDisputaId ?? null,
-    modo_disputa_nome: item.modoDisputaNome ?? null,
+    modo_disputa_id: item.modoDisputaIdPncp ?? null,
+    modo_disputa_nome: null,
     objeto_compra: item.objetoCompra ?? null,
     valor_estimado: item.valorTotalEstimado ?? null,
     valor_homologado: item.valorTotalHomologado ?? null,
     data_publicacao_pncp: item.dataPublicacaoPncp ?? null,
-    data_abertura_proposta: item.dataAberturaProposta ?? null,
-    data_encerramento_proposta: item.dataEncerramentoProposta ?? null,
-    data_inclusao: item.dataInclusao ?? null,
-    data_atualizacao: item.dataAtualizacao ?? null,
-    situacao_id: item.situacaoCompraId ?? null,
-    situacao_nome: item.situacaoCompraNome ?? null,
-    uf: item.unidadeOrgao?.ufSigla ?? null,
-    municipio_nome: item.unidadeOrgao?.municipioNome ?? null,
-    municipio_ibge: item.unidadeOrgao?.codigoIbge ?? null,
-    unidade_codigo: item.unidadeOrgao?.codigoUnidade ?? null,
-    unidade_nome: item.unidadeOrgao?.nomeUnidade ?? null,
-    emenda_parlamentar: item.emendaParlamentar ?? null,
+    data_abertura_proposta: item.dataAberturaPropostaPncp ?? null,
+    data_encerramento_proposta: item.dataEncerramentoPropostaPncp ?? null,
+    data_inclusao: item.dataInclusaoPncp ?? null,
+    data_atualizacao: item.dataAtualizacaoPncp ?? null,
+    situacao_id: item.situacaoCompraIdPncp ?? null,
+    situacao_nome: item.situacaoCompraNomePncp ?? null,
+    uf: item.unidadeOrgaoUfSigla ?? null,
+    municipio_nome: item.unidadeOrgaoMunicipioNome ?? null,
+    municipio_ibge: item.unidadeOrgaoCodigoIbge ?? null,
+    unidade_codigo: item.unidadeOrgaoCodigoUnidade ?? null,
+    unidade_nome: item.unidadeOrgaoNomeUnidade ?? null,
+    emenda_parlamentar: null,
     srp: item.srp ?? null,
     existe_resultado: item.existeResultado ?? null,
-    link_sistema_origem: item.linkSistemaOrigem ?? null,
+    link_sistema_origem: null,
     dados: {},
     ingerido_em: new Date().toISOString(),
   };
@@ -87,10 +87,11 @@ export async function jobIngestaoPncp(opts: {
         else inseridos += lote.length;
       }
     } catch (err: unknown) {
-      // Modalidade sem dados: 400 "no records" ou HTML de rate-limit — ignora
       const msg = err instanceof Error ? err.message : String(err);
-      const silencioso = msg.includes("400") || msg.includes("<html") || msg.includes("Unexpected token");
-      if (!silencioso) console.error(`  [modal ${modalidade}] erro:`, msg);
+      // 404 = modalidade sem dados nesse período — esperado
+      if (!msg.includes("404")) {
+        console.error(`  [modal ${modalidade}] erro:`, msg.slice(0, 200));
+      }
     }
 
     if (total > 0) {

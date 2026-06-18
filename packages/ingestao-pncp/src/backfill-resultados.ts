@@ -1,9 +1,9 @@
 /**
- * Backfill PNCP — percorre meses passados
+ * Backfill PNCP Resultados — vencedores por item de licitação
  *
  * Uso:
- *   npm run backfill:ts -- --anos=2024,2025
- *   npm run backfill:ts -- --anos=2026 --modalidades=6
+ *   npx tsx --no-cache src/backfill-resultados.ts --anos=2024,2025
+ *   npx tsx --no-cache src/backfill-resultados.ts --anos=2026
  */
 
 import dotenv from "dotenv";
@@ -12,60 +12,52 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: resolve(__dirname, "../../../.env") });
 
-import { jobIngestaoPncp } from "./job-ingestao-pncp.js";
+import { jobResultadosPncp } from "./job-resultados-pncp.js";
 
 const args = process.argv.slice(2);
 const get = (flag: string) => args.find((a) => a.startsWith(`--${flag}=`))?.split("=")[1];
 
 const anosArg = get("anos") ?? "2024,2025,2026";
 const anos = anosArg.split(",").map(Number);
-const modArg = get("modalidades");
-// Default: só as modalidades mais comuns para reduzir carga no API
-const modalidades = modArg
-  ? modArg.split(",").map(Number)
-  : [1, 3, 4, 6, 8]; // pregão elet, dispensa elet, concorrência elet, leilão, concurso
+const mesInicio = Number(get("mes-inicio") ?? "1");
 
-console.log("▶ Backfill PNCP");
+console.log("▶ Backfill PNCP Resultados (vencedores)");
 console.log(`  Anos: ${anos.join(", ")}`);
-console.log(`  Modalidades: ${modalidades?.join(", ") ?? "todas"}`);
 console.log();
 
 const hoje = new Date();
 let totalGeral = 0, inseridosGeral = 0;
 
 for (const ano of anos) {
-  for (let mes = 1; mes <= 12; mes++) {
+  const mesStart = anos.indexOf(ano) === 0 ? mesInicio : 1;
+  for (let mes = mesStart; mes <= 12; mes++) {
     const inicio = new Date(ano, mes - 1, 1);
     if (inicio > hoje) break;
 
-    const fimDate = new Date(ano, mes, 0); // último dia do mês
+    const fimDate = new Date(ano, mes, 0);
     const fim = fimDate > hoje ? hoje : fimDate;
 
-    const fmt = (d: Date) => d.toISOString().slice(0, 10); // YYYY-MM-DD
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
     const di = fmt(inicio);
     const df = fmt(fim);
 
     process.stdout.write(`  ${ano}-${String(mes).padStart(2, "0")} (${di}→${df})... `);
 
-    // Pausa entre meses para não sobrecarregar o PNCP
-    await new Promise((r) => setTimeout(r, 5000));
+    await new Promise((r) => setTimeout(r, 1000));
 
     const t0 = Date.now();
-    const { resultados } = await jobIngestaoPncp({
+    const { total, inseridos } = await jobResultadosPncp({
       supabaseUrl: process.env.SUPABASE_URL!,
       supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
       dataInicial: di,
       dataFinal: df,
-      modalidades,
     });
 
-    const tot = resultados.reduce((s, r) => s + r.total, 0);
-    const ins = resultados.reduce((s, r) => s + r.inseridos, 0);
-    totalGeral += tot;
-    inseridosGeral += ins;
+    totalGeral += total;
+    inseridosGeral += inseridos;
 
     const seg = ((Date.now() - t0) / 1000).toFixed(1);
-    console.log(`${tot} licitações, ${ins} inseridas (${seg}s)`);
+    console.log(`${total.toLocaleString("pt-BR")} resultados, ${inseridos.toLocaleString("pt-BR")} inseridos (${seg}s)`);
   }
 }
 

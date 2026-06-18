@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "pncp:ts": "tsx src/run.ts",
-    "backfill:ts": "tsx src/backfill.ts"
+    "backfill:ts": "tsx src/backfill.ts",
+    "backfill-resultados:ts": "tsx src/backfill-resultados.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
