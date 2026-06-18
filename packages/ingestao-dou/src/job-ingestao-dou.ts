@@ -4,6 +4,7 @@ import { normalizarPublicacao } from "./extratores.js";
 import {
   upsertPublicacoesDOU,
   buscarNomesFuncionarios,
+  buscarCPFsDoadores,
   buscarCNPJsDoadores,
   upsertAlertas,
   type AlertaCruzamento,
@@ -66,12 +67,14 @@ async function* paginarPublicacoes(supabase: SupabaseClient): AsyncGenerator<Pub
 async function processarLote(
   lote: PubParaCruzamento[],
   nomesFuncionarios: Set<string>,
+  cpfsDoadores: Set<string>,
   cnpjsDoadores: Set<string>,
   supabase: SupabaseClient
 ): Promise<number> {
   const alertas: AlertaCruzamento[] = [];
 
   for (const pub of lote) {
+    // Match por nome de assessor (fallback — Câmara/Senado não expõem CPF)
     const assinante = pub.assinante?.toUpperCase();
     if (assinante && nomesFuncionarios.has(assinante)) {
       alertas.push({
@@ -83,15 +86,33 @@ async function processarLote(
         valor_match: assinante,
       });
     }
+
+    // Match por CPF de doador (pessoa física) nos CPFs extraídos do ato
+    for (const cpf of pub.cpfs_extraidos ?? []) {
+      const cpfLimpo = cpf.replace(/\D/g, "");
+      if (cpfLimpo.length === 11 && cpfsDoadores.has(cpfLimpo)) {
+        alertas.push({
+          id_externo: pub.id_externo,
+          titulo: pub.titulo,
+          data_publicacao: pub.data_publicacao,
+          orgao: pub.orgao,
+          tipo_match: "cpf_doador",
+          valor_match: cpfLimpo,
+        });
+      }
+    }
+
+    // Match por CNPJ de empresa doadora nos CNPJs extraídos do ato
     for (const cnpj of pub.cnpjs_extraidos ?? []) {
-      if (cnpjsDoadores.has(cnpj)) {
+      const cnpjLimpo = cnpj.replace(/\D/g, "");
+      if (cnpjLimpo.length === 14 && cnpjsDoadores.has(cnpjLimpo)) {
         alertas.push({
           id_externo: pub.id_externo,
           titulo: pub.titulo,
           data_publicacao: pub.data_publicacao,
           orgao: pub.orgao,
           tipo_match: "cnpj_doador",
-          valor_match: cnpj,
+          valor_match: cnpjLimpo,
         });
       }
     }
@@ -107,24 +128,28 @@ export async function jobCruzamento(
 ): Promise<void> {
   console.log("[dou] Iniciando cruzamento com funcionários e doadores...");
 
-  const [nomesFuncionarios, cnpjsDoadores] = await Promise.all([
+  const [nomesFuncionarios, cpfsDoadores, cnpjsDoadores] = await Promise.all([
     buscarNomesFuncionarios(supabase),
+    buscarCPFsDoadores(supabase),
     buscarCNPJsDoadores(supabase),
   ]);
 
-  console.log(`[dou] Base de referência: ${nomesFuncionarios.size} nomes, ${cnpjsDoadores.size} CNPJs`);
+  console.log(
+    `[dou] Base de referência: ${nomesFuncionarios.size} nomes, ` +
+    `${cpfsDoadores.size} CPFs doadores, ${cnpjsDoadores.size} CNPJs doadores`
+  );
 
   let totalAlertas = 0;
   let totalPubs = 0;
 
   if (publicacoes) {
     // Chamada da ingestão diária — processa o lote já em memória
-    totalAlertas = await processarLote(publicacoes, nomesFuncionarios, cnpjsDoadores, supabase);
+    totalAlertas = await processarLote(publicacoes, nomesFuncionarios, cpfsDoadores, cnpjsDoadores, supabase);
     totalPubs = publicacoes.length;
   } else {
     // Cruzamento histórico — pagina todo o banco em lotes de PAGE_SIZE
     for await (const pagina of paginarPublicacoes(supabase)) {
-      const n = await processarLote(pagina, nomesFuncionarios, cnpjsDoadores, supabase);
+      const n = await processarLote(pagina, nomesFuncionarios, cpfsDoadores, cnpjsDoadores, supabase);
       totalAlertas += n;
       totalPubs += pagina.length;
       process.stdout.write(

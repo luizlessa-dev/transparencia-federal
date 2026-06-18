@@ -32,13 +32,24 @@ function normCnpj(s: unknown): string {
   return String(s ?? "").replace(/\D/g, "");
 }
 
-// 1. Carrega todos os sancionados (CPF/CNPJ normalizados — sem filtro de ativo,
-//    igual run-doadores-sancionados: qualquer histórico de sanção conta)
-const { data: sancs, error: e1 } = await sb
-  .from("portal_sancionados")
-  .select("cpf_cnpj");
-if (e1) throw new Error(`portal_sancionados: ${e1.message}`);
-const sancSet = new Set((sancs ?? []).map((s: { cpf_cnpj: string }) => normCnpj(s.cpf_cnpj)));
+// 1. Carrega todos os sancionados paginado (22k+ registros, supera o limite de 1000 do PostgREST)
+const sancSet = new Set<string>();
+{
+  let sfrom = 0;
+  const SPAGE = 1000;
+  while (true) {
+    const { data, error } = await sb
+      .from("portal_sancionados")
+      .select("cpf_cnpj")
+      .range(sfrom, sfrom + SPAGE - 1);
+    if (error) throw new Error(`portal_sancionados: ${error.message}`);
+    for (const s of (data ?? []) as { cpf_cnpj: string }[]) {
+      sancSet.add(normCnpj(s.cpf_cnpj));
+    }
+    if ((data ?? []).length < SPAGE) break;
+    sfrom += SPAGE;
+  }
+}
 console.log(`  Sancionados carregados: ${sancSet.size}`);
 
 // 2. Conta total de deputados em cam_parlamentar_risco (para o passo de zeragem)

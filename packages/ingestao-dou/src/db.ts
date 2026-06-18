@@ -65,12 +65,35 @@ export async function buscarCNPJsDoadores(supabase: SupabaseClient): Promise<Set
   return new Set(cnpjs);
 }
 
+/** Retorna CPFs de pessoas físicas doadoras (11 dígitos, sem formatação) para cruzamento. */
+export async function buscarCPFsDoadores(supabase: SupabaseClient): Promise<Set<string>> {
+  const PAGE = 1000;
+  const cpfs: string[] = [];
+  let offset = 0;
+  while (true) {
+    const { data, error } = await supabase
+      .from("tse_receitas_brutas")
+      .select("nr_cpf_cnpj_doador")
+      .not("nr_cpf_cnpj_doador", "is", null)
+      .range(offset, offset + PAGE - 1);
+    if (error) throw new Error(`Buscar CPFs doadores: ${error.message}`);
+    if (!data || data.length === 0) break;
+    for (const r of data as { nr_cpf_cnpj_doador: string }[]) {
+      const limpo = r.nr_cpf_cnpj_doador.replace(/\D/g, "");
+      if (limpo.length === 11) cpfs.push(limpo);
+    }
+    if (data.length < PAGE) break;
+    offset += PAGE;
+  }
+  return new Set(cpfs);
+}
+
 export interface AlertaCruzamento {
   id_externo: string;
   titulo: string;
   data_publicacao: string;
   orgao: string;
-  tipo_match: "cpf_funcionario" | "cnpj_doador";
+  tipo_match: "cpf_funcionario" | "cpf_doador" | "cnpj_doador";
   valor_match: string;
 }
 
