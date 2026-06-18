@@ -4,12 +4,7 @@
  * Credenciais: INLABS_EMAIL e INLABS_PASSWORD no .env
  */
 
-import { createWriteStream, mkdirSync, rmSync } from "fs";
-import { tmpdir } from "os";
-import { join } from "path";
-import { pipeline } from "stream/promises";
-import { Extract } from "unzipper";
-import { readdir, readFile } from "fs/promises";
+import { Open as UnzipOpen } from "unzipper";
 
 const BASE_URL = "https://inlabs.in.gov.br";
 const USER_AGENT = "Mozilla/5.0 (compatible; BRInsider/1.0; +https://thebrinsider.com)";
@@ -78,7 +73,7 @@ async function downloadZip(data: string, secao: SecaoDOU): Promise<Buffer | null
       Cookie: sessionCookie,
       origem: "736372697074", // hex de "script" — obrigatório para download automatizado
     },
-    signal: AbortSignal.timeout(60_000),
+    signal: AbortSignal.timeout(180_000),
   });
 
   if (res.status === 404 || res.status === 403) return null; // seção não publicada nesse dia
@@ -96,58 +91,47 @@ function formatarData(data: Date): string {
 }
 
 async function parseZip(zipBuf: Buffer, secao: SecaoDOU): Promise<PublicacaoDOU[]> {
-  const tmpDir = join(tmpdir(), "dou", `${secao}-${Date.now()}`);
-  mkdirSync(tmpDir, { recursive: true });
+  const zip = await UnzipOpen.buffer(zipBuf);
+  const xmlEntries = zip.files.filter((f) => f.path.endsWith(".xml") && f.type === "File");
 
-  try {
-    const { Readable } = await import("stream");
-    await pipeline(Readable.from(zipBuf), Extract({ path: tmpDir }));
+  const RE_ATTR = (attr: string) => new RegExp(`${attr}="([^"]*)"`, "i");
+  const RE_ASSINA = /<p[^>]*class="assina"[^>]*>([\s\S]*?)<\/p>/i;
 
-    const files = await readdir(tmpDir);
-    const xmlFiles = files.filter((f) => f.endsWith(".xml"));
+  const publicacoes: PublicacaoDOU[] = [];
 
-    // Atributos estão no elemento <article>: pubDate, pubName, artType, artCategory, id, name
-    // Conteúdo fica dentro de <Texto><![CDATA[...]]></Texto>
-    // Assinante fica em <p class="assina">NOME</p> dentro do CDATA
-    const RE_ATTR = (attr: string) => new RegExp(`${attr}="([^"]*)"`, "i");
-    const RE_ASSINA = /<p[^>]*class="assina"[^>]*>([\s\S]*?)<\/p>/i;
+  for (const entry of xmlEntries) {
+    try {
+      const buf = await entry.buffer();
+      const xml = buf.toString("utf-8");
 
-    const publicacoes: PublicacaoDOU[] = [];
+      const attr = (name: string) => xml.match(RE_ATTR(name))?.[1] ?? "";
+      const cdata = xml.match(/<Texto[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/Texto>/i)?.[1] ?? "";
+      const assinaMatch = cdata.match(RE_ASSINA);
+      const assina = assinaMatch
+        ? assinaMatch[1].replace(/<[^>]+>/g, "").trim()
+        : undefined;
 
-    for (const file of xmlFiles) {
-      try {
-        const xml = await readFile(join(tmpDir, file), "utf-8");
+      const identifica = xml.match(/<Identifica[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/Identifica>/i)?.[1]?.trim() ?? "";
+      const fileName = entry.path.split("/").pop() ?? entry.path;
 
-        const attr = (name: string) => xml.match(RE_ATTR(name))?.[1] ?? "";
-        const cdata = xml.match(/<Texto[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/Texto>/i)?.[1] ?? "";
-        const assinaMatch = cdata.match(RE_ASSINA);
-        const assina = assinaMatch
-          ? assinaMatch[1].replace(/<[^>]+>/g, "").trim()
-          : undefined;
-
-        const identifica = xml.match(/<Identifica[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/Identifica>/i)?.[1]?.trim() ?? "";
-
-        publicacoes.push({
-          pubName: attr("pubName") || secao,
-          title: identifica,
-          urlTitle: attr("name") || file.replace(".xml", ""),
-          content: cdata,
-          pubDate: attr("pubDate"),         // formato DD/MM/YYYY
-          classPK: attr("id") || file.replace(".xml", ""),
-          displayDateSortable: attr("pubDate").replace(/\D/g, ""),
-          hierarchyStr: attr("artCategory"),
-          artType: attr("artType"),
-          assina,
-        });
-      } catch {
-        // XML malformado — ignora
-      }
+      publicacoes.push({
+        pubName: attr("pubName") || secao,
+        title: identifica,
+        urlTitle: attr("name") || fileName.replace(".xml", ""),
+        content: cdata,
+        pubDate: attr("pubDate"),
+        classPK: attr("id") || fileName.replace(".xml", ""),
+        displayDateSortable: attr("pubDate").replace(/\D/g, ""),
+        hierarchyStr: attr("artCategory"),
+        artType: attr("artType"),
+        assina,
+      });
+    } catch {
+      // XML malformado — ignora
     }
-
-    return publicacoes;
-  } finally {
-    rmSync(tmpDir, { recursive: true, force: true });
   }
+
+  return publicacoes;
 }
 
 function extrairTexto(obj: unknown): string {

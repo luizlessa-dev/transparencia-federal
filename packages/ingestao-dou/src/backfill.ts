@@ -43,15 +43,28 @@ function fmt(d: Date): string {
 }
 
 async function datasJaIngeridas(supabase: ReturnType<typeof createSupabaseClient>): Promise<Set<string>> {
-  const { data, error } = await supabase
-    .from("dou_publicacoes")
-    .select("data_publicacao")
-    .gte("data_publicacao", "2023-01-01")
-    .order("data_publicacao", { ascending: true });
+  // dou_publicacoes tem muitas linhas por dia (500-3000). Para pegar datas únicas, paginamos
+  // agrupando no lado cliente: buscamos página a página até a última data mudar ou a página estar vazia.
+  const datas = new Set<string>();
+  const PAGE = 1000;
+  let offset = 0;
 
-  if (error) throw new Error(`Buscar datas ingeridas: ${error.message}`);
+  while (true) {
+    const { data, error } = await supabase
+      .from("dou_publicacoes")
+      .select("data_publicacao")
+      .gte("data_publicacao", "2023-01-01")
+      .order("data_publicacao", { ascending: true })
+      .range(offset, offset + PAGE - 1);
 
-  return new Set((data ?? []).map((r: { data_publicacao: string }) => r.data_publicacao));
+    if (error) throw new Error(`Buscar datas ingeridas: ${error.message}`);
+    const rows = (data ?? []) as { data_publicacao: string }[];
+    for (const r of rows) datas.add(r.data_publicacao);
+    if (rows.length < PAGE) break;
+    offset += PAGE;
+  }
+
+  return datas;
 }
 
 async function main(): Promise<void> {
