@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
-    payment_method_types: ["card"],
+    payment_method_types: ["card", "boleto", "pix"],
     line_items: [{ price: priceId, quantity: 1 }],
     customer_email: user.email,
     // `client_reference_id` permite associar o pagamento ao user_id

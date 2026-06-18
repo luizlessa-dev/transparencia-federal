@@ -160,11 +160,11 @@ export default function PlanosPage() {
                 Individual
               </p>
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.375rem", marginBottom: "0.25rem" }}>
-                <span style={{ fontSize: "2rem", fontWeight: 700, fontFamily: "var(--font-mono)" }}>R$ 69</span>
+                <span style={{ fontSize: "2rem", fontWeight: 700, fontFamily: "var(--font-mono)" }}>R$ 99</span>
                 <span style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))" }}>/mês</span>
               </div>
               <p style={{ fontSize: "0.75rem", color: "hsl(var(--primary))", margin: "0 0 0.375rem", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                ou R$ 690/ano · 2 meses grátis
+                ou R$ 990/ano · 2 meses grátis
               </p>
               <p style={{ fontSize: "0.8125rem", color: "hsl(var(--text-caption))", margin: 0, lineHeight: 1.5 }}>
                 Para jornalistas, pesquisadores e ativistas independentes.
@@ -183,10 +183,10 @@ export default function PlanosPage() {
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-              <CheckoutButton plan="monthly" label="Assinar por R$ 69/mês" />
+              <CheckoutButton plan="monthly" label="Assinar por R$ 99/mês" />
               <CheckoutButton
                 plan="annual"
-                label="Assinar por R$ 690/ano (2 meses grátis)"
+                label="Assinar por R$ 990/ano (2 meses grátis)"
                 style={{ backgroundColor: "transparent", border: "1px solid hsl(var(--primary))", color: "hsl(var(--primary))" }}
               />
             </div>
