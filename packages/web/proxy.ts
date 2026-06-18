@@ -35,6 +35,23 @@ const AUTH_REQUIRED = [
   "/ativar",
 ];
 
+// Rotas que exigem plano pago (individual ou institucional não-expirado).
+// Subconjunto de AUTH_REQUIRED — quem cair aqui passa primeiro pela verificação
+// de sessão e depois pela de plano.
+const PAID_REQUIRED = [
+  "/ranking",
+  "/agenda",
+  "/expenses",
+  "/senate-expenses",
+  "/amendments",
+  "/funding",
+  "/proposicoes",
+  "/risco",
+  "/mercado-de-capitais/galo-forte",
+  "/mercado-de-capitais/emissores-sancionados",
+  "/sancionados",
+];
+
 // Exceções: sub-rotas que casariam com AUTH_REQUIRED mas devem ficar públicas.
 const AUTH_BYPASS = [
   "/risco/metodologia",
@@ -46,6 +63,18 @@ function needsAuth(pathname: string): boolean {
   }
   return AUTH_REQUIRED.some((prefix) => {
     // /risco/ e /frentes/ → só protege sub-rotas (não o próprio listing)
+    if (prefix.endsWith("/")) {
+      return pathname.startsWith(prefix) && pathname.length > prefix.length;
+    }
+    return pathname === prefix || pathname.startsWith(prefix + "/");
+  });
+}
+
+function needsPaid(pathname: string): boolean {
+  if (AUTH_BYPASS.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return false;
+  }
+  return PAID_REQUIRED.some((prefix) => {
     if (prefix.endsWith("/")) {
       return pathname.startsWith(prefix) && pathname.length > prefix.length;
     }
@@ -99,8 +128,8 @@ export async function proxy(request: NextRequest) {
   const url = process.env.SUPABASE_URL!;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-  // Helper: verifica sessão e redireciona para /login se não autenticado.
-  async function requireAuth(redirectPath: string): Promise<NextResponse | null> {
+  // Helper: verifica sessão e retorna o user (ou null).
+  async function getSessionUser() {
     let response = NextResponse.next({ request });
     const supabase = createServerClient(url, key, {
       auth: { persistSession: true },
@@ -116,13 +145,47 @@ export async function proxy(request: NextRequest) {
       },
     });
     const { data: { user } } = await supabase.auth.getUser();
+    return { user, supabase, response };
+  }
+
+  // Helper: exige sessão ativa; redireciona para /login se não autenticado.
+  async function requireAuth(redirectPath: string): Promise<NextResponse | null> {
+    const { user } = await getSessionUser();
     if (!user) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.searchParams.set("next", redirectPath);
       return NextResponse.redirect(loginUrl);
     }
-    return null; // autenticado — prosseguir
+    return null;
+  }
+
+  // Helper: exige plano pago ativo; redireciona para /planos se não tiver.
+  // Pressupõe que a sessão já foi verificada (user != null).
+  async function requirePaid(redirectPath: string): Promise<NextResponse | null> {
+    const { user, supabase } = await getSessionUser();
+    if (!user) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.searchParams.set("next", redirectPath);
+      return NextResponse.redirect(loginUrl);
+    }
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("plano, plano_valido_ate")
+      .eq("id", user.id)
+      .single();
+    const paid = profile &&
+      profile.plano !== "free" &&
+      profile.plano != null &&
+      (!profile.plano_valido_ate || new Date(profile.plano_valido_ate) > new Date());
+    if (!paid) {
+      const planosUrl = request.nextUrl.clone();
+      planosUrl.pathname = "/planos";
+      planosUrl.searchParams.set("next", redirectPath);
+      return NextResponse.redirect(planosUrl);
+    }
+    return null;
   }
 
   // Subdomínio estadual → exige login, depois rewrite pra /<segmento>/<path>.
@@ -136,6 +199,13 @@ export async function proxy(request: NextRequest) {
       return NextResponse.rewrite(rewriteUrl);
     }
     return NextResponse.next();
+  }
+
+  // Rotas pagas têm precedência: verificam autenticação + plano em uma passagem.
+  if (needsPaid(pathname)) {
+    const paidRedirect = await requirePaid(pathname);
+    if (paidRedirect) return paidRedirect;
+    return NextResponse.next({ request });
   }
 
   if (!needsAuth(pathname)) return NextResponse.next();

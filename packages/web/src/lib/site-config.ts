@@ -63,6 +63,7 @@ export const FEDERAL_CONFIG: SiteConfig = {
         { label: "Emendas Parlamentares", href: "/amendments" },
         { label: "Orçamento Secreto (RP9)", href: "/rp9" },
         { label: "Financiamento Eleitoral", href: "/funding" },
+        { label: "Empresas Sancionadas", href: "/sancionados" },
       ],
     },
     {
@@ -108,7 +109,6 @@ export const FEDERAL_CONFIG: SiteConfig = {
     {
       label: "Mais",
       children: [
-        { label: "Empresas Sancionadas", href: "/sancionados" },
         { label: "Planos", href: "/planos" },
         { label: "Sobre o Projeto", href: "/about" },
       ],
