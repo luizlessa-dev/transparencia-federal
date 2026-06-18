@@ -59,32 +59,40 @@ async function fetchPagina(
   url.searchParams.set("tamanhoPagina", "500");
 
   for (let tentativa = 0; tentativa < 4; tentativa++) {
-    let res: Response;
+    const controller = new AbortController();
+    const timeoutId  = setTimeout(() => controller.abort(), 60_000);
+
     try {
-      res = await fetch(url.toString(), {
+      const res = await fetch(url.toString(), {
         headers: { Accept: "application/json" },
-        signal: AbortSignal.timeout(60_000),
+        signal:  controller.signal,
       });
-    } catch {
-      const espera = 10_000 * 2 ** tentativa;
-      console.warn(`  [PNCP-res] timeout (tentativa ${tentativa + 1}), aguardando ${espera / 1000}s...`);
-      await sleep(espera);
-      continue;
-    }
 
-    if (res.status === 429 || res.status === 503) {
-      const espera = 15_000 * 2 ** tentativa;
-      console.warn(`  [PNCP-res] rate-limit ${res.status}, aguardando ${espera / 1000}s...`);
-      await sleep(espera);
-      continue;
-    }
+      if (res.status === 429 || res.status === 503) {
+        const espera = 15_000 * 2 ** tentativa;
+        console.warn(`  [PNCP-res] rate-limit ${res.status}, aguardando ${espera / 1000}s...`);
+        await sleep(espera);
+        continue;
+      }
 
-    if (!res.ok) {
-      const body = await res.text();
-      throw new Error(`PNCP-res ${res.status}: ${body.slice(0, 300)}`);
-    }
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`PNCP-res ${res.status}: ${body.slice(0, 300)}`);
+      }
 
-    return res.json() as Promise<ResultadoPage>;
+      // await dentro do try: AbortController cobre também a leitura do body
+      return await (res.json() as Promise<ResultadoPage>);
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        const espera = 10_000 * 2 ** tentativa;
+        console.warn(`  [PNCP-res] timeout 60s (tentativa ${tentativa + 1}), aguardando ${espera / 1000}s...`);
+        await sleep(espera);
+        continue;
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   throw new Error("PNCP-res: máximo de tentativas atingido");

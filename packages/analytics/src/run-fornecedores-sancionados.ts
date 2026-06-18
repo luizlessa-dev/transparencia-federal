@@ -59,24 +59,29 @@ const { count: totalDeputados, error: e2 } = await sb
 if (e2) throw new Error(`cam_parlamentar_risco: ${e2.message}`);
 console.log(`  Deputados em cam_parlamentar_risco: ${totalDeputados ?? 0}`);
 
-// 3. Carrega ceaps_brutas paginado e filtra em memória.
-//    ceaps_brutas tem 1M+ rows acumulados (2019–2026); paginar é o caminho.
-type CeapRow = { deputado_id_externo: string; cnpj_cpf_fornecedor: string | null };
+// 3. Carrega ceaps_brutas via cursor pagination por id (PK uuid, indexed).
+//    Offset-based pagination é O(N) no PostgreSQL — a 100k+ rows estoura o
+//    statement_timeout. Cursor por id é O(log N) independente do tamanho.
+type CeapRow = { id: string; deputado_id_externo: string; cnpj_cpf_fornecedor: string | null };
 
 const PAGE = 1000;
 const porDeputado = new Map<number, Set<string>>(); // deputado_id → CNPJs sancionados únicos
-let from = 0;
 let totalLidos = 0;
 let totalMatches = 0;
+let lastId: string | null = null;
 
 while (true) {
-  const { data, error } = await sb
+  let query = sb
     .from("ceaps_brutas")
-    .select("deputado_id_externo, cnpj_cpf_fornecedor")
+    .select("id, deputado_id_externo, cnpj_cpf_fornecedor")
     .not("cnpj_cpf_fornecedor", "is", null)
-    .order("ano", { ascending: true })
-    .range(from, from + PAGE - 1);
-  if (error) throw new Error(`ceaps_brutas (range ${from}): ${error.message}`);
+    .order("id", { ascending: true })
+    .limit(PAGE);
+
+  if (lastId !== null) query = query.gt("id", lastId);
+
+  const { data, error } = await query;
+  if (error) throw new Error(`ceaps_brutas cursor ${lastId ?? "start"}: ${error.message}`);
   const rows = (data ?? []) as CeapRow[];
   totalLidos += rows.length;
 
@@ -93,10 +98,11 @@ while (true) {
     totalMatches++;
   }
 
+  if (rows.length > 0) lastId = rows[rows.length - 1].id;
   process.stdout.write(`\r  Lendo ceaps_brutas... ${totalLidos} rows, ${totalMatches} matches`);
   if (rows.length < PAGE) break;
-  from += PAGE;
 }
+console.log();
 console.log(`\n  CEAP lido: ${totalLidos} rows, ${totalMatches} matches de fornecedor sancionado`);
 console.log(`  Deputados com fornecedor sancionado: ${porDeputado.size}`);
 
