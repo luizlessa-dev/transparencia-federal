@@ -273,25 +273,34 @@ async function loadProducao(): Promise<Map<number, ProducaoRow>> {
 }
 
 async function loadEmendas(): Promise<Map<string, EmendaRow>> {
-  // Agrupa emendas individuais por autor: total e quanto é RP9
-  const { data, error } = await sb
-    .from("emendas_completas")
-    .select("autor_nome, eh_rp9, valor_empenhado")
-    .ilike("tipo_emenda", "%individual%");
-
-  if (error) throw new Error(`loadEmendas: ${error.message}`);
-
+  // Agrupa emendas individuais por autor: total e quanto é RP9.
+  // Pagina em lotes de 1000 — emendas_completas tem >70k linhas individuais.
   const map = new Map<string, EmendaRow>();
-  for (const r of (data ?? []) as Array<{
-    autor_nome: string;
-    eh_rp9: boolean;
-    valor_empenhado: number;
-  }>) {
-    const key = normNome(r.autor_nome);
-    const cur = map.get(key) ?? { autor_nome: r.autor_nome, valor_total: 0, valor_rp9: 0 };
-    cur.valor_total += r.valor_empenhado ?? 0;
-    if (r.eh_rp9) cur.valor_rp9 += r.valor_empenhado ?? 0;
-    map.set(key, cur);
+  const PAGE = 1000;
+  let from = 0;
+  while (true) {
+    const { data, error } = await sb
+      .from("emendas_completas")
+      .select("autor_nome, eh_rp9, valor_empenhado")
+      .ilike("tipo_emenda", "%individual%")
+      .range(from, from + PAGE - 1);
+
+    if (error) throw new Error(`loadEmendas: ${error.message}`);
+
+    const rows = (data ?? []) as Array<{
+      autor_nome: string;
+      eh_rp9: boolean;
+      valor_empenhado: number;
+    }>;
+    for (const r of rows) {
+      const key = normNome(r.autor_nome);
+      const cur = map.get(key) ?? { autor_nome: r.autor_nome, valor_total: 0, valor_rp9: 0 };
+      cur.valor_total += r.valor_empenhado ?? 0;
+      if (r.eh_rp9) cur.valor_rp9 += r.valor_empenhado ?? 0;
+      map.set(key, cur);
+    }
+    if (rows.length < PAGE) break;
+    from += PAGE;
   }
   return map;
 }
