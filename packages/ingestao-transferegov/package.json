@@ -1,0 +1,19 @@
+{
+  "name": "@transparencia/ingestao-transferegov",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "ted:ts": "tsx src/run-ted.ts",
+    "faf:ts": "tsx src/run-faf.ts",
+    "backfill:ts": "tsx src/backfill.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "typescript": "^5.0.0",
+    "tsx": "^4.19.0"
+  }
+}
