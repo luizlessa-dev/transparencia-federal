@@ -90,8 +90,8 @@ interface RiscoUpsert {
   financiamento_total: number | null;
   financiamento_fefc: number | null;
   patrimonio_2022: number | null;
-  fornecedores_sancionados: number;
-  doadores_sancionados?: number; // owner = run-doadores-sancionados.ts
+  fornecedores_sancionados?: number; // owner = run-fornecedores-sancionados.ts
+  doadores_sancionados?: number;     // owner = run-doadores-sancionados.ts
   atualizado_em: string;
 }
 
@@ -427,7 +427,9 @@ for (const dep of deputados) {
     financiamento_total: tse?.total_receitas ?? null,
     financiamento_fefc: tse?.fefc ?? null,
     patrimonio_2022,
-    fornecedores_sancionados: 0,
+    // fornecedores_sancionados e doadores_sancionados omitidos intencionalmente:
+    // cada campo tem seu próprio script owner (run-fornecedores-sancionados.ts /
+    // run-doadores-sancionados.ts). Omitir do upsert preserva o valor existente.
     atualizado_em: agora,
   });
 }
