@@ -68,6 +68,10 @@ jobs:
           echo "label=$ANO/[$(echo $MESES | tr ' ' ',')]" >> "$GITHUB_OUTPUT"
 
       - name: Atualizar lista de deputados
+        # A API PHP da ALEPE bloqueia IPs de datacenter (como Azure/GitHub Actions).
+        # O step falha com "fetch failed" em runners remotos mas funciona localmente.
+        # Não abortar o job — as despesas podem ser ingeridas mesmo sem atualizar deputados.
+        continue-on-error: true
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -83,7 +87,9 @@ jobs:
             ${{ steps.periodo.outputs.meses }}
 
       - name: Atualizar cruzamento ALEPE × Câmara × ALESP
-        if: success()
+        # Mesmo motivo do ALESP: statement_timeout do Supabase não pode ser sobrescrito
+        # via RPC. O refresh real roda no launchd local (refresh-fornecedores-mensal.sh).
+        continue-on-error: true
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -95,7 +101,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{}')
           echo "Refresh fornecedores_intersetados → HTTP $STATUS"
-          [ "$STATUS" = "204" ] || [ "$STATUS" = "200" ] || { echo "Refresh falhou (HTTP $STATUS)"; exit 1; }
 
       - name: Resumo no log
         if: always()

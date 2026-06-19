@@ -120,7 +120,12 @@ jobs:
             ${{ steps.periodo.outputs.meses_atual }}
 
       - name: Atualizar cruzamentos ALESP × ALEPE e ALESP × ALMG
+        # O refresh das MVs requer >25s (agrega 4M+ linhas) e o statement_timeout do
+        # Supabase não pode ser sobrescrito via RPC. O refresh real roda no launchd local
+        # (scripts/refresh-fornecedores-mensal.sh) após cada ingestão estadual.
+        # Este step tenta de qualquer forma mas não aborta o job se falhar.
         if: success()
+        continue-on-error: true
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -133,7 +138,6 @@ jobs:
               -H "Content-Type: application/json" \
               -d '{}')
             echo "Refresh ${FN} → HTTP $STATUS"
-            [ "$STATUS" = "204" ] || [ "$STATUS" = "200" ] || { echo "Refresh ${FN} falhou (HTTP $STATUS)"; exit 1; }
           done
 
       - name: Resumo no log
