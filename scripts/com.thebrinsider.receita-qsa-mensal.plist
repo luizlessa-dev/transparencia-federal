@@ -34,5 +34,13 @@
   <!-- QSA demora ~10 min; throttle de 1 dia evita reexecuções acidentais -->
   <key>ThrottleInterval</key>
   <integer>86400</integer>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/opt/node@22/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>HOME</key>
+    <string>/Users/luizlessa</string>
+  </dict>
 </dict>
 </plist>
