@@ -16,6 +16,10 @@ on:
         required: false
         default: false
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   verificar:
     name: Verificar disponibilidade no Portal
