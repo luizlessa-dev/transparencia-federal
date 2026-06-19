@@ -1,14 +1,12 @@
 name: ALEPE — Ingestão Mensal
 
-# A API da ALEPE é pública, sem bloqueio de IP.
-# Roda no dia 5 de cada mês às 14:00 UTC (11:00 BRT).
-# Ingere o mês anterior + corrente (dados parciais do mês em curso).
+# ATENÇÃO — sem schedule automático:
+# A API PHP da ALEPE bloqueia IPs de datacenter (Azure/GitHub Actions).
+# A ingestão só funciona via IP residencial BR (Mac local do editor).
+# Use o launchd local (scripts/alepe-cron.sh + LaunchAgents/com.thebrinsider.alepe-mensal.plist)
+# ou dispare manualmente via workflow_dispatch após rodar localmente para validação pontual.
 
 on:
-  schedule:
-    # Dia 5 de cada mês às 14:00 UTC — após ALMG (09h BRT) e ALESP (13h UTC)
-    - cron: "0 14 5 * *"
-
   workflow_dispatch:
     inputs:
       ano:
