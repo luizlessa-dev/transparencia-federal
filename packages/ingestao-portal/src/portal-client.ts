@@ -119,7 +119,7 @@ export class PortalClient {
         headers: {
           Accept: "application/json",
           "chave-api-dados": this.apiKey,
-          "User-Agent": "Mozilla/5.0 (compatible; TransparenciaFederal/3.0; +https://transparenciafederal.org)",
+          "User-Agent": "Mozilla/5.0 (compatible; BRInsider/3.0; +https://www.thebrinsider.com)",
         },
       });
 
