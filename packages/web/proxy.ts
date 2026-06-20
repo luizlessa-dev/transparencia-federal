@@ -85,8 +85,8 @@ function needsPaid(pathname: string): boolean {
 // ── Host-based routing pra nós estaduais ────────────────────────────────
 // Cada subdomínio mapeia pra um segmento da App Router. Federal
 // (www.thebrinsider.com) é o default — não entra aqui, não reescreve.
-// Os hosts transparenciafederal.{com,org} permanecem aqui durante a
-// migração de DNS — assim que o redirect 301 estiver no provedor, podem sair.
+
+
 const HOST_SEGMENT: Record<string, string> = {
   // novos domínios (thebrinsider.com)
   "almg.thebrinsider.com": "/almg",
@@ -95,15 +95,6 @@ const HOST_SEGMENT: Record<string, string> = {
   "alepe.thebrinsider.com": "/alepe",
   "cldf.thebrinsider.com": "/cldf",
   "radar.thebrinsider.com": "/radar",
-  // legado (manter durante migração de DNS)
-  "almg.transparenciafederal.org": "/almg",
-  "almg.transparenciafederal.com": "/almg",
-  "alesp.transparenciafederal.org": "/alesp",
-  "alesp.transparenciafederal.com": "/alesp",
-  "alerj.transparenciafederal.org": "/alerj",
-  "alerj.transparenciafederal.com": "/alerj",
-  "radar.transparenciafederal.com": "/radar",
-  "radar.transparenciafederal.org": "/radar",
   // dev local
   "almg.localhost:3000": "/almg",
   "alesp.localhost:3000": "/alesp",
