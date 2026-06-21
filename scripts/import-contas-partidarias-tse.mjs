@@ -58,31 +58,41 @@ const dt  = (v) => {
 };
 const hashOf = (parts) => createHash('sha1').update(parts.join('|')).digest('hex');
 
-// Extrai um CSV de dentro do ZIP como JSON com auto-detecção de encoding.
-// Grava em arquivo temporário para evitar ENOBUFS em CSVs grandes (ex.: extrato nacional).
-// O TSE mistura UTF-8 (2023+) e latin-1 (2017-2022 e alguns arquivos de 2025) no mesmo dataset.
-function readCsv(zip, member, _enc = 'utf-8-sig') {
-  const tmp = `/tmp/tse_json_${process.pid}_${Date.now()}.json`;
+// Extrai um CSV de dentro do ZIP como NDJSON (um objeto por linha) para evitar
+// ERR_STRING_TOO_LONG em CSVs grandes (SP/MG/RJ em anos eleitorais ultrapassam 512 MB de JSON).
+// Usa readline para nunca materializar o arquivo inteiro em memória.
+// O TSE mistura UTF-8 (2023+) e latin-1 (2017-2022) no mesmo dataset.
+import { createReadStream } from 'fs';
+import { createInterface } from 'readline';
+
+async function readCsv(zip, member, _enc = 'utf-8-sig') {
+  const tmp = `/tmp/tse_ndjson_${process.pid}_${Date.now()}.ndjson`;
   try {
     execSync(
       `unzip -p ${zip} ${member} | python3 -c "
 import sys, csv, io, json
 data = sys.stdin.buffer.read()
-rows = None
 for enc in ['utf-8-sig', 'latin-1']:
     try:
         text = data.decode(enc)
         r = csv.reader(io.StringIO(text), delimiter=';')
         h = [c.strip() for c in next(r)]
-        rows = [dict(zip(h, row)) for row in r if len(row) >= len(h)]
+        for row in r:
+            if len(row) >= len(h):
+                sys.stdout.write(json.dumps(dict(zip(h, row))) + '\\n')
         break
     except (UnicodeDecodeError, StopIteration):
         continue
-print(json.dumps(rows or []))
 " > ${tmp}`,
-      { maxBuffer: 4 * 1024 * 1024 }
+      { maxBuffer: 1024 * 1024 }  // stdout quase vazio — saída vai direto pro arquivo
     );
-    return JSON.parse(readFileSync(tmp, 'utf-8'));
+    // readline lê linha a linha — nunca cria string gigante em memória
+    const rows = [];
+    const rl = createInterface({ input: createReadStream(tmp, { encoding: 'utf-8' }), crlfDelay: Infinity });
+    for await (const line of rl) {
+      if (line.trim()) rows.push(JSON.parse(line));
+    }
+    return rows;
   } finally {
     try { unlinkSync(tmp); } catch {}
   }
@@ -204,7 +214,7 @@ async function ingere(zip, prefixo, tabela, mapFn, ano, enc) {
   }
   let tot = 0;
   for (const csv of listMembers(zip, prefixo)) {
-    const rows = desambigua(readCsv(zip, csv, enc).map((r) => mapFn(r, ano)));
+    const rows = desambigua((await readCsv(zip, csv, enc)).map((r) => mapFn(r, ano)));
     tot += await upsert(tabela, rows);
     process.stdout.write(`   ${tabela.replace('tse_conta_', '').padEnd(11)} ${csv.slice(0, 40)}: +${rows.length}      \r`);
   }
