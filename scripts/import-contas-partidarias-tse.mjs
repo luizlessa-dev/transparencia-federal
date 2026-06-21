@@ -115,17 +115,27 @@ function desambigua(rows) {
   return rows;
 }
 
+const MAX_ATTEMPTS = 7;
+
 async function upsert(table, rows) {
   let ok = 0;
   for (let i = 0; i < rows.length; i += BATCH_SIZE) {
     const batch = rows.slice(i, i + BATCH_SIZE);
     let error, attempts = 0;
-    do {
+    while (attempts < MAX_ATTEMPTS) {
       attempts++;
-      ({ error } = await sb.from(table).upsert(batch, { onConflict: 'id_hash', ignoreDuplicates: false }));
-      if (error && attempts < 3) await new Promise(r => setTimeout(r, 2000 * attempts));
-    } while (error && attempts < 3);
-    if (error) console.error(`  ❌ ${table} batch ${i} (${attempts} tentativas): ${error.message}`);
+      try {
+        ({ error } = await sb.from(table).upsert(batch, { onConflict: 'id_hash', ignoreDuplicates: false }));
+      } catch (e) {
+        // TypeError: fetch failed — conexão recusada ou reset, trata como erro retryável
+        error = { message: e.message };
+      }
+      if (!error) break;
+      const espera = Math.min(2000 * attempts, 30000);  // 2s, 4s, 6s … até 30s
+      console.warn(`  ⚠ ${table} batch ${i} tentativa ${attempts}/${MAX_ATTEMPTS} — ${error.message} — aguardando ${espera}ms`);
+      await new Promise(r => setTimeout(r, espera));
+    }
+    if (error) console.error(`  ❌ ${table} batch ${i}: esgotadas ${MAX_ATTEMPTS} tentativas — ${error.message}`);
     else ok += batch.length;
   }
   return ok;
