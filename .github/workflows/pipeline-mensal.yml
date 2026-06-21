@@ -82,6 +82,16 @@ jobs:
         run: npm run enriquecimento
         timeout-minutes: 15
 
+      - name: "F2.5 — Sancionados (CEIS + CNEP + cruzamento CEAP)"
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          PORTAL_TRANSPARENCIA_API_KEY: ${{ secrets.PORTAL_TRANSPARENCIA_API_KEY }}
+        run: |
+          npm run sancionados:ts -w @transparencia/ingestao-portal
+          npm run fornecedores-sancionados:ts -w @transparencia/analytics
+        timeout-minutes: 20
+
       - name: "F3 — Analytics build"
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
