@@ -1,0 +1,61 @@
+name: Ingestão TSE — Contas Anuais Partidárias
+
+# Cadência: anual, em março (o TSE fecha o exercício anterior em fevereiro).
+# Também disparável manualmente para backfill de anos históricos.
+#
+# Fonte: cdn.tse.jus.br → prestacao_contas_anual_partidaria_{ano}.zip
+#        + extrato_bancario_partido_{ano}.zip
+#        + prestacao_contas_anual_partidaria_notafiscal_{ano}.zip
+# Anos disponíveis no TSE: 2014–atual
+# Anos já ingeridos: 2023
+#
+# Secrets necessários:
+#   SUPABASE_URL
+#   SUPABASE_SERVICE_ROLE_KEY
+#
+# Volume estimado por ano: ~870k receitas + ~714k despesas + ~612k extratos + ~188k notas
+# Tempo estimado: 20–40 min por ano (download + upsert em lotes de 500)
+
+on:
+  schedule:
+    # Março de cada ano às 10:00 UTC — após o TSE fechar o exercício anterior
+    - cron: "0 10 1 3 *"
+  workflow_dispatch:
+    inputs:
+      anos:
+        description: "Anos a ingerir (separados por espaço, ex: '2022 2021 2020')"
+        required: true
+        default: "2024"
+
+concurrency:
+  group: ingest-tse-contas-partidarias
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180  # 3h — backfill de múltiplos anos
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Ingerir contas partidárias
+        run: |
+          ANOS="${{ github.event.inputs.anos }}"
+          if [ -z "$ANOS" ]; then
+            # Cron anual: ingere o ano anterior
+            ANOS=$(( $(date +%Y) - 1 ))
+          fi
+          node scripts/import-contas-partidarias-tse.mjs $ANOS
