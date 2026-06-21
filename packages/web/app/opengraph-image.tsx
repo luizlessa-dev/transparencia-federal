@@ -16,28 +16,16 @@ const BRAND_RUST  = "#C76E45";   // laranja-ferrugem
 const BRAND_GREEN = "#3B7553";   // verde-musgo
 const BRAND_STEEL = "#4188B5";   // azul-aço
 
-// ── Monograma circular (SVG inline, fiel ao componente Logo) ──────
-function Monograma({ size: s = 140, color = FG }: { size?: number; color?: string }) {
+// ── Monograma circular — SVG fiel ao brinsider-logo.svg (viewBox 300×300) ──
+function Monograma({ size: s = 140 }: { size?: number }) {
   return (
-    <div
-      style={{
-        width: s,
-        height: s,
-        borderRadius: "50%",
-        border: `${Math.max(1, s / 90)}px solid ${color}`,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "serif",
-        color,
-        lineHeight: 1,
-      }}
-    >
-      <span style={{ fontSize: s * 0.1, fontStyle: "italic" }}>the</span>
-      <span style={{ fontSize: s * 0.28, fontWeight: 700, letterSpacing: -1 }}>BR</span>
-      <span style={{ fontSize: s * 0.1 }}>insider</span>
-    </div>
+    <svg width={s} height={s} viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="150" cy="150" r="110" fill="#1B1B1B" stroke="#FFFFFF" strokeWidth="1.5" />
+      <circle cx="150" cy="150" r="100" fill="none" stroke="#FFFFFF" strokeWidth="0.5" />
+      <text x="150" y="108" fontFamily="Georgia, serif" fontSize="18" fontWeight="400" fill="#FFFFFF" textAnchor="middle" fontStyle="italic">the</text>
+      <text x="150" y="175" fontFamily="Georgia, serif" fontSize="68" fontWeight="700" fill="#FFFFFF" textAnchor="middle">BR</text>
+      <text x="150" y="205" fontFamily="Georgia, serif" fontSize="18" fontWeight="400" fill="#FFFFFF" textAnchor="middle" letterSpacing="3">insider</text>
+    </svg>
   );
 }
 
@@ -59,7 +47,7 @@ export default async function OGImage() {
       >
         {/* Header: monograma + nome + tagline */}
         <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-          <Monograma size={120} color={FG} />
+          <Monograma size={120} />
           <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.15 }}>
             <span style={{ fontSize: 38, color: FG, fontWeight: 700, letterSpacing: "-0.01em" }}>
               The BR Insider
