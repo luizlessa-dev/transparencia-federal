@@ -43,7 +43,10 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   process.exit(1);
 }
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-const anos = process.argv.slice(2).map(Number).filter(Boolean);
+const argv = process.argv.slice(2);
+// --extrato: reprocessa SÓ o extrato bancário (útil pra fechar lacunas sem reler tudo)
+const SO_EXTRATO = argv.includes('--extrato');
+const anos = argv.filter((a) => !a.startsWith('--')).map(Number).filter(Boolean);
 const ANOS = anos.length ? anos : ANOS_PADRAO;
 
 // ---- helpers -------------------------------------------------------------
@@ -240,11 +243,20 @@ async function ingere(zip, prefixo, tabela, mapFn, ano, enc) {
 }
 
 async function processaAno(ano) {
-  const zMain = `/tmp/pcp_${ano}.zip`;
   const zExtr = `/tmp/pcp_extrato_${ano}.zip`;
+  baixa(`extrato_bancario_partido_${ano}.zip`, zExtr);
+
+  // Modo --extrato: só reprocessa o extrato bancário (fecha lacunas sem reler o resto)
+  if (SO_EXTRATO) {
+    if (existsSync(zExtr) && !zipValido(zExtr)) { execSync(`rm -f ${zExtr}`); }
+    const e = await ingere(zExtr, `extrato_bancario_`, 'tse_conta_extrato', mapExtrato, ano, 'latin-1');
+    console.log(`\n✅  ${ano} (só extrato): ${e.toLocaleString('pt-BR')} lançamentos`);
+    return;
+  }
+
+  const zMain = `/tmp/pcp_${ano}.zip`;
   const zNota = `/tmp/pcp_nota_${ano}.zip`;
   baixa(`prestacao_contas_anual_partidaria_${ano}.zip`, zMain);
-  baixa(`extrato_bancario_partido_${ano}.zip`, zExtr);
   baixa(`prestacao_contas_anual_partidaria_notafiscal_${ano}.zip`, zNota);
 
   for (const z of [zMain, zExtr, zNota]) {
